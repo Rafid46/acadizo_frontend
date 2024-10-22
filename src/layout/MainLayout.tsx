@@ -2,30 +2,18 @@ import { useState } from "react";
 import {
   MenuFoldOutlined,
   MenuOutlined,
-  MenuUnfoldOutlined,
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Layout,
-  Menu,
-  MenuProps,
-  Space,
-  Spin,
-  theme,
-} from "antd";
+import { Avatar, Button, Dropdown, Layout, Menu, MenuProps, theme } from "antd";
 import { Link, Outlet } from "react-router-dom";
-import { TestSide } from "./TestSide";
 import { LuHome, LuLogOut } from "react-icons/lu";
 import { MdOutlineCollectionsBookmark } from "react-icons/md";
 import logo from "../assets/icons/acadizo_logo.png";
 import icon from "../assets/icons/acadizo_icon.png";
-import CustomButton from "../common/CustomButton";
 import { PiStudent } from "react-icons/pi";
+import { FaAngleDown } from "react-icons/fa";
 
 const { Header, Sider, Content } = Layout;
 
@@ -124,10 +112,10 @@ const MainLayout = () => {
         >
           <div className="mt-4 mb-2">
             {collapsed ? (
-              <img className="w-[40px] mx-auto" src={icon} alt="" />
+              <img className="w-[35px] mx-auto" src={icon} alt="" />
             ) : (
               <div className="flex items-center  mt-4 mb-2">
-                <img className="w-[40px]" src={icon} alt="" />
+                <img className="w-[35px]" src={icon} alt="" />
                 <img className="w-[130px] flex mx-auto" src={logo} alt="" />
               </div>
             )}
@@ -210,6 +198,7 @@ const MainLayout = () => {
                       hello@gmail.com
                     </p>
                   </div>
+                  <FaAngleDown className="ml-2 text-text-secondary-color" />
                 </div>
               </a>
             </Dropdown>
