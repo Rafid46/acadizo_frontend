@@ -6,7 +6,7 @@ export default {
       "primary-color": "#7ABA78",
       "secondary-color": "#41B06E",
       "text-color": "#20272c",
-      "text-secondary-color": "#64748b",
+      "text-second-color": "#64748B",
       "border-color": "#EEEDEB",
     },
     fontFamily: {
