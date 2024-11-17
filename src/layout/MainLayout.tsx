@@ -1,7 +1,9 @@
 import Dashboard from "../pages/Dashboard";
+import TestDashboard from "../pages/TestDashboard";
 
 const MainLayout = () => {
-  return <Dashboard />;
+  return <TestDashboard />;
+  // <Dashboard />;
 };
 
 export default MainLayout;

@@ -111,3 +111,23 @@
   border: 1px solid rgb(224, 224, 224);
   /* border-radius: 8px; */
 }
+.ant-form-item-label {
+  padding: 5px 0 !important;
+}
+
+.ant-form-item .ant-form-item-explain-error {
+  font-size: 12px !important;
+  margin-top: 2px !important;
+}
+
+.custom_hover:hover {
+  background-color: #35915a !important;
+}
+
+.custom_button_style {
+  @apply text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color;
+}
+
+.ant-drawer .ant-drawer-body {
+  padding: 6px;
+}
