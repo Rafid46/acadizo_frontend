@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useContext, useRef } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import {
   Form,
   Input,
@@ -24,18 +24,19 @@ interface UserData {
   contactNo: string;
   avatar: string;
   image: any;
+  role: string;
 }
 
 const UpdateProfile: React.FC = () => {
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [fileList, setFileList] = useState<any[]>([]);
   const [imageUrl, setImageUrl] = useState(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [imageSelected, setImageSelected] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
+
   //   const [imageUrl, setImageUrl] = useState<string>();
   const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
-  const image_hosting_api = `https://api.imgbb.com/1/upload?expiration=600&key=${image_hosting_key}`;
+  // const image_hosting_api = `https://api.imgbb.com/1/upload?expiration=600&key=${image_hosting_key}`;
   //   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const axiosPublic = useAxios();
   const {
@@ -45,61 +46,68 @@ const UpdateProfile: React.FC = () => {
     loading,
     setLoading,
   }: any = useContext(AuthContext);
-  const src =
-    "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png";
+  // const src =
+  //   "https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png";
   const [imageAvatar, setImageAvatar] = useState(user?.photoURL);
-  // const handleUpdate = async (value: UserData) => {
-  //   setLoading(true);
+  const handleUpdate = async (value: UserData) => {
+    setButtonLoading(true);
 
-  //   // Prepare the MongoDB update payload
-  //   const updateProfileValues: any = {};
-  //   if (value.firstName) updateProfileValues.firstName = value.firstName;
-  //   if (value.lastName) updateProfileValues.lastName = value.lastName;
-  //   if (value.gender) updateProfileValues.gender = value.gender;
-  //   if (value.contactNo) updateProfileValues.contactNo = value.contactNo;
+    // Prepare the MongoDB update payload
+    const updateProfileValues: any = {};
+    if (value.firstName) updateProfileValues.firstName = value.firstName;
+    if (value.lastName) updateProfileValues.lastName = value.lastName;
+    if (value.gender) updateProfileValues.gender = value.gender;
+    if (value.contactNo) updateProfileValues.contactNo = value.contactNo;
+    if (value.role) updateProfileValues.role = value.role;
 
-  //   try {
-  //     // Update user in MongoDB
-  //     const res = await axiosPublic.put(
-  //       `/api/v1/user/update-user/${user?.email}`,
-  //       updateProfileValues
-  //     );
+    try {
+      // Update user in MongoDB
+      const res = await axiosPublic.put(
+        `/api/v1/user/update-user/${user?.email}`,
+        updateProfileValues
+      );
 
-  //     notification.success({
-  //       message: "Update success",
-  //       description: "User updated successfully in MongoDB",
-  //       duration: 3,
-  //       placement: "topRight",
-  //     });
+      notification.success({
+        message: (
+          <p className="font-semibold text-[14px]">User updated successfully</p>
+        ),
+        // description: (
+        //   <p className="text-[12px] text-gray-600">
+        //     Account registered successfully
+        //   </p>
+        // ),
+        duration: 3,
+        placement: "topRight",
+        showProgress: true,
+      });
+      // Set displayName to reflect both existing and updated names
+      if (value.firstName || value.lastName) {
+        // Set displayName to reflect both existing and updated names
+        const newFirstName =
+          value.firstName || user?.displayName?.split(" ")[0];
+        const newLastName =
+          value.lastName || user?.displayName?.split(" ")[1] || "";
 
-  //     // Set displayName to reflect both existing and updated names
-  //     if (value.firstName || value.lastName) {
-  //       // Set displayName to reflect both existing and updated names
-  //       const newFirstName =
-  //         value.firstName || user?.displayName?.split(" ")[0];
-  //       const newLastName =
-  //         value.lastName || user?.displayName?.split(" ")[1] || "";
+        // Ensure no extra spaces are added in case one of the names is missing
+        const fullName = `${newFirstName.trim()} ${newLastName.trim()}`.trim();
 
-  //       // Ensure no extra spaces are added in case one of the names is missing
-  //       const fullName = `${newFirstName.trim()} ${newLastName.trim()}`.trim();
+        // Update Firebase Authentication profile
+        await updateUserProfile(fullName);
+      }
 
-  //       // Update Firebase Authentication profile
-  //       await updateUserProfile(fullName);
-  //     }
-
-  //     console.log(res.data);
-  //   } catch (error) {
-  //     console.error("Error updating profile:", error);
-  //     notification.error({
-  //       message: "Something went wrong",
-  //       description: "Update failed",
-  //       duration: 3,
-  //       placement: "topRight",
-  //     });
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
+      console.log(res.data);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      notification.error({
+        message: "Something went wrong",
+        description: "Update failed",
+        duration: 3,
+        placement: "topRight",
+      });
+    } finally {
+      setButtonLoading(false);
+    }
+  };
 
   //   const props: UploadProps = {
   //     name: "file",
@@ -134,41 +142,58 @@ const UpdateProfile: React.FC = () => {
   // };
 
   const handleUploadPhoto = async () => {
-    // if (!fileList.length || !user) return;
-    // const imageFile = fileList[0];
-    // if (!fileList.length || !user) return;
-    // const imageFile = fileList[0];
     setLoading(true);
 
     try {
       if (imageSelected && fileInputRef.current?.files?.length) {
         const file = fileInputRef.current.files[0];
         if (file) {
-          // Upload image to ImageBB
-          const formData = new FormData();
-          formData.append("image", file);
-          const response = await axiosPublic.post(
-            `https://api.cloudinary.com/v1_1/deej2hp71/image/upload`,
-            formData
-          );
+          // Ensure file size is below 10MB
+          if (file.size < 10 * 1024 * 1024) {
+            const formData = new FormData();
+            formData.append("file", file); // Use "file" as key
+            formData.append("upload_preset", "your_upload_preset"); // Replace with the exact preset name
 
-          const imageUrl = response.data.data.display_url;
-          console.log("Image URL from cloudinery:", imageUrl);
+            // Upload to Cloudinary
+            const response = await axiosPublic.post(
+              `https://api.cloudinary.com/v1_1/deej2hp71/image/upload`,
+              formData
+            );
 
-          // Update Firebase user profile
-          await updateUserAvatar(imageUrl);
+            const imageUrl = response.data.secure_url; // Correct URL
+            console.log("Image URL from Cloudinary:", imageUrl);
+            await updateUserAvatar(imageUrl);
 
-          // Update your backend database
-          await axiosPublic.put(`/api/v1/user/update-user/${user.email}`, {
-            photoURL: imageUrl,
-          });
-          setImageAvatar(response.data.cover);
-          setImageSelected(false);
-          setFileList([]);
+            // Handle your backend updates here
+            await axiosPublic.put(`/api/v1/user/update-user/${user.email}`, {
+              photoURL: imageUrl,
+            });
+            setImageAvatar(imageUrl);
+            setImageSelected(false);
+            setFileList([]);
+          } else {
+            console.log("file size is too large");
+          }
         }
       }
     } catch (error: any) {
-      console.group(error);
+      console.error(
+        "Upload failed:",
+        error.response ? error.response.data : error.message
+      );
+      notification.success({
+        message: (
+          <p className="font-semibold text-[14px]">Image size is too large</p>
+        ),
+        description: (
+          <p className="text-[12px] text-gray-600">
+            Please upload a smaller image.
+          </p>
+        ),
+        duration: 3,
+        placement: "topRight",
+        showProgress: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -198,51 +223,55 @@ const UpdateProfile: React.FC = () => {
     setImageAvatar(false); // Reset the image selection state
     setImageUrl(null); // Optionally reset the image preview if you want
   };
+
   return (
     <>
       <style>
         {`
           .custom_hover:hover {
             background-color: #35915a !important;
-          }
+        }
+
+          .ant-form-item {
+           margin-bottom: 15px !important;
+        }
+  .custom_border .ant-select-selector {
+   border-color: #7ABA78 !important; 
+  }
+          
         `}
       </style>
-      <section className="relative pt-40 pb-24">
-        <img
-          src="https://pagedone.io/asset/uploads/1705473908.png"
-          alt="cover-image"
-          className="w-full absolute top-0 left-0 z-0  h-60 object-cover"
-        />
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-8">
-          <div className="flex items-center justify-center sm:justify-start relative z-10 mb-5">
-            <div className="relative inline-block">
-              <div className="bg-white rounded-full flex items-center justify-center overflow-hidden">
-                {imageAvatar ? (
-                  <Image
-                    width={200}
-                    height={200}
-                    src={imageAvatar}
-                    className="border-4 border-solid border-white rounded-full object-cover !w-[200px] h-[200px]"
-                  />
-                ) : loading ? (
-                  <div className="border-4 border-solid border-white rounded-full object-cover !w-[200px] h-[200px]">
-                    <Loader />
-                  </div>
-                ) : (
-                  <Image
-                    width={200}
-                    height={200}
-                    src={
-                      user?.photoURL
-                        ? user?.photoURL
-                        : "https://github.com/shadcn.png"
-                    } // Default avatar if no photoURL
-                    className="border-4 border-solid border-white rounded-full object-cover !w-[200px] h-[200px]"
-                  />
-                )}
-              </div>
-              <span className="absolute bottom-[25px] right-[20px] text-sm text-gray-600  px-1 rounded-sm transform translate-x-1/4 translate-y-1/4">
-                {/* <Upload
+      <div>
+        <div className="">
+          <div className="w-full max-w-7xl mx-auto px-6 md:px-8">
+            <div className="flex items-center justify-center sm:justify-start relative z-10 mb-5">
+              <div className="relative inline-block">
+                <p className="font-semibold text-2xl text-[#030712] mb-5">
+                  Update your profile
+                </p>
+                <div className="bg-white rounded-full flex items-center justify-center overflow-hidden">
+                  {loading ? (
+                    <div className="border-4 border-solid border-white rounded-full object-cover !w-[200px] h-[200px]">
+                      <Loader />
+                    </div>
+                  ) : imageAvatar ? (
+                    <Image
+                      width={200}
+                      height={200}
+                      src={imageAvatar}
+                      className="border-4 border-solid border-white rounded-full object-cover !w-[200px] h-[200px]"
+                    />
+                  ) : (
+                    <Image
+                      width={200}
+                      height={200}
+                      src="https://github.com/shadcn.png" // Default avatar
+                      className="border-4 border-solid border-white rounded-full object-cover !w-[200px] h-[200px]"
+                    />
+                  )}
+                </div>
+                <span className="absolute bottom-[25px] right-[20px] text-sm text-gray-600  px-1 rounded-sm transform translate-x-1/4 translate-y-1/4">
+                  {/* <Upload
                   listType="picture"
                   maxCount={1}
                   beforeUpload={() => false} // Prevent auto-upload
@@ -251,57 +280,62 @@ const UpdateProfile: React.FC = () => {
                 >
                   <Button icon={<UploadOutlined />}></Button>
                 </Upload> */}
-                <form onSubmit={handleUploadPhoto}>
-                  <div>
-                    <input
-                      ref={fileInputRef}
-                      name="image"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageChange}
-                      style={{ display: "none" }}
-                    />
+                  <form onSubmit={handleUploadPhoto}>
+                    <div>
+                      <input
+                        ref={fileInputRef}
+                        name="image"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                    <Button
+                      className="rounded-full"
+                      onClick={handleButtonClick}
+                      icon={<UploadOutlined />}
+                    ></Button>
+                  </form>
+                </span>
+              </div>
+              <div>
+                {imageSelected && (
+                  <div className="flex items-center justify-center">
+                    <Button
+                      disabled={loading}
+                      loading={loading}
+                      className="custom_hover ml-5 mr-2 text-sm font-semibold h-[40px] px-8 border-none shadow-none !bg-secondary-color !text-white"
+                      type="primary"
+                      onClick={handleUploadPhoto}
+                      // loading={loading}
+                    >
+                      {loading ? "Uploading avatar" : " Upload Avatar"}
+                    </Button>
+                    <Button
+                      onClick={handleCancel}
+                      className="border-none"
+                      icon={<RxCross1 className="w-8 h-8" />}
+                    ></Button>
                   </div>
-                  <Button
-                    className="rounded-full"
-                    onClick={handleButtonClick}
-                    icon={<UploadOutlined />}
-                  ></Button>
-                </form>
-              </span>
+                )}
+              </div>
             </div>
-            <div>
-              {imageSelected && (
-                <div className="flex items-center justify-center">
-                  <Button
-                    disabled={loading}
-                    loading={loading}
-                    className="custom_hover ml-5 mr-2 text-sm font-semibold h-[40px] px-8 border-none shadow-none !bg-secondary-color !text-white"
-                    type="primary"
-                    onClick={handleUploadPhoto}
-                    // loading={loading}
-                  >
-                    {loading ? "Uploading avatar" : " Upload Avatar"}
-                  </Button>
-                  <Button
-                    onClick={handleCancel}
-                    className="border-none"
-                    icon={<RxCross1 className="w-8 h-8" />}
-                  ></Button>
+            <div className="flex items-center justify-center flex-col sm:flex-row max-sm:gap-5 sm:justify-between mb-5">
+              <div className="block">
+                <div className="flex lg:flex-row flex-col items-center gap-y-2 lg:gap-x-4">
+                  <h3 className="font-manrope font-bold text-2xl text-[#030712] mb-1 max-sm:text-center">
+                    {user?.displayName}
+                  </h3>
+                  <a className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900">
+                    Teacher
+                  </a>
                 </div>
-              )}
-            </div>
-          </div>
-          <div className="flex items-center justify-center flex-col sm:flex-row max-sm:gap-5 sm:justify-between mb-5">
-            <div className="block">
-              <h3 className="font-manrope font-bold text-4xl text-gray-900 mb-1 max-sm:text-center">
-                {user?.displayName}
-              </h3>
-              <p className="font-normal text-base leading-7 text-gray-500  max-sm:text-center">
-                {user?.email}
-              </p>
-            </div>
-            <button className="py-3.5 px-5 flex rounded-full bg-indigo-600 items-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700">
+                <p className="font-normal text-base leading-7 text-gray-500  max-sm:text-center">
+                  {user?.email}
+                </p>
+              </div>
+              {/* <button className="py-3.5 px-5 flex rounded-full bg-indigo-600 items-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700">
               <svg
                 width="20"
                 height="20"
@@ -319,9 +353,9 @@ const UpdateProfile: React.FC = () => {
               <span className="px-2 font-semibold text-base leading-7 text-white">
                 Send Message
               </span>
-            </button>
-          </div>
-          <div className="flex max-sm:flex-wrap max-sm:justify-center items-center gap-4">
+            </button> */}
+            </div>
+            {/* <div className="flex max-sm:flex-wrap max-sm:justify-center items-center gap-4">
             <a
               href="javascript:;"
               className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900"
@@ -340,36 +374,98 @@ const UpdateProfile: React.FC = () => {
             >
               Project Manager
             </a>
+          </div> */}
+            <div className="">
+              <Form
+                layout="vertical"
+                onFinish={handleUpdate}
+                style={{ maxWidth: 600 }}
+              >
+                <Form.Item
+                  label={
+                    <p className="block text-sm font-medium text-gray-700">
+                      First name
+                    </p>
+                  }
+                  name="firstName"
+                >
+                  <Input className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color" />
+                </Form.Item>
+                <Form.Item
+                  label={
+                    <p className="block text-sm font-medium text-gray-700">
+                      last name
+                    </p>
+                  }
+                  name="lastName"
+                >
+                  <Input className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color" />
+                </Form.Item>
+
+                <Form.Item
+                  label={
+                    <p className="block text-sm font-medium text-gray-700">
+                      Gender
+                    </p>
+                  }
+                  name="gender"
+                >
+                  <Select
+                    defaultValue={user?.gender || undefined}
+                    className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color"
+                  >
+                    <Option value="male">Male</Option>
+                    <Option value="female">Female</Option>
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  label={
+                    <p className="block text-sm font-medium text-gray-700">
+                      Contact Number
+                    </p>
+                  }
+                  name="contactNo"
+                >
+                  <Input
+                    type="Number"
+                    className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  label={
+                    <p className="block text-sm font-medium text-gray-700">
+                      Role
+                    </p>
+                  }
+                  name="role"
+                >
+                  <Select
+                    defaultValue={user?.role || undefined}
+                    className="custom_border shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color"
+                  >
+                    <Option value="student">Student</Option>
+                    <Option value="teacher">Teacher</Option>
+                  </Select>
+                </Form.Item>
+
+                <div className="mt-10 flex items-end justify-end">
+                  <Button
+                    className="custom_button_style custom_hover"
+                    type="primary"
+                    htmlType="submit"
+                    loading={buttonLoading}
+                  >
+                    {buttonLoading ? "Saving" : "Save changes"}
+                  </Button>
+                </div>
+              </Form>
+            </div>
           </div>
         </div>
-      </section>
-      {/* <Form
-        layout="vertical"
-        onFinish={handleUpdate}
-        style={{ maxWidth: 600, margin: "0 auto" }}
-      >
-        <Form.Item name="firstName" label="First Name">
-          <Input />
-        </Form.Item>
-        <Form.Item name="lastName" label="Last Name">
-          <Input />
-        </Form.Item>
+      </div>
 
-        <Form.Item name="gender" label="Gender">
-          <Select>
-            <Option value="male">Male</Option>
-            <Option value="female">Female</Option>
-          </Select>
-        </Form.Item>
-
-        <Form.Item name="contactNo" label="Contact Number">
-          <Input />
-        </Form.Item>
-
-        <Button type="primary" htmlType="submit" loading={loading}>
-          {loading ? "updating profile" : "Update Profile"}
-        </Button>
-      </Form> */}
       {/* <img src={user?.photoURL} alt="" /> */}
 
       {/* <div>

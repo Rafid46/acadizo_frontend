@@ -7,11 +7,20 @@ import {
   UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
-import { Avatar, Button, Dropdown, Layout, Menu, MenuProps, theme } from "antd";
+import {
+  Avatar,
+  Button,
+  Drawer,
+  Dropdown,
+  Layout,
+  Menu,
+  MenuProps,
+  theme,
+} from "antd";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { LuHome, LuLogOut } from "react-icons/lu";
 import { MdOutlineCollectionsBookmark } from "react-icons/md";
-// import logo from "../assets/icons/acadizo_logo.png";
+import logo from "../assets/icons/acadizo_logo.png";
 import icon from "../assets/icons/acadizo_icon.png";
 import { PiStudent } from "react-icons/pi";
 import { FaAngleDown } from "react-icons/fa";
@@ -21,11 +30,11 @@ import { AuthContext } from "../providers/AuthProvider";
 
 const { Header, Sider, Content } = Layout;
 
-const Dashboard = () => {
+const TestDashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { user, logOut, loading }: any = useContext(AuthContext);
-  // const [loading, setLoading] = useState(false);
+  const { user, logOut, loading, setLoading }: any = useContext(AuthContext);
+  const [open, setOpen] = useState(false);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -88,6 +97,15 @@ const Dashboard = () => {
       setIsMobile(true);
     }
   }, []);
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
+
   return (
     <Layout>
       <style>
@@ -158,88 +176,16 @@ const Dashboard = () => {
     `}
       </style>
       {/* Sidebar */}
-      <Sider
-        collapsedWidth={isMobile ? 0 : 70}
-        width={!isMobile ? 250 : "100%"}
-        className="h-[100vh] bg-[#ffffff] border-r border-[#C1D8C3] z-50 overflow-hidden"
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-      >
-        <div
-          style={{
-            transition: "all 0.3s ease",
-          }}
-          className={`duration-300 ${collapsed ? "" : ""}`}
+      {isMobile ? (
+        <Drawer
+          placement="left"
+          width={350}
+          title={<img className="w-[100px] ml-3" src={logo} />}
+          onClose={onClose}
+          open={open}
         >
-          <div className="mt-4 mb-2">
-            {collapsed ? (
-              <img
-                className="w-[35px] rounded-[10px] mx-auto"
-                src={icon}
-                alt=""
-              />
-            ) : (
-              <div
-                className={`${
-                  isMobile ? " " : "flex items-start"
-                } ml-6 gap-x-2  mt-4 mb-2`}
-              >
-                {isMobile ? (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-start gap-x-2 mt-2">
-                      <img
-                        className="w-[35px] rounded-[10px]"
-                        src={icon}
-                        alt=""
-                      />
-                      <div className="flex flex-col">
-                        <p className="text-primary-color font-bold text-[14px]">
-                          Acadizo
-                        </p>
-                        <p className="font-semibold text-[12px] text-text-second-color -mt-[2px]">
-                          description
-                        </p>
-                      </div>
-                    </div>
-                    <div>
-                      <Button
-                        className="border-none !focus:outline-none custom-button shadow-none mr-2"
-                        icon={
-                          collapsed ? <MenuOutlined /> : <MenuFoldOutlined />
-                        }
-                        onClick={() => setCollapsed(!collapsed)}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between gap-x-2 ml-4">
-                    <img
-                      className="w-[35px] rounded-[10px]"
-                      src={icon}
-                      alt=""
-                    />
-                    <div className="flex flex-col ">
-                      <p className="text-primary-color font-bold text-[14px]">
-                        Acadizo
-                      </p>
-                      <p className="font-semibold text-[12px] text-text-second-color -mt-[2px]">
-                        description
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* <img className="w-[130px]" src={logo} alt="" /> */}
-              </div>
-            )}
-          </div>
-        </div>
-        <div className="">
           <Menu
-            className={`bg-[#ffffff] !border-none mt-4 ${
-              collapsed ? "p-[7px]" : "menu-expanded"
-            }`}
+            className={`bg-[#ffffff] !border-none mt-4`}
             mode="inline"
             defaultSelectedKeys={["1"]}
             items={[
@@ -247,10 +193,7 @@ const Dashboard = () => {
                 key: "1",
                 icon: <UserOutlined />,
                 label: (
-                  <NavLink
-                    onClick={() => isMobile && setCollapsed(!collapsed)}
-                    to="/about"
-                  >
+                  <NavLink onClick={() => setOpen(false)} to="/about">
                     Dashboard
                   </NavLink>
                 ),
@@ -259,10 +202,7 @@ const Dashboard = () => {
                 key: "2",
                 icon: <VideoCameraOutlined />,
                 label: (
-                  <NavLink
-                    onClick={() => isMobile && setCollapsed(!collapsed)}
-                    to="/modules"
-                  >
+                  <NavLink onClick={() => setOpen(false)} to="/modules">
                     Modules
                   </NavLink>
                 ),
@@ -282,7 +222,7 @@ const Dashboard = () => {
                     key: "4-1",
                     label: (
                       <NavLink
-                        onClick={() => isMobile && setCollapsed(!collapsed)}
+                        onClick={() => setOpen(false)}
                         to="/institution/students"
                       >
                         Overview
@@ -294,7 +234,7 @@ const Dashboard = () => {
                     key: "4-2",
                     label: (
                       <NavLink
-                        onClick={() => isMobile && setCollapsed(!collapsed)}
+                        onClick={() => setOpen(false)}
                         to="/institution/overview"
                       >
                         Students
@@ -306,49 +246,104 @@ const Dashboard = () => {
               },
             ]}
           />
-          {/* <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
+        </Drawer>
+      ) : (
+        <Sider
+          collapsedWidth={70}
+          width={250}
+          className="h-[100vh] bg-[#ffffff] border-r border-[#C1D8C3] z-50 overflow-hidden"
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
+        >
+          <div
             style={{
-              fontSize: "16px",
-              width: 64,
-              height: 64,
+              transition: "all 0.3s ease",
             }}
-          /> */}
-          {/* <div className="absolute bottom-0 left-0 right-0 p-4 bg-gray-100">
-            <div className="flex items-center justify-center">
-              <span className="text-sm font-medium text-gray-600">
-                {collapsed ? (
-                  <Avatar
-                    shape="square"
-                    className="h-10 w-10 rounded-full"
-                    src="https://api.dicebear.com/7.x/miniavs/svg?seed=1"
-                  />
-                ) : (
-                  <div className="flex items-center  bg-[#F2FCF2] px-6 py-4 rounded-[12px]">
-                    <div className="flex-shrink-0">
-                      <Avatar
-                        shape="square"
-                        className="h-10 w-10 rounded-full"
-                        src="https://api.dicebear.com/7.x/miniavs/svg?seed=1"
-                      />
-                    </div>
-                    <div className="flex-1 ml-3">
-                      <p className="text-sm font-medium text-white truncate">
-                        Mostafa AL Rafid
+            className={`duration-300 ${collapsed ? "" : ""}`}
+          >
+            <div className="mt-4 mb-2">
+              {collapsed ? (
+                <img
+                  className="w-[35px] rounded-[10px] mx-auto"
+                  src={icon}
+                  alt=""
+                />
+              ) : (
+                <div
+                  className={`flex items-start"
+                } ml-6 gap-x-2  mt-4 mb-2`}
+                >
+                  <div className="flex items-center justify-between gap-x-2 ml-4">
+                    <img
+                      className="w-[35px] rounded-[10px]"
+                      src={icon}
+                      alt=""
+                    />
+                    <div className="flex flex-col ">
+                      <p className="text-primary-color font-bold text-[14px]">
+                        Acadizo
                       </p>
-                      <p className="text-sm text-gray-400 truncate">
-                        hello@gmail.com
+                      <p className="font-semibold text-[12px] text-text-second-color -mt-[2px]">
+                        description
                       </p>
                     </div>
                   </div>
-                )}
-              </span>
+
+                  {/* <img className="w-[130px]" src={logo} alt="" /> */}
+                </div>
+              )}
             </div>
-          </div> */}
-        </div>
-      </Sider>
+          </div>
+          <Menu
+            className={`bg-[#ffffff] !border-none mt-4 ${
+              collapsed ? "p-[7px]" : "menu-expanded"
+            }`}
+            mode="inline"
+            defaultSelectedKeys={["1"]}
+            items={[
+              {
+                key: "1",
+                icon: <UserOutlined />,
+                label: <NavLink to="/dashboard">Dashboard</NavLink>,
+              },
+              {
+                key: "2",
+                icon: <VideoCameraOutlined />,
+                label: <NavLink to="/modules">Modules</NavLink>,
+              },
+              {
+                key: "3",
+                icon: <UploadOutlined />,
+                label: "Users",
+              },
+
+              {
+                key: "4",
+                icon: <RiHomeOfficeLine />,
+                label: "Institution",
+                children: [
+                  {
+                    key: "4-1",
+                    label: (
+                      <NavLink to="/institution/students">Overview</NavLink>
+                    ),
+                    icon: <CiViewList />,
+                  },
+                  {
+                    key: "4-2",
+                    label: (
+                      <NavLink to="/institution/overview">Students</NavLink>
+                    ),
+                    icon: <PiStudent />,
+                  },
+                ],
+              },
+            ]}
+          />
+        </Sider>
+      )}
+
       {/* Main content area */}
       <Layout>
         <Header
@@ -358,13 +353,19 @@ const Dashboard = () => {
           <div
             className={`flex items-center justify-between  overflow-hidden py-3 lg:p-3`}
           >
-            <Button
-              className={`border-none !focus:outline-none mx-3 lg:mx-0 shadow-none ${
-                collapsed ? "block lg:block" : "hidden lg:block"
-              }`}
-              icon={collapsed ? <MenuOutlined /> : <MenuFoldOutlined />}
-              onClick={() => setCollapsed(!collapsed)}
-            />
+            {isMobile ? (
+              <Button
+                className={`border-none !focus:outline-none mx-3 lg:mx-0 shadow-none`}
+                icon={<MenuOutlined />}
+                onClick={showDrawer}
+              />
+            ) : (
+              <Button
+                className={`border-none !focus:outline-none mx-3 lg:mx-0 shadow-none`}
+                icon={collapsed ? <MenuOutlined /> : <MenuFoldOutlined />}
+                onClick={() => setCollapsed(!collapsed)}
+              />
+            )}
 
             <Dropdown
               //   trigger={["click"]}
@@ -404,10 +405,9 @@ const Dashboard = () => {
           </div>
         </Header>
         <Content
-          className={collapsed ? "block lg:block" : "hidden lg:block"}
           style={{
             margin: "10px 10px",
-            padding: isMobile ? 8 : 24,
+            padding: 24,
             background: "white",
             borderRadius: "10px",
             overflow: "initial",
@@ -420,4 +420,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default TestDashboard;

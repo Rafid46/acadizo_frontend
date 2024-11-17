@@ -7,6 +7,7 @@ import Login from "../pages/auth/Login";
 
 import UpdateProfile from "../pages/profile/UpdateProfile";
 import Modules from "../pages/profile/sidebar/Modules";
+import InstitutionSection from "../pages/InstitutionSection";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: "update-profile",
         element: <UpdateProfile />,
+      },
+      {
+        path: "dashboard",
+        element: <InstitutionSection />,
       },
     ],
   },
