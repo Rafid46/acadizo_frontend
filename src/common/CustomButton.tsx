@@ -9,7 +9,7 @@ const CustomButton = ({ loading, buttonText }: any) => {
           transition: "background-color 0.3s ease",
         }}
         type="primary"
-        className="hover-button text-sm font-semibold h-[40px] px-8 border-none shadow-none !bg-secondary-color text-white"
+        className="hover:bg-transparent w-full  !hover:text-primary-color text-sm font-semibold h-[40px] px-8 border-none shadow-none !bg-secondary-color text-white"
       >
         {loading ? (
           <Spin
