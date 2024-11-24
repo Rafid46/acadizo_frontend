@@ -35,7 +35,7 @@ const UpdateProfile: React.FC = () => {
   const [buttonLoading, setButtonLoading] = useState(false);
 
   //   const [imageUrl, setImageUrl] = useState<string>();
-  const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+  // const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
   // const image_hosting_api = `https://api.imgbb.com/1/upload?expiration=600&key=${image_hosting_key}`;
   //   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const axiosPublic = useAxios();
@@ -241,37 +241,41 @@ const UpdateProfile: React.FC = () => {
           
         `}
       </style>
-      <div>
-        <div className="">
-          <div className="w-full max-w-7xl mx-auto px-6 md:px-8">
-            <div className="flex items-center justify-center sm:justify-start relative z-10 mb-5">
-              <div className="relative inline-block">
-                <p className="font-semibold text-2xl text-[#030712] mb-5">
-                  Update your profile
-                </p>
-                <div className="bg-white rounded-full flex items-center justify-center overflow-hidden">
-                  {loading ? (
-                    <div className="border-4 border-solid border-white rounded-full object-cover !w-[200px] h-[200px]">
-                      <Loader />
-                    </div>
-                  ) : imageAvatar ? (
-                    <Image
-                      width={200}
-                      height={200}
-                      src={imageAvatar}
-                      className="border-4 border-solid border-white rounded-full object-cover !w-[200px] h-[200px]"
-                    />
-                  ) : (
-                    <Image
-                      width={200}
-                      height={200}
-                      src="https://github.com/shadcn.png" // Default avatar
-                      className="border-4 border-solid border-white rounded-full object-cover !w-[200px] h-[200px]"
-                    />
-                  )}
-                </div>
-                <span className="absolute bottom-[25px] right-[20px] text-sm text-gray-600  px-1 rounded-sm transform translate-x-1/4 translate-y-1/4">
-                  {/* <Upload
+
+      <div className="">
+        <div className="w-full max-w-7xl  px-6 md:px-8">
+          <div className="flex relative z-10">
+            <div className="relative inline-block">
+              <p className="font-semibold text-xl text-[#030712] mb-5">
+                Update your profile
+              </p>
+              <div className="rounded-full flex items-center justify-center !overflow-hidden w-[130px] h-[130px]">
+                {imageAvatar ? (
+                  <Image
+                    width={130}
+                    height={130}
+                    src={imageAvatar}
+                    className="rounded-full  w-[130px] h-[130px]"
+                  />
+                ) : loading ? (
+                  <div className="rounded-full  w-[130px] h-[130px]">
+                    <Loader />
+                  </div>
+                ) : (
+                  <Image
+                    width={130}
+                    height={130}
+                    src={
+                      user?.photoURL
+                        ? user?.photoURL
+                        : "https://github.com/shadcn.png"
+                    } // Default avatar if no photoURL
+                    className="rounded-full object-cover object-center !w-[130px] !h-[130px]"
+                  />
+                )}
+              </div>
+              <span className="absolute bottom-[20px] right-[60px] text-sm text-gray-600  px-1 rounded-sm transform translate-x-1/4 translate-y-1/4">
+                {/* <Upload
                   listType="picture"
                   maxCount={1}
                   beforeUpload={() => false} // Prevent auto-upload
@@ -280,62 +284,62 @@ const UpdateProfile: React.FC = () => {
                 >
                   <Button icon={<UploadOutlined />}></Button>
                 </Upload> */}
-                  <form onSubmit={handleUploadPhoto}>
-                    <div>
-                      <input
-                        ref={fileInputRef}
-                        name="image"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        style={{ display: "none" }}
-                      />
-                    </div>
-                    <Button
-                      className="rounded-full"
-                      onClick={handleButtonClick}
-                      icon={<UploadOutlined />}
-                    ></Button>
-                  </form>
-                </span>
-              </div>
-              <div>
-                {imageSelected && (
-                  <div className="flex items-center justify-center">
-                    <Button
-                      disabled={loading}
-                      loading={loading}
-                      className="custom_hover ml-5 mr-2 text-sm font-semibold h-[40px] px-8 border-none shadow-none !bg-secondary-color !text-white"
-                      type="primary"
-                      onClick={handleUploadPhoto}
-                      // loading={loading}
-                    >
-                      {loading ? "Uploading avatar" : " Upload Avatar"}
-                    </Button>
-                    <Button
-                      onClick={handleCancel}
-                      className="border-none"
-                      icon={<RxCross1 className="w-8 h-8" />}
-                    ></Button>
+                <form onSubmit={handleUploadPhoto}>
+                  <div>
+                    <input
+                      ref={fileInputRef}
+                      name="image"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      style={{ display: "none" }}
+                    />
                   </div>
-                )}
-              </div>
+                  <Button
+                    className="rounded-full"
+                    onClick={handleButtonClick}
+                    icon={<UploadOutlined />}
+                  ></Button>
+                </form>
+              </span>
             </div>
-            <div className="flex items-center justify-center flex-col sm:flex-row max-sm:gap-5 sm:justify-between mb-5">
-              <div className="block">
-                <div className="flex lg:flex-row flex-col items-center gap-y-2 lg:gap-x-4">
-                  <h3 className="font-manrope font-bold text-2xl text-[#030712] mb-1 max-sm:text-center">
-                    {user?.displayName}
-                  </h3>
-                  <a className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900">
-                    Teacher
-                  </a>
+            <div>
+              {imageSelected && (
+                <div className="flex items-center justify-center">
+                  <Button
+                    disabled={loading}
+                    loading={loading}
+                    className="custom_hover ml-5 mr-2 text-sm font-semibold h-[40px] px-8 border-none shadow-none !bg-secondary-color !text-white"
+                    type="primary"
+                    onClick={handleUploadPhoto}
+                    // loading={loading}
+                  >
+                    {loading ? "Uploading avatar" : " Upload Avatar"}
+                  </Button>
+                  <Button
+                    onClick={handleCancel}
+                    className="border-none"
+                    icon={<RxCross1 className="w-8 h-8" />}
+                  ></Button>
                 </div>
-                <p className="font-normal text-base leading-7 text-gray-500  max-sm:text-center">
-                  {user?.email}
-                </p>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center justify-center flex-col sm:flex-row max-sm:gap-5 sm:justify-between mb-5 mt-5">
+            <div className="block">
+              <div className="flex lg:flex-row flex-col items-center gap-y-2 lg:gap-x-4">
+                <h3 className="font-manrope font-bold text-2xl text-[#030712] max-sm:text-center">
+                  {user?.displayName}
+                </h3>
+                <a className="rounded-full py-2 px-4 bg-stone-100 text-gray-700 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900">
+                  Teacher
+                </a>
               </div>
-              {/* <button className="py-3.5 px-5 flex rounded-full bg-indigo-600 items-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700">
+              <p className="font-normal text-s text-gray-500  max-sm:text-center">
+                {user?.email}
+              </p>
+            </div>
+            {/* <button className="py-3.5 px-5 flex rounded-full bg-indigo-600 items-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700">
               <svg
                 width="20"
                 height="20"
@@ -354,8 +358,8 @@ const UpdateProfile: React.FC = () => {
                 Send Message
               </span>
             </button> */}
-            </div>
-            {/* <div className="flex max-sm:flex-wrap max-sm:justify-center items-center gap-4">
+          </div>
+          {/* <div className="flex max-sm:flex-wrap max-sm:justify-center items-center gap-4">
             <a
               href="javascript:;"
               className="rounded-full py-3 px-6 bg-stone-100 text-gray-700 font-semibold text-sm leading-6 transition-all duration-500 hover:bg-stone-200 hover:text-gray-900"
@@ -375,93 +379,92 @@ const UpdateProfile: React.FC = () => {
               Project Manager
             </a>
           </div> */}
-            <div className="">
-              <Form
-                layout="vertical"
-                onFinish={handleUpdate}
-                style={{ maxWidth: 600 }}
+          <div className="">
+            <Form
+              layout="vertical"
+              onFinish={handleUpdate}
+              style={{ maxWidth: 600 }}
+            >
+              <Form.Item
+                label={
+                  <p className="block text-sm font-medium text-gray-700">
+                    First name
+                  </p>
+                }
+                name="firstName"
               >
-                <Form.Item
-                  label={
-                    <p className="block text-sm font-medium text-gray-700">
-                      First name
-                    </p>
-                  }
-                  name="firstName"
-                >
-                  <Input className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color" />
-                </Form.Item>
-                <Form.Item
-                  label={
-                    <p className="block text-sm font-medium text-gray-700">
-                      last name
-                    </p>
-                  }
-                  name="lastName"
-                >
-                  <Input className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color" />
-                </Form.Item>
+                <Input className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color" />
+              </Form.Item>
+              <Form.Item
+                label={
+                  <p className="block text-sm font-medium text-gray-700">
+                    last name
+                  </p>
+                }
+                name="lastName"
+              >
+                <Input className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color" />
+              </Form.Item>
 
-                <Form.Item
-                  label={
-                    <p className="block text-sm font-medium text-gray-700">
-                      Gender
-                    </p>
-                  }
-                  name="gender"
+              <Form.Item
+                label={
+                  <p className="block text-sm font-medium text-gray-700">
+                    Gender
+                  </p>
+                }
+                name="gender"
+              >
+                <Select
+                  defaultValue={user?.gender || undefined}
+                  className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color"
                 >
-                  <Select
-                    defaultValue={user?.gender || undefined}
-                    className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color"
-                  >
-                    <Option value="male">Male</Option>
-                    <Option value="female">Female</Option>
-                  </Select>
-                </Form.Item>
+                  <Option value="male">Male</Option>
+                  <Option value="female">Female</Option>
+                </Select>
+              </Form.Item>
 
-                <Form.Item
-                  label={
-                    <p className="block text-sm font-medium text-gray-700">
-                      Contact Number
-                    </p>
-                  }
-                  name="contactNo"
+              <Form.Item
+                label={
+                  <p className="block text-sm font-medium text-gray-700">
+                    Contact Number
+                  </p>
+                }
+                name="contactNo"
+              >
+                <Input
+                  type="Number"
+                  className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color"
+                />
+              </Form.Item>
+
+              <Form.Item
+                label={
+                  <p className="block text-sm font-medium text-gray-700">
+                    Role
+                  </p>
+                }
+                name="role"
+              >
+                <Select
+                  defaultValue={user?.role || undefined}
+                  className="custom_border shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color"
                 >
-                  <Input
-                    type="Number"
-                    className="shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color"
-                  />
-                </Form.Item>
+                  <Option value="student">Student</Option>
+                  <Option value="teacher">Teacher</Option>
+                </Select>
+              </Form.Item>
 
-                <Form.Item
-                  label={
-                    <p className="block text-sm font-medium text-gray-700">
-                      Role
-                    </p>
-                  }
-                  name="role"
+              <div className="mt-10 flex items-end justify-end">
+                <Button
+                  className="custom_button_style custom_hover"
+                  type="primary"
+                  htmlType="submit"
+                  loading={buttonLoading}
                 >
-                  <Select
-                    defaultValue={user?.role || undefined}
-                    className="custom_border shadow-sm h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color"
-                  >
-                    <Option value="student">Student</Option>
-                    <Option value="teacher">Teacher</Option>
-                  </Select>
-                </Form.Item>
-
-                <div className="mt-10 flex items-end justify-end">
-                  <Button
-                    className="custom_button_style custom_hover"
-                    type="primary"
-                    htmlType="submit"
-                    loading={buttonLoading}
-                  >
-                    {buttonLoading ? "Saving" : "Save changes"}
-                  </Button>
-                </div>
-              </Form>
-            </div>
+                  {buttonLoading ? "Saving" : "Save changes"}
+                </Button>
+              </div>
+            </Form>
           </div>
         </div>
       </div>

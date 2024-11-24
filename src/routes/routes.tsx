@@ -8,6 +8,8 @@ import Login from "../pages/auth/Login";
 import UpdateProfile from "../pages/profile/UpdateProfile";
 import Modules from "../pages/profile/sidebar/Modules";
 import InstitutionSection from "../pages/InstitutionSection";
+import Users from "../pages/profile/Users";
+import Overview from "../pages/Institution/OverView";
 
 const router = createBrowserRouter([
   {
@@ -29,6 +31,20 @@ const router = createBrowserRouter([
       {
         path: "dashboard",
         element: <InstitutionSection />,
+      },
+      {
+        path: "users",
+        element: <Users />,
+      },
+    ],
+  },
+  {
+    path: "/institution",
+    element: <MainLayout />,
+    children: [
+      {
+        path: "overview",
+        element: <Overview />,
       },
     ],
   },

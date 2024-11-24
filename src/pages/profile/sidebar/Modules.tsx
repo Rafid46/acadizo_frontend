@@ -22,7 +22,7 @@ const Modules = () => {
   // };
   return (
     <div>
-      <p className="font-semibold text-2xl text-[#030712] my-5">Modules</p>
+      <p className="font-semibold text-2xl text-[#030712] mb-5">Modules</p>
       <Collapse
         className="w-full lg:w-[500px]"
         items={[

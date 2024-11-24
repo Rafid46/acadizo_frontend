@@ -19,7 +19,7 @@ const useAllUser = () => {
   const axiosPublic = useAxios();
 
   const {
-    data: AllUserInfo,
+    data: AllUserInfo = [],
     isLoading, // Correct loading state
     isError,
     error,
@@ -28,17 +28,18 @@ const useAllUser = () => {
     queryKey: ["AllUsers"],
     queryFn: async () => {
       const res = await axiosPublic.get("http://localhost:3000/api/v1/user");
-      return res.data;
+      console.log(res.data.data || res.data);
+      return res.data.data || res.data;
     },
   });
 
-  return {
+  return [
     AllUserInfo,
     isLoading, // use isLoading instead of loading
     isError,
     error,
     refetch,
-  };
+  ];
 };
 
 export default useAllUser;
