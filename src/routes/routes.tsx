@@ -10,12 +10,35 @@ import Modules from "../pages/profile/sidebar/Modules";
 import InstitutionSection from "../pages/InstitutionSection";
 import Users from "../pages/profile/Users";
 import Overview from "../pages/Institution/Overview";
+import TestDashboard from "../pages/TestDashboard";
+import PrivateRoute from "./PrivateRoute";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <MainLayout />,
+    element: (
+      <PrivateRoute>
+        <TestDashboard />
+      </PrivateRoute>
+    ),
+  },
+
+  {
+    path: "/dashboard",
+    element: (
+      <PrivateRoute>
+        <TestDashboard />
+      </PrivateRoute>
+    ),
     children: [
+      {
+        index: true,
+        element: <InstitutionSection />,
+      },
+      {
+        path: "dashboard",
+        element: <InstitutionSection />,
+      },
       {
         path: "about",
         element: <About />,
@@ -28,26 +51,35 @@ const router = createBrowserRouter([
         path: "update-profile",
         element: <UpdateProfile />,
       },
+
       {
-        path: "dashboard",
-        element: <InstitutionSection />,
-      },
-      {
-        path: "users",
+        path: "AllUsers",
         element: <Users />,
       },
-    ],
-  },
-  {
-    path: "/institution",
-    element: <MainLayout />,
-    children: [
       {
-        path: "overview",
+        path: "institution/overview",
+        element: <Overview />,
+      },
+      {
+        path: "institution/students",
+        element: <Overview />,
+      },
+      {
+        path: "institution/users",
         element: <Overview />,
       },
     ],
   },
+  // {
+  //   path: "/institution",
+  //   element: <MainLayout />,
+  //   children: [
+  //     {
+  //       path: "overview",
+  //       element: <Overview />,
+  //     },
+  //   ],
+  // },
   {
     path: "/home",
     element: <Home />,

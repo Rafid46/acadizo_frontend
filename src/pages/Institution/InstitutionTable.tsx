@@ -10,7 +10,7 @@ const InstitutionTable = ({
   setCreateUserModal,
   loading,
   members,
-}) => {
+}: any) => {
   return (
     <div>
       {/* table */}
@@ -106,7 +106,7 @@ const InstitutionTable = ({
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-300">
-                          {members?.map((user: any) => (
+                          {members?.academyMembers?.map((user: any) => (
                             <tr
                               key={user?.id}
                               // onClick={() => {

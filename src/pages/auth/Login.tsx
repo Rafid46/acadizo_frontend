@@ -1,19 +1,19 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Form, Input, notification } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AiFillHome } from "react-icons/ai";
 import icon from "../../assets/icons/acadizo_logo.png";
 import banner from "../../assets/images/login_pattern.jpg";
 import { AuthContext } from "../../providers/AuthProvider";
 import useAxios from "../../hooks/useAxios";
+import { useLocation, useNavigate } from "react-router-dom";
 const Login = () => {
   const axiosPublic = useAxios();
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  useEffect(() => {
-    // Simulate a longer loading delay
-    const timer = setTimeout(() => setLoading(false), 9000); // 3-second delay
-    return () => clearTimeout(timer);
-  }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.from?.pathname || "/";
   const { signIn, googleSignIn, loading, setLoading }: any =
     useContext(AuthContext);
 
@@ -22,26 +22,25 @@ const Login = () => {
     const email = values.email;
     const password = values.password;
     signIn(email, password)
-      .then((res: any) => {
+      .then(() => {
         notification.success({
           message: "Login Success",
           description: "Logged in successfully.",
           duration: 3,
           placement: "topRight",
         });
-        console.log("logged in successfully");
-        const user = res.data;
-        console.log("user from login", user);
+
+        navigate(from, { replace: true });
+
         setLoading(false);
       })
-      .catch((error: any) => {
+      .catch(() => {
         notification.error({
           message: "Login failed",
-          description: "Logged in failed.",
+          description: "Please try again or check your email and password",
           duration: 3,
           placement: "topRight",
         });
-        console.log("logged in failed", error);
         setLoading(false);
       });
   };
@@ -71,8 +70,8 @@ const Login = () => {
   };
 
   const onFieldsChange = (_: any, allFields: any) => {
-    const isValid = allFields.every(
-      (field: any) => field.errors.length === 0 && field.value
+    const isValid = allFields?.every(
+      (field: any) => field?.errors?.length === 0 && field?.value
     );
     setIsButtonDisabled(!isValid);
   };
@@ -128,7 +127,7 @@ const Login = () => {
               </h1>
 
               <Form
-                onValuesChange={onFieldsChange}
+                onFieldsChange={onFieldsChange}
                 onFinish={handleLogin}
                 className="mt-8 grid grid-cols-6 gap-4"
               >
@@ -172,6 +171,39 @@ const Login = () => {
                         required: true,
                         message: "please enter your password",
                       },
+                      {
+                        validator: (_, value) => {
+                          if (!/[A-Z]/.test(value)) {
+                            return Promise.reject(
+                              new Error(
+                                "Password must contain at least one capital letter"
+                              )
+                            );
+                          }
+                          if (!/[a-z]/.test(value)) {
+                            return Promise.reject(
+                              new Error(
+                                "Password must contain at least one small letter"
+                              )
+                            );
+                          }
+                          if (!/[!@#$%^&*(),.?":{}|<>]/.test(value)) {
+                            return Promise.reject(
+                              new Error(
+                                "  Password must contain at least one special character"
+                              )
+                            );
+                          }
+                          if (value.length < 6) {
+                            return Promise.reject(
+                              new Error(
+                                "This_password_is_too_short._It_must_contain_at_least_8_characters."
+                              )
+                            );
+                          }
+                          return Promise.resolve();
+                        },
+                      },
                     ]}
                   >
                     <Input.Password
@@ -201,7 +233,7 @@ const Login = () => {
                   </div>
                   <div className="mt-4">
                     <Button
-                      // disabled={isButtonDisabled || loading}
+                      disabled={isButtonDisabled || loading}
                       loading={loading}
                       htmlType="submit"
                       style={{

@@ -20,61 +20,57 @@ const JoinAcademyModal = ({
     );
 
     return (
-      //   <Button
-      //     disabled={isListLoading || isPending || isUserEmailIncluded}
-      //     className={
-      //       isUserEmailIncluded
-      //         ? "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
-      //         : "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color"
-      //     }
-      //     onClick={() =>
-      //       !isUserEmailIncluded && handleJoinAcademy(academy?.academyName)
-      //     }
-      //   >
-      //     {isListLoading || isPending
-      //       ? "joining.."
-      //       : isUserEmailIncluded || isPending
-      //       ? "Joined"
-      //       : "Join"}
-      //   </Button>
+      <Button
+        disabled={isListLoading || isPending || isUserEmailIncluded}
+        className={
+          isUserEmailIncluded
+            ? "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
+            : "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color"
+        }
+        onClick={() =>
+          !isUserEmailIncluded &&
+          handleJoinAcademy(academy?.academyName, academy?.academyId)
+        }
+      >
+        {isUserEmailIncluded ? "Joined" : isListLoading ? "joining" : "Join"}
+      </Button>
 
-      <>
-        {isListLoading && isPending ? (
-          <>
-            <Button
-              disabled={isListLoading || isPending || isUserEmailIncluded}
-              className={
-                isUserEmailIncluded
-                  ? "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
-                  : "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color"
-              }
-            >
-              joining..
-            </Button>
-          </>
-        ) : isUserEmailIncluded ? (
-          <>
-            <Button
-              disabled={isListLoading || isPending || isUserEmailIncluded}
-              className={`text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border`}
-            >
-              Joined
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              disabled={isListLoading || isPending || isUserEmailIncluded}
-              className={`text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color`}
-              onClick={() =>
-                !isUserEmailIncluded && handleJoinAcademy(academy?.academyName)
-              }
-            >
-              Join
-            </Button>
-          </>
-        )}
-      </>
+      // <>
+      //   {isListLoading || isPending ? (
+      //     <>
+      //       <Button
+      //         disabled={isListLoading || isPending || isUserEmailIncluded}
+      //         className={
+      //           isUserEmailIncluded
+      //             ? "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
+      //             : "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color"
+      //         }
+      //       >
+      //         joining..
+      //       </Button>
+      //     </>
+      //   ) : isUserEmailIncluded ? (
+      //     <>
+      //       <Button
+      //         disabled
+      //         className={`text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border`}
+      //       >
+      //         Joined
+      //       </Button>
+      //     </>
+      //   ) : (
+      //     <>
+      //       <Button
+      //         className={`text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color`}
+      //         onClick={() =>
+      //           !isUserEmailIncluded && handleJoinAcademy(academy?.academyName)
+      //         }
+      //       >
+      //         Join
+      //       </Button>
+      //     </>
+      //   )}
+      // </>
     );
   };
 

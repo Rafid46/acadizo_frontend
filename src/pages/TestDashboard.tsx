@@ -343,12 +343,12 @@ const TestDashboard = () => {
               {
                 key: "2",
                 icon: <VideoCameraOutlined />,
-                label: <NavLink to="/modules">Modules</NavLink>,
+                label: <NavLink to="/dashboard/modules">Modules</NavLink>,
               },
               {
                 key: "3",
                 icon: <UploadOutlined />,
-                label: <NavLink to="/users">Users</NavLink>,
+                label: <NavLink to="/dashboard/AllUsers">All users</NavLink>,
               },
 
               {
@@ -359,14 +359,18 @@ const TestDashboard = () => {
                   {
                     key: "4-1",
                     label: (
-                      <NavLink to="/institution/overview">Overview</NavLink>
+                      <NavLink to="/dashboard/institution/overview">
+                        Overview
+                      </NavLink>
                     ),
                     icon: <CiViewList />,
                   },
                   {
                     key: "4-2",
                     label: (
-                      <NavLink to="/institution/overview">Students</NavLink>
+                      <NavLink to="/dashboard/institution/students">
+                        Students
+                      </NavLink>
                     ),
                     icon: <PiStudent />,
                   },
@@ -374,7 +378,10 @@ const TestDashboard = () => {
                     key: "3",
                     icon: <CiUser />,
                     label: (
-                      <NavLink onClick={() => setOpen(false)} to="/users">
+                      <NavLink
+                        onClick={() => setOpen(false)}
+                        to="/dashboard/institution/users"
+                      >
                         Users
                       </NavLink>
                     ),

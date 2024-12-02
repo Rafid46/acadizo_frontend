@@ -33,6 +33,8 @@ const InstitutionSection = () => {
   }: any = useCurrentAcademy();
   console.log(currentUser, "testing current user");
   console.log(academyLists, "academy list");
+  console.log(currentAcademy, "current academy");
+  // const { Option } = Select;
   // const { Option } = Select;
   const {
     // createUser,
@@ -47,6 +49,12 @@ const InstitutionSection = () => {
   const currentUserEmail = users?.find(
     (item: { email: string; id: string }) => item?.email === user?.email
   )?.email;
+  const currentUserFirstName = users?.find(
+    (item: { email: string; id: string }) => item?.email === user?.email
+  )?.firstName;
+  const currentUserLastName = users?.find(
+    (item: { email: string; id: string }) => item?.email === user?.email
+  )?.lastName;
   // console.log("current user -->", currentUser);
   const currentUserId = users?.find(
     (item: { email: string; id: string }) => item?.email === user?.email
@@ -306,17 +314,22 @@ const InstitutionSection = () => {
   //   }
   // };
 
+  // join academy
   const { mutate: handleJoinAcademy, isPending } = useMutation({
     mutationKey: ["academyJoin"],
     mutationFn: async (academyName: any) => {
       const userId = currentUserId;
       const email = currentUserEmail;
       const role = currentUserRole;
+      const firstName = currentUserFirstName;
+      const lastName = currentUserLastName;
       return await axiosPublic.post("/api/v1/user/join-academy", {
         userId,
         academyName,
         email,
         role,
+        firstName,
+        lastName,
       });
     },
     onSuccess: async () => {
@@ -336,17 +349,19 @@ const InstitutionSection = () => {
   });
 
   // academy members
-  const academyMembers = () => {
-    const academyMember =
-      academyList?.academyMembers?.map((item: any) => ({
-        id: item?.id,
-        email: item?.email,
-        role: item?.role,
-      })) || [];
-    return academyMember;
-  };
-  const members = academyMembers();
-  console.log(members);
+  // const academyMembers = () => {
+  //   const academyMember =
+  //     academyLists?.academyMembers?.map((item: any) => ({
+  //       id: item?.id,
+  //       email: item?.email,
+  //       role: item?.role,
+  //     })) || [];
+  //   return academyMember;
+  // };
+  const isMember = academyLists?.find(
+    (item: any) => item?.email === user?.academyName
+  );
+  // const members = academyMembers();
   // useEffect(() => {
   //   if (academyList?.academyMembers) {
   //     console.log(academyMembers());
@@ -355,12 +370,12 @@ const InstitutionSection = () => {
 
   return (
     <section>
-      <BannerPart currentAcademy={currentAcademy} />
+      <BannerPart currentAcademy={isMember} />
       <InstitutionTable
         setAcademyModal={setAcademyModal}
         setCreateUserModal={setCreateUserModal}
         loading={loading}
-        members={members}
+        members={isMember}
       />
       <CreateAcademyModal
         createUserModal={createUserModal}
