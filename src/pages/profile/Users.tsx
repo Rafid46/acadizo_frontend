@@ -151,9 +151,27 @@ const Users = () => {
                           </div>
                         </td>
                         <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
-                          <div className="py-1.5 px-2.5 bg-emerald-50 rounded-full flex justify-center w-20 items-center gap-1">
-                            <div className="w-2 h-2 rounded-full bg-emerald-600"></div>
-                            <span className="font-medium text-xs text-emerald-600">
+                          <div
+                            className={`${
+                              user?.role === "student"
+                                ? "bg-blue-50"
+                                : "bg-emerald-50"
+                            } py-1.5 px-2.5  rounded-full flex justify-center w-20 items-center gap-1`}
+                          >
+                            <div
+                              className={`w-2 h-2 rounded-full ${
+                                user?.role === "student"
+                                  ? "bg-blue-600"
+                                  : "bg-emerald-600"
+                              }`}
+                            ></div>
+                            <span
+                              className={`${
+                                user?.role === "student"
+                                  ? "text-blue-600"
+                                  : "text-emerald-600"
+                              } font-medium text-xs`}
+                            >
                               {user?.role === "student" ? "Student" : "Teacher"}
                             </span>
                           </div>

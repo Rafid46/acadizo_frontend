@@ -136,3 +136,13 @@
 .ant-drawer .ant-drawer-body {
   padding: 6px;
 }
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #7aba78;
+  border-radius: 12px;
+}
