@@ -6,6 +6,7 @@ const CreateAcademyModal = ({
   createUserModal,
   setCreateUserModal,
   handleCreateAcademy,
+  loading,
 }: any) => {
   return (
     <div>
@@ -105,7 +106,7 @@ const CreateAcademyModal = ({
 
           <div className="col-span-6 sm:flex sm:items-center justify-end sm:gap-4 mt-5">
             <Button
-              // disabled={isButtonDisabled || loading}
+              disabled={loading}
               htmlType="submit"
               style={{
                 transition: "background-color 0.3s ease",
@@ -113,7 +114,7 @@ const CreateAcademyModal = ({
               type="primary"
               className={`text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color custom_hover`}
             >
-              Create
+              {loading ? "Creating" : "Create"}
             </Button>
           </div>
         </Form>

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "antd";
+import moment from "moment";
 import { CiCalendar, CiMapPin, CiStar } from "react-icons/ci";
 import { FiMoreVertical } from "react-icons/fi";
 
@@ -67,13 +68,16 @@ const BannerPart = ({ currentAcademy }: any) => {
                 </div>
                 {/* Location and join date */}
                 <div className="flex items-center gap-2 text-sm text-gray-500 mt-5 lg:mt-0">
-                  <div className="flex items-center gap-1">
+                  {/* <div className="flex items-center gap-1">
                     <CiMapPin className="w-4 h-4" />
                     <span>San francisco, CA</span>
-                  </div>
+                  </div> */}
                   <div className="flex items-center gap-1">
                     <CiCalendar className="w-4 h-4" />
-                    <span>Joined April 2021</span>
+                    <span>
+                      Created{" "}
+                      {moment(currentAcademy?.createdAt).format("MMMM D, YYYY")}
+                    </span>
                   </div>
                   <div className="flex items-center gap-1">
                     <CiStar className="w-4 h-4 fill-yellow-400 text-yellow-400" />

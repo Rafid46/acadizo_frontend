@@ -381,6 +381,8 @@ const InstitutionSection = () => {
         createUserModal={createUserModal}
         setCreateUserModal={setCreateUserModal}
         handleCreateAcademy={handleCreateAcademy}
+        // isButtonDisabled={isButtonDisabled}
+        loading={loading}
       />
       <JoinAcademyModal
         academyModal={academyModal}
