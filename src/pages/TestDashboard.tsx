@@ -33,7 +33,7 @@ const { Header, Sider, Content } = Layout;
 const TestDashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { user, logOut, loading, setLoading }: any = useContext(AuthContext);
+  const { user, logOut, loading }: any = useContext(AuthContext);
   const [open, setOpen] = useState(false);
   const {
     token: { colorBgContainer },
@@ -107,9 +107,10 @@ const TestDashboard = () => {
   };
 
   return (
-    <Layout>
+    <Layout className="flex flex-col h-screen overflow-hidden">
       <style>
         {` 
+
         .ant-menu-item {
         color: #64748b !important;
         font-size: 12px;
@@ -122,55 +123,71 @@ const TestDashboard = () => {
          color: #007260 !important;
 
     }
-     .ant-menu-item-content:hover {
-    color: #007260 !important; 
-        }
+
+        .ant-menu-item-content:hover {
+         color: #007260 !important; 
+    }
         
         .ant-menu-item-selected {
-        color: #007260 !important;
-        background-color: #f6f6f7 !important;
-        border-radius: 12px !important;
+         color: #007260 !important;
+         background-color: #f6f6f7 !important;
+         border-radius: 12px !important;
     }
         .ant-menu-item-selected .ant-menu-title-content {
          color: #007260 !important;
-        font-weight: 600 !important;
+         font-weight: 600 !important;
     }
-       .ant-menu-submenu-title .ant-menu-title-content {
-        font-weight: 600 !important;
+        .ant-menu-submenu-title .ant-menu-title-content {
+         font-weight: 600 !important;
        }
 
-       .menu-expanded.ant-menu {
+        .menu-expanded.ant-menu {
          padding: 7px !important;
     }
         
         .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
-        padding: 10px 24px;
+         padding: 10px 24px;
 
     }
         .ant-dropdown-menu-title-content {
-        color: #64748b !important;
-        font-size: 12px;
-        font-weight: 600 !important;
+         color: #64748b !important;
+         font-size: 12px;
+         font-weight: 600 !important;
     }
 
         .hover-button {
-        transition: background-color 0.3s ease, opacity 0.3s ease;
+         transition: background-color 0.3s ease, opacity 0.3s ease;
     }
 
         .hover-button:hover {
-        opacity: 0.9;
+         opacity: 0.9;
     }
         .ant-menu-title-content {
-        color: #64748b !important;
-        font-size: 12px;
-        }
+         color: #64748b !important;
+         font-size: 12px;
+    }
 
         .ant-menu-light.ant-menu-inline .ant-menu-sub.ant-menu-inline {
-        background: none !important;
+         background: none !important;
     }
   
         .ant-layout {
-        background: white !important;
+         background: white !important;
+        }
+
+        .ant-menu-submenu-title:hover {
+         border-radius: 12px !important;
+         color: #007260 !important;
+        
+        }
+
+        .ant-menu .ant-menu-submenu-selected >.ant-menu-submenu-title {
+        color: #64748b !important;
+        
+        }
+
+        ant-menu-submenu-selected >.ant-menu-submenu-title {
+         color: #007260 !important;
         }
 
     `}
@@ -210,7 +227,11 @@ const TestDashboard = () => {
               {
                 key: "3",
                 icon: <UploadOutlined />,
-                label: "Users",
+                label: (
+                  <NavLink onClick={() => setOpen(false)} to="/users">
+                    Users
+                  </NavLink>
+                ),
               },
 
               {
@@ -223,7 +244,7 @@ const TestDashboard = () => {
                     label: (
                       <NavLink
                         onClick={() => setOpen(false)}
-                        to="/institution/students"
+                        to="/institution/overview"
                       >
                         Overview
                       </NavLink>
@@ -249,9 +270,12 @@ const TestDashboard = () => {
         </Drawer>
       ) : (
         <Sider
+          style={{
+            overflow: "!hidden",
+          }}
           collapsedWidth={70}
           width={250}
-          className="h-[100vh] bg-[#ffffff] border-r border-[#C1D8C3] z-50 overflow-hidden"
+          className="!h-screen bg-[#ffffff] border-r border-[#C1D8C3] z-50"
           trigger={null}
           collapsible
           collapsed={collapsed}
@@ -271,8 +295,8 @@ const TestDashboard = () => {
                 />
               ) : (
                 <div
-                  className={`flex items-start"
-                } ml-6 gap-x-2  mt-4 mb-2`}
+                  className={`flex items-start
+                 ml-6 gap-x-2  mt-4 mb-2`}
                 >
                   <div className="flex items-center justify-between gap-x-2 ml-4">
                     <img
@@ -315,7 +339,7 @@ const TestDashboard = () => {
               {
                 key: "3",
                 icon: <UploadOutlined />,
-                label: "Users",
+                label: <NavLink to="/users">Users</NavLink>,
               },
 
               {
@@ -326,7 +350,7 @@ const TestDashboard = () => {
                   {
                     key: "4-1",
                     label: (
-                      <NavLink to="/institution/students">Overview</NavLink>
+                      <NavLink to="/institution/overview">Overview</NavLink>
                     ),
                     icon: <CiViewList />,
                   },
@@ -367,11 +391,7 @@ const TestDashboard = () => {
               />
             )}
 
-            <Dropdown
-              //   trigger={["click"]}
-              className=""
-              menu={{ items }}
-            >
+            <Dropdown trigger={["click"]} className="" menu={{ items }}>
               <a className="px-6">
                 {loading ? (
                   <div className="flex items-center gap-x-2">
@@ -406,11 +426,11 @@ const TestDashboard = () => {
         </Header>
         <Content
           style={{
-            margin: "10px 10px",
-            padding: 24,
+            margin: "5px 5px",
+            padding: isMobile ? 8 : 24,
             background: "white",
             borderRadius: "10px",
-            overflow: "initial",
+            overflow: "auto",
           }}
         >
           <Outlet />

@@ -89,7 +89,7 @@ const Dashboard = () => {
     }
   }, []);
   return (
-    <Layout>
+    <Layout className="">
       <style>
         {` 
         .ant-menu-item {
@@ -158,42 +158,71 @@ const Dashboard = () => {
     `}
       </style>
       {/* Sidebar */}
-      <Sider
-        collapsedWidth={isMobile ? 0 : 70}
-        width={!isMobile ? 250 : "100%"}
-        className="h-[100vh] bg-[#ffffff] border-r border-[#C1D8C3] z-50 overflow-hidden"
-        trigger={null}
-        collapsible
-        collapsed={collapsed}
-      >
-        <div
-          style={{
-            transition: "all 0.3s ease",
-          }}
-          className={`duration-300 ${collapsed ? "" : ""}`}
+      <Layout style={{ height: "100vh" }}>
+        {" "}
+        <Sider
+          style={{ height: "100%" }}
+          collapsedWidth={isMobile ? 0 : 70}
+          width={!isMobile ? 250 : "100%"}
+          className="bg-[#ffffff] border-r border-[#C1D8C3] z-50"
+          trigger={null}
+          collapsible
+          collapsed={collapsed}
         >
-          <div className="mt-4 mb-2">
-            {collapsed ? (
-              <img
-                className="w-[35px] rounded-[10px] mx-auto"
-                src={icon}
-                alt=""
-              />
-            ) : (
-              <div
-                className={`${
-                  isMobile ? " " : "flex items-start"
-                } ml-6 gap-x-2  mt-4 mb-2`}
-              >
-                {isMobile ? (
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-start gap-x-2 mt-2">
+          <div
+            style={{
+              transition: "all 0.3s ease",
+            }}
+            className={`duration-300 ${collapsed ? "" : ""}`}
+          >
+            <div className="mt-4 mb-2">
+              {collapsed ? (
+                <img
+                  className="w-[35px] rounded-[10px] mx-auto"
+                  src={icon}
+                  alt=""
+                />
+              ) : (
+                <div
+                  className={`${
+                    isMobile ? " " : "flex items-start"
+                  } ml-6 gap-x-2  mt-4 mb-2`}
+                >
+                  {isMobile ? (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-start gap-x-2 mt-2">
+                        <img
+                          className="w-[35px] rounded-[10px]"
+                          src={icon}
+                          alt=""
+                        />
+                        <div className="flex flex-col">
+                          <p className="text-primary-color font-bold text-[14px]">
+                            Acadizo
+                          </p>
+                          <p className="font-semibold text-[12px] text-text-second-color -mt-[2px]">
+                            description
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        <Button
+                          className="border-none !focus:outline-none custom-button shadow-none mr-2"
+                          icon={
+                            collapsed ? <MenuOutlined /> : <MenuFoldOutlined />
+                          }
+                          onClick={() => setCollapsed(!collapsed)}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center justify-between gap-x-2 ml-4">
                       <img
                         className="w-[35px] rounded-[10px]"
                         src={icon}
                         alt=""
                       />
-                      <div className="flex flex-col">
+                      <div className="flex flex-col ">
                         <p className="text-primary-color font-bold text-[14px]">
                           Acadizo
                         </p>
@@ -202,111 +231,85 @@ const Dashboard = () => {
                         </p>
                       </div>
                     </div>
-                    <div>
-                      <Button
-                        className="border-none !focus:outline-none custom-button shadow-none mr-2"
-                        icon={
-                          collapsed ? <MenuOutlined /> : <MenuFoldOutlined />
-                        }
-                        onClick={() => setCollapsed(!collapsed)}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between gap-x-2 ml-4">
-                    <img
-                      className="w-[35px] rounded-[10px]"
-                      src={icon}
-                      alt=""
-                    />
-                    <div className="flex flex-col ">
-                      <p className="text-primary-color font-bold text-[14px]">
-                        Acadizo
-                      </p>
-                      <p className="font-semibold text-[12px] text-text-second-color -mt-[2px]">
-                        description
-                      </p>
-                    </div>
-                  </div>
-                )}
+                  )}
 
-                {/* <img className="w-[130px]" src={logo} alt="" /> */}
-              </div>
-            )}
+                  {/* <img className="w-[130px]" src={logo} alt="" /> */}
+                </div>
+              )}
+            </div>
           </div>
-        </div>
-        <div className="">
-          <Menu
-            className={`bg-[#ffffff] !border-none mt-4 ${
-              collapsed ? "p-[7px]" : "menu-expanded"
-            }`}
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-            items={[
-              {
-                key: "1",
-                icon: <UserOutlined />,
-                label: (
-                  <NavLink
-                    onClick={() => isMobile && setCollapsed(!collapsed)}
-                    to="/about"
-                  >
-                    Dashboard
-                  </NavLink>
-                ),
-              },
-              {
-                key: "2",
-                icon: <VideoCameraOutlined />,
-                label: (
-                  <NavLink
-                    onClick={() => isMobile && setCollapsed(!collapsed)}
-                    to="/modules"
-                  >
-                    Modules
-                  </NavLink>
-                ),
-              },
-              {
-                key: "3",
-                icon: <UploadOutlined />,
-                label: "Users",
-              },
+          <div className="">
+            <Menu
+              className={`bg-[#ffffff] !border-none mt-4 ${
+                collapsed ? "p-[7px]" : "menu-expanded"
+              }`}
+              mode="inline"
+              defaultSelectedKeys={["1"]}
+              items={[
+                {
+                  key: "1",
+                  icon: <UserOutlined />,
+                  label: (
+                    <NavLink
+                      onClick={() => isMobile && setCollapsed(!collapsed)}
+                      to="/about"
+                    >
+                      Dashboard
+                    </NavLink>
+                  ),
+                },
+                {
+                  key: "2",
+                  icon: <VideoCameraOutlined />,
+                  label: (
+                    <NavLink
+                      onClick={() => isMobile && setCollapsed(!collapsed)}
+                      to="/modules"
+                    >
+                      Modules
+                    </NavLink>
+                  ),
+                },
+                {
+                  key: "3",
+                  icon: <UploadOutlined />,
+                  label: "Users",
+                },
 
-              {
-                key: "4",
-                icon: <RiHomeOfficeLine />,
-                label: "Institution",
-                children: [
-                  {
-                    key: "4-1",
-                    label: (
-                      <NavLink
-                        onClick={() => isMobile && setCollapsed(!collapsed)}
-                        to="/institution/students"
-                      >
-                        Overview
-                      </NavLink>
-                    ),
-                    icon: <CiViewList />,
-                  },
-                  {
-                    key: "4-2",
-                    label: (
-                      <NavLink
-                        onClick={() => isMobile && setCollapsed(!collapsed)}
-                        to="/institution/overview"
-                      >
-                        Students
-                      </NavLink>
-                    ),
-                    icon: <PiStudent />,
-                  },
-                ],
-              },
-            ]}
-          />
-          {/* <Button
+                {
+                  key: "4",
+                  icon: <RiHomeOfficeLine />,
+                  label: "Institution",
+                  children: [
+                    {
+                      key: "4-1",
+                      label: (
+                        <NavLink
+                          onClick={() => isMobile && setCollapsed(!collapsed)}
+                          to="/institution/students"
+                        >
+                          Overview
+                        </NavLink>
+                      ),
+                      icon: <CiViewList />,
+                    },
+                    {
+                      key: "4-2",
+                      label: (
+                        <NavLink
+                          onClick={() => isMobile && setCollapsed(!collapsed)}
+                          to="/institution/overview"
+                        >
+                          Students
+                        </NavLink>
+                      ),
+                      icon: <PiStudent />,
+                    },
+                  ],
+                },
+              ]}
+            />
+            {/* <Button
             type="text"
             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
             onClick={() => setCollapsed(!collapsed)}
@@ -316,7 +319,7 @@ const Dashboard = () => {
               height: 64,
             }}
           /> */}
-          {/* <div className="absolute bottom-0 left-0 right-0 p-4 bg-gray-100">
+            {/* <div className="absolute bottom-0 left-0 right-0 p-4 bg-gray-100">
             <div className="flex items-center justify-center">
               <span className="text-sm font-medium text-gray-600">
                 {collapsed ? (
@@ -347,8 +350,9 @@ const Dashboard = () => {
               </span>
             </div>
           </div> */}
-        </div>
-      </Sider>
+          </div>
+        </Sider>
+      </Layout>
       {/* Main content area */}
       <Layout>
         <Header
@@ -406,11 +410,10 @@ const Dashboard = () => {
         <Content
           className={collapsed ? "block lg:block" : "hidden lg:block"}
           style={{
-            margin: "10px 10px",
-            padding: isMobile ? 8 : 24,
+            // margin: "10px 10px",
+            padding: isMobile ? 8 : 0,
             background: "white",
             borderRadius: "10px",
-            overflow: "initial",
           }}
         >
           <Outlet />

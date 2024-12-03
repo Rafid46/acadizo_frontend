@@ -123,6 +123,11 @@
 .custom_hover:hover {
   background-color: #35915a !important;
 }
+.custom_hover_second:hover {
+  border-color: #35915a !important;
+  color: #35915a !important;
+  background-color: transparent !important;
+}
 
 .custom_button_style {
   @apply text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color;

@@ -24,6 +24,7 @@ interface AuthContextType {
   updateUserAvatar: (photoURL: string) => Promise<void>;
   googleSignIn: () => Promise<UserCredential>;
   setLoading: (loading: boolean) => void;
+  auth: any;
 }
 
 export const AuthContext = createContext<AuthContextType | null>(null);
@@ -103,6 +104,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     updateUserProfile,
     updateUserAvatar,
     googleSignIn,
+    auth,
   };
   return (
     <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>

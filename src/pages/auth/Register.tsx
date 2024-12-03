@@ -5,9 +5,11 @@ import icon from "../../assets/icons/acadizo_logo.png";
 import useAxios from "../../hooks/useAxios";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
+import useUser from "../../hooks/useUser";
 const Register = () => {
   const axiosPublic = useAxios();
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const { users }: any = useUser();
   const {
     createUser,
     updateUserProfile,
@@ -15,6 +17,11 @@ const Register = () => {
     loading,
     setLoading,
   }: any = useContext(AuthContext);
+
+  // const matchUser = (email: any) => {
+  //   const user = users.find((user: any) => user?.email === email);
+  //   return user;
+  // };
 
   // const handleRegister = async (values: any) => {
   //   const { email, password, first_name, last_name } = values;
@@ -71,11 +78,32 @@ const Register = () => {
   //   //     console.log(error);
   //   //   });
   // };
-  const handleRegister = async (values: any) => {
+  const handleRegister = async (values: any, e: any) => {
+    e.preventDefault();
     setLoading(true);
     const { email, password } = values;
     console.log("Registering with values:", values);
     const name = `${values.first_name} ${values.last_name}`;
+    const matchUser = users?.find((user: any) => user?.email === values?.email);
+    if (matchUser) {
+      notification.error({
+        message: (
+          <p className="font-semibold text-[14px]">Email already exists</p>
+        ),
+        description: (
+          <p className="text-[12px] text-gray-600">
+            The provided email is already registered. Please use another email
+          </p>
+        ),
+        duration: 3,
+        placement: "topRight",
+        showProgress: true,
+      });
+
+      setLoading(false);
+      console.log("email already exist");
+      return;
+    }
     createUser(email, password)
       .then((res: any) => {
         updateUserProfile(name).then(() => {
@@ -87,11 +115,12 @@ const Register = () => {
           const userData = {
             ...values,
             role: "teacher",
-            firstName: values.first_name,
-            lastName: values.last_name,
+            firstName: values?.first_name,
+            lastName: values?.last_name,
           };
 
           console.log("User data being sent to the backend:", userData);
+
           return axiosPublic
             .post("/api/v1/user/create-user", userData)
             .then((res) => {
@@ -378,7 +407,6 @@ const Register = () => {
                     </span>
                   </label>
                 </div> */}
-
               <div className="col-span-6 sm:flex sm:items-center sm:gap-4">
                 <Button
                   disabled={isButtonDisabled || loading}
