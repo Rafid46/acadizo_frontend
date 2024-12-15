@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, List, Modal } from "antd";
+import { Button, List, Modal, Popconfirm, Tooltip } from "antd";
 import Loader from "../../common/Loader";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useAxios from "../../hooks/useAxios";
+import Toast from "../../common/Toast";
 
 const JoinAcademyModal = ({
   academyModal,
@@ -9,31 +12,90 @@ const JoinAcademyModal = ({
   handleSearch,
   isListLoading,
   loading,
-  currentUserEmail,
-  isPending,
   academyLists,
-  handleJoinAcademy,
+  currentUserEmail,
+  currentUserId,
+  currentUserFirstName,
+  currentUserRole,
+  currentUserLastName,
+  userId,
+  currentUserPhotoURL,
 }: any) => {
+  const queryClient = useQueryClient();
+  const axiosPublic = useAxios();
   const getJoinButton = (academy: any) => {
     const isUserEmailIncluded = academy?.academyMembers?.some(
       (member: any) => member?.email === currentUserEmail
     );
+    const joinedAcademyDetails = academyLists?.some((academy: any) =>
+      academy?.academyMembers?.some(
+        (member: any) => member?.email === currentUserEmail
+      )
+    );
 
     return (
-      <Button
-        disabled={isListLoading || isPending || isUserEmailIncluded}
-        className={
-          isUserEmailIncluded
-            ? "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
-            : "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color"
-        }
-        onClick={() =>
-          !isUserEmailIncluded &&
-          handleJoinAcademy(academy?.academyName, academy?.academyId)
-        }
-      >
-        {isUserEmailIncluded ? "Joined" : isListLoading ? "joining" : "Join"}
-      </Button>
+      <>
+        {isUserEmailIncluded ? (
+          <Popconfirm
+            title="Leave academy"
+            description={
+              <p className="text-sm">
+                Are you sure you want to left the academy?
+              </p>
+            }
+            okText={
+              <div
+                className="p-5"
+                onClick={() => handleLeaveAcademy(academy?.academyName, userId)}
+              >
+                Yes
+              </div>
+            }
+            cancelText="No"
+          >
+            <Button
+              className={`text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color`}
+            >
+              Leave
+            </Button>
+          </Popconfirm>
+        ) : (
+          <Tooltip
+            title={
+              joinedAcademyDetails && (
+                <p className="text-[12px]">
+                  Leave your current academy to join a new academy
+                </p>
+              )
+            }
+          >
+            <Button
+              loading={
+                isListLoading === academy?.academyId ||
+                isPending === academy?.academyId
+              }
+              disabled={
+                isListLoading === academy?.academyId ||
+                isPending === academy?.academyId ||
+                joinedAcademyDetails
+              }
+              className={
+                isUserEmailIncluded
+                  ? "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
+                  : "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
+              }
+              onClick={() =>
+                handleJoinAcademy(academy?.academyName, academy?.academyId)
+              }
+            >
+              {isListLoading === academy?.academyId ||
+              isPending === academy?.academyId
+                ? "joining"
+                : "Join"}
+            </Button>
+          </Tooltip>
+        )}
+      </>
 
       // <>
       //   {isListLoading || isPending ? (
@@ -74,6 +136,57 @@ const JoinAcademyModal = ({
     );
   };
 
+  // join a academy
+  const { mutate: handleJoinAcademy, isPending } = useMutation({
+    mutationKey: ["academyJoin"],
+    mutationFn: async (academyName: any) => {
+      const userId = currentUserId;
+      const email = currentUserEmail;
+      const role = currentUserRole;
+      const firstName = currentUserFirstName;
+      const lastName = currentUserLastName;
+      const photoURL = currentUserPhotoURL;
+      return await axiosPublic.post("/api/v1/user/join-academy", {
+        userId,
+        academyName,
+        email,
+        role,
+        firstName,
+        lastName,
+        photoURL,
+      });
+    },
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ["academyLists"] });
+      const showNotification = Toast({
+        type: "success",
+        message: "",
+        description: "You have joined the academy",
+      });
+      showNotification();
+    },
+  });
+
+  // leave academy
+  const { mutate: handleLeaveAcademy } = useMutation({
+    mutationKey: ["leaveAcademy"],
+    mutationFn: async (academyName: string) => {
+      const userId = currentUserId;
+      return await axiosPublic.post("/api/v1/user/leave-academy", {
+        userId,
+        academyName,
+      });
+    },
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ["academyLists"] });
+      const showNotification = Toast({
+        type: "success",
+        message: "",
+        description: "You have left the academy",
+      });
+      showNotification();
+    },
+  });
   return (
     <div>
       <Modal
@@ -90,7 +203,7 @@ const JoinAcademyModal = ({
               placeholder="Search academy by name"
               value={searchItem}
               onChange={handleSearch}
-              className="w-full input rounded-[12px] px-6 py-3 border focus:outline-none focus:border-primary-color placeholder-gray-400 transition-all duration-300 border-gray-200 placeholder:text-sm"
+              className="w-full input rounded-[12px] px-6 py-2 border focus:outline-none focus:border-primary-color placeholder-gray-400 transition-all duration-300 border-gray-200 placeholder:text-sm"
               type="text"
             />
             <button className="absolute right-3 -translate-y-1/2 top-1/2 p-1">

@@ -130,7 +130,7 @@
 }
 
 .custom_button_style {
-  @apply text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color;
+  @apply text-[12px] font-semibold h-[30px] px-4 border-none shadow-none text-white bg-secondary-color;
 }
 
 .ant-drawer .ant-drawer-body {
@@ -145,4 +145,8 @@
 ::-webkit-scrollbar-thumb {
   background-color: #7aba78;
   border-radius: 12px;
+}
+
+.custom_dropdown.ant-dropdown {
+  min-width: 230px !important;
 }

@@ -1,20 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useContext, useRef, useEffect } from "react";
-import {
-  Form,
-  Input,
-  Select,
-  Button,
-  notification,
-  Upload,
-  Avatar,
-  Image,
-} from "antd";
+import { Form, Input, Select, Button, notification, Image } from "antd";
 import useAxios from "../../hooks/useAxios";
 import { AuthContext } from "../../providers/AuthProvider";
 import { UploadOutlined } from "@ant-design/icons";
 import { RxCross1 } from "react-icons/rx";
 import Loader from "../../common/Loader";
+import useCurrentUser from "../../hooks/useCurrentUser";
 const { Option } = Select;
 
 interface UserData {
@@ -33,10 +25,23 @@ const UpdateProfile: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [imageSelected, setImageSelected] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
-
+  const { data: currentUser }: any = useCurrentUser();
+  const [form] = Form.useForm();
+  useEffect(() => {
+    if (currentUser) {
+      form.setFieldsValue({
+        firstName: currentUser.firstName || "",
+        lastName: currentUser.lastName || "",
+        gender: currentUser.gender || "",
+        contactNo: currentUser.contactNo || "",
+        role: currentUser.role || "",
+      });
+    }
+  }, [currentUser, form]);
   //   const [imageUrl, setImageUrl] = useState<string>();
-  // const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
-  // const image_hosting_api = `https://api.imgbb.com/1/upload?expiration=600&key=${image_hosting_key}`;
+  const image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+  const image_hosting_api = `https://api.cloudinary.com/v1_1/${image_hosting_key}/image/upload`;
+
   //   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const axiosPublic = useAxios();
   const {
@@ -156,7 +161,7 @@ const UpdateProfile: React.FC = () => {
 
             // Upload to Cloudinary
             const response = await axiosPublic.post(
-              `https://api.cloudinary.com/v1_1/deej2hp71/image/upload`,
+              image_hosting_api,
               formData
             );
 
@@ -235,9 +240,9 @@ const UpdateProfile: React.FC = () => {
           .ant-form-item {
            margin-bottom: 15px !important;
         }
-  .custom_border .ant-select-selector {
-   border-color: #7ABA78 !important; 
-  }
+          .custom_border .ant-select-selector {
+           border-color: #7ABA78 !important; 
+        }
           
         `}
       </style>
@@ -255,10 +260,10 @@ const UpdateProfile: React.FC = () => {
                     width={130}
                     height={130}
                     src={imageAvatar}
-                    className="rounded-full  w-[130px] h-[130px]"
+                    className="rounded-full  !w-[130px] !h-[130px] object-cover object-center"
                   />
                 ) : loading ? (
-                  <div className="rounded-full  w-[130px] h-[130px]">
+                  <div className="rounded-full  !w-[130px] !h-[130px] object-cover object-center">
                     <Loader />
                   </div>
                 ) : (
@@ -274,7 +279,7 @@ const UpdateProfile: React.FC = () => {
                   />
                 )}
               </div>
-              <span className="absolute bottom-[20px] right-[60px] text-sm text-gray-600  px-1 rounded-sm transform translate-x-1/4 translate-y-1/4">
+              <span className="absolute bottom-[20px] right-[40px] text-sm text-gray-600  px-1 rounded-sm transform translate-x-1/4 translate-y-1/4">
                 {/* <Upload
                   listType="picture"
                   maxCount={1}
@@ -309,7 +314,7 @@ const UpdateProfile: React.FC = () => {
                   <Button
                     disabled={loading}
                     loading={loading}
-                    className="custom_hover ml-5 mr-2 text-sm font-semibold h-[40px] px-8 border-none shadow-none !bg-secondary-color !text-white"
+                    className="custom_hover ml-5 mr-2 text-sm font-semibold px-4 border-none shadow-none !bg-secondary-color !text-white"
                     type="primary"
                     onClick={handleUploadPhoto}
                     // loading={loading}
@@ -381,9 +386,17 @@ const UpdateProfile: React.FC = () => {
           </div> */}
           <div className="">
             <Form
+              form={form}
               layout="vertical"
               onFinish={handleUpdate}
               style={{ maxWidth: 600 }}
+              initialValues={{
+                firstName: currentUser?.firstName || "",
+                lastName: currentUser?.lastName || "",
+                gender: currentUser?.gender || "",
+                contactNo: currentUser?.contactNo || "",
+                role: currentUser?.role || "",
+              }}
             >
               <Form.Item
                 label={
