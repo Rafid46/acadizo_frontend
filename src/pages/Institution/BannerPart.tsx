@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "antd";
 import moment from "moment";
-import { CiCalendar, CiMapPin, CiStar } from "react-icons/ci";
+import { CiCalendar, CiStar } from "react-icons/ci";
 import { FiMoreVertical } from "react-icons/fi";
+import UpIconAcademy from "./UpIconAademy";
 
-const BannerPart = ({ currentAcademy }: any) => {
+const BannerPart = ({ joinedAcademyDetails }: any) => {
   return (
     <div>
       <div className="max-w-full mx-auto">
@@ -17,21 +18,17 @@ const BannerPart = ({ currentAcademy }: any) => {
             <div className="flex justify-between items-start">
               <div className="flex-1">
                 {/* Profile image */}
-                <div className="relative -mt-16 mb-4">
-                  <img
-                    src="https://github.com/shadcn.png"
-                    alt="Profile"
-                    className="rounded-full border-4 border-white w-32 h-32 object-cover"
-                  />
+                <div className="relative -mt-16 mb-4 flex justify-between items-start">
+                  <UpIconAcademy joinedAcademyDetails={joinedAcademyDetails} />
                 </div>
                 <div className="flex lg:flex-row flex-col items-center justify-between">
                   {/* Profile info */}
                   <div>
                     <h1 className="text-2xl font-bold mb-1">
-                      {currentAcademy?.academyName}
+                      {joinedAcademyDetails[0]?.academyName}
                     </h1>
                     <p className="text-gray-600 mb-2">
-                      {currentAcademy?.academyDescription}
+                      {joinedAcademyDetails[0]?.academyDescription}
                     </p>
                   </div>
                   {/* Stats */}
@@ -76,7 +73,9 @@ const BannerPart = ({ currentAcademy }: any) => {
                     <CiCalendar className="w-4 h-4" />
                     <span>
                       Created{" "}
-                      {moment(currentAcademy?.createdAt).format("MMMM D, YYYY")}
+                      {moment(joinedAcademyDetails[0]?.createdAt).format(
+                        "MMMM D, YYYY"
+                      )}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">

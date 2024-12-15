@@ -3,19 +3,19 @@ import useAxios from "./useAxios";
 
 // Define a type for the user data
 
-const useAllUser = () => {
+const useNotice = () => {
   const axiosPublic = useAxios();
 
-  const allUsers = useQuery({
-    queryKey: ["AllUsers"],
+  const allNotices = useQuery({
+    queryKey: ["academyNotices"],
     queryFn: async () => {
-      const res = await axiosPublic.get("http://localhost:3000/api/v1/user");
+      const res = await axiosPublic.get("/academy/notices");
       console.log(res.data.data);
       return res.data.data;
     },
   });
 
-  return { ...allUsers };
+  return { ...allNotices, refetch: allNotices.refetch };
 };
 
-export default useAllUser;
+export default useNotice;

@@ -1,9 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "antd";
+import { Button, Dropdown, MenuProps } from "antd";
 import { FaEdit, FaPlus, FaTrashAlt } from "react-icons/fa";
 import { PiStudent } from "react-icons/pi";
 import Loader from "../../common/Loader";
 import moment from "moment";
+import useAllUser from "../../hooks/useAllUser";
+import { useEffect, useState } from "react";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import { CiBellOn } from "react-icons/ci";
+import NoticeModal from "./NoticeModal";
 
 const InstitutionTable = ({
   setAcademyModal,
@@ -11,6 +16,36 @@ const InstitutionTable = ({
   loading,
   members,
 }: any) => {
+  const [noticeModal, setNoticeModal] = useState(false);
+  const { data: currentUser }: any = useCurrentUser();
+  // useEffect(() => {
+  //   if (allUsers) {
+  //     const memberDetail = allUsers?.find(
+  //       (member: any) => member?.email === allUsers?.email
+  //     );
+  //     if (memberDetail) {
+  //       setMemberDetails((prev: any) => [...prev]);
+  //     }
+  //   }
+  // }, [allUsers]);
+  // console.log(memberDetails, "member details");
+
+  const memberDetail = () => {
+    const emails = members[0]?.academyMembers?.map((item: any) => item?.email);
+    console.log(emails, "member details");
+    return emails;
+  };
+
+  memberDetail();
+
+  const dropItems: MenuProps["items"] = [
+    {
+      key: "1",
+      label: "Update notice",
+      onClick: () => setNoticeModal(true),
+    },
+  ];
+
   return (
     <div>
       {/* table */}
@@ -35,20 +70,43 @@ const InstitutionTable = ({
               >
                 Join academy
               </Button>
-              <Button
-                onClick={() => setCreateUserModal(true)}
-                icon={<FaPlus />}
-                // disabled={isButtonDisabled || loading}
-                // loading={loading}
-                htmlType="submit"
-                style={{
-                  transition: "background-color 0.3s ease",
-                }}
-                type="primary"
-                className={`text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color custom_hover`}
-              >
-                Create your academy
-              </Button>
+              {currentUser?.role === "teacher" && (
+                <Button
+                  onClick={() => setCreateUserModal(true)}
+                  icon={<FaPlus />}
+                  // disabled={isButtonDisabled || loading}
+                  // loading={loading}
+                  htmlType="submit"
+                  style={{
+                    transition: "background-color 0.3s ease",
+                  }}
+                  type="primary"
+                  className={`text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color custom_hover`}
+                >
+                  Create your academy
+                </Button>
+              )}
+
+              <Dropdown menu={{ items: dropItems }}>
+                <a onClick={(e) => e.preventDefault()}>
+                  <Button
+                    // onClick={() => setNoticeModal(true)}
+                    icon={<CiBellOn />}
+                    // disabled={isButtonDisabled || loading}
+                    // loading={loading}
+                    // htmlType="submit"
+                    style={{
+                      transition: "background-color 0.3s ease",
+                    }}
+                    type="primary"
+                    className={`text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color custom_hover`}
+                  ></Button>
+                </a>
+              </Dropdown>
+              <NoticeModal
+                setNoticeModal={setNoticeModal}
+                noticeModal={noticeModal}
+              ></NoticeModal>
             </div>
             {/* academy input list */}
           </span>
@@ -106,7 +164,7 @@ const InstitutionTable = ({
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-300">
-                          {members?.academyMembers?.map((user: any) => (
+                          {members[0]?.academyMembers?.map((user: any) => (
                             <tr
                               key={user?.id}
                               // onClick={() => {

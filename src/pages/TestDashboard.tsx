@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import {
   Avatar,
+  Badge,
   Button,
   Drawer,
   Dropdown,
@@ -23,18 +24,24 @@ import { MdOutlineCollectionsBookmark } from "react-icons/md";
 import logo from "../assets/icons/acadizo_logo.png";
 import icon from "../assets/icons/acadizo_icon.png";
 import { PiStudent } from "react-icons/pi";
-import { FaAngleDown } from "react-icons/fa";
+import { FaAngleDown, FaBell } from "react-icons/fa";
 import { CiUser, CiViewList } from "react-icons/ci";
 import { RiHomeOfficeLine } from "react-icons/ri";
 import { AuthContext } from "../providers/AuthProvider";
+import useCurrentUser from "../hooks/useCurrentUser";
+import { IoMdNotificationsOutline } from "react-icons/io";
+import useCurrentNotice from "../hooks/useCurrentNotice";
 
 const { Header, Sider, Content } = Layout;
 
 const TestDashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
-  const { user, logOut, loading }: any = useContext(AuthContext);
   const [open, setOpen] = useState(false);
+
+  const { user, logOut, loading }: any = useContext(AuthContext);
+  const { data: currentUser }: any = useCurrentUser();
+  const matchedNotices = useCurrentNotice();
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -51,7 +58,7 @@ const TestDashboard = () => {
   const items: MenuProps["items"] = [
     {
       key: "1",
-      label: <Link to="/update-profile">My Account</Link>,
+      label: <Link to="/dashboard/update-profile">My Account</Link>,
     },
     {
       type: "divider",
@@ -92,6 +99,64 @@ const TestDashboard = () => {
       onClick: handleLogout,
     },
   ];
+  const desktopItems: MenuProps["items"] = [
+    {
+      key: "1",
+      icon: <UserOutlined />,
+      label: <NavLink to="/dashboard">Dashboard</NavLink>,
+    },
+    {
+      key: "2",
+      icon: <VideoCameraOutlined />,
+      label: <NavLink to="/dashboard/modules">Modules</NavLink>,
+    },
+    {
+      key: "3",
+      icon: <IoMdNotificationsOutline />,
+      label: <NavLink to="/dashboard/notice">Notice</NavLink>,
+    },
+
+    {
+      key: "4",
+      icon: <RiHomeOfficeLine />,
+      label: "Institution",
+      children: [
+        {
+          key: "4-1",
+          label: (
+            <NavLink to="/dashboard/institution/overview">Overview</NavLink>
+          ),
+          icon: <CiViewList />,
+        },
+        {
+          key: "4-2",
+          label: (
+            <NavLink to="/dashboard/institution/students">Students</NavLink>
+          ),
+          icon: <PiStudent />,
+        },
+        {
+          key: "4-3",
+          icon: <CiUser />,
+          label: (
+            <NavLink
+              onClick={() => setOpen(false)}
+              to="/dashboard/institution/users"
+            >
+              Users
+            </NavLink>
+          ),
+        },
+      ],
+    },
+  ];
+  if (currentUser?.role === "teacher") {
+    desktopItems.push({
+      key: "5",
+      icon: <UploadOutlined />,
+      label: <NavLink to="/dashboard/AllUsers">All users</NavLink>,
+    });
+  }
   useEffect(() => {
     if (window.innerWidth < 746) {
       setIsMobile(true);
@@ -233,6 +298,15 @@ const TestDashboard = () => {
                   </NavLink>
                 ),
               },
+              {
+                key: "4",
+                icon: <IoMdNotificationsOutline />,
+                label: (
+                  <NavLink onClick={() => setOpen(false)} to="/notice">
+                    Notice
+                  </NavLink>
+                ),
+              },
 
               {
                 key: "4",
@@ -317,8 +391,13 @@ const TestDashboard = () => {
                       <p className="text-primary-color font-bold text-[14px]">
                         Acadizo
                       </p>
-                      <p className="font-semibold text-[12px] text-text-second-color -mt-[2px]">
-                        description
+                      <p
+                        className={`font-semibold text-[12px] text-text-second-color -mt-[2px] ${
+                          !currentUser?.academyName &&
+                          "bg-gray-100 rounded-xl p-1"
+                        }`}
+                      >
+                        {currentUser?.academyName}
                       </p>
                     </div>
                   </div>
@@ -334,61 +413,7 @@ const TestDashboard = () => {
             }`}
             mode="inline"
             defaultSelectedKeys={["1"]}
-            items={[
-              {
-                key: "1",
-                icon: <UserOutlined />,
-                label: <NavLink to="/dashboard">Dashboard</NavLink>,
-              },
-              {
-                key: "2",
-                icon: <VideoCameraOutlined />,
-                label: <NavLink to="/dashboard/modules">Modules</NavLink>,
-              },
-              {
-                key: "3",
-                icon: <UploadOutlined />,
-                label: <NavLink to="/dashboard/AllUsers">All users</NavLink>,
-              },
-
-              {
-                key: "4",
-                icon: <RiHomeOfficeLine />,
-                label: "Institution",
-                children: [
-                  {
-                    key: "4-1",
-                    label: (
-                      <NavLink to="/dashboard/institution/overview">
-                        Overview
-                      </NavLink>
-                    ),
-                    icon: <CiViewList />,
-                  },
-                  {
-                    key: "4-2",
-                    label: (
-                      <NavLink to="/dashboard/institution/students">
-                        Students
-                      </NavLink>
-                    ),
-                    icon: <PiStudent />,
-                  },
-                  {
-                    key: "3",
-                    icon: <CiUser />,
-                    label: (
-                      <NavLink
-                        onClick={() => setOpen(false)}
-                        to="/dashboard/institution/users"
-                      >
-                        Users
-                      </NavLink>
-                    ),
-                  },
-                ],
-              },
-            ]}
+            items={desktopItems}
           />
         </Sider>
       )}
@@ -400,7 +425,7 @@ const TestDashboard = () => {
           style={{ padding: 0, background: colorBgContainer }}
         >
           <div
-            className={`flex items-center justify-between  overflow-hidden py-3 lg:p-3`}
+            className={`flex items-center justify-between  overflow-hidden  px-3 pt-3`}
           >
             {isMobile ? (
               <Button
@@ -416,37 +441,50 @@ const TestDashboard = () => {
               />
             )}
 
-            <Dropdown trigger={["click"]} className="" menu={{ items }}>
-              <a className="px-6">
-                {loading ? (
-                  <div className="flex items-center gap-x-2">
-                    <Avatar src="" size={40} className="bg-gray-200" />
-                    <div className="flex flex-col gap-y-2">
-                      <p className="bg-gray-200 w-[100px] h-[10px] rounded-[10px]"></p>
-                      <p className="bg-gray-200 w-[80px] h-[10px] rounded-[10px]"></p>
+            <div className="flex items-center">
+              <Badge
+                color="#7aba78"
+                className="cursor-pointer"
+                count={matchedNotices?.length}
+              >
+                <FaBell size={20} />
+              </Badge>
+              <Dropdown
+                className="custom_dropdown"
+                trigger={["click"]}
+                menu={{ items }}
+              >
+                <a className="px-6">
+                  {loading ? (
+                    <div className="flex items-center gap-x-2">
+                      <Avatar src="" size={40} className="bg-gray-200" />
+                      <div className="flex flex-col gap-y-2">
+                        <p className="bg-gray-200 w-[100px] h-[10px] rounded-[10px]"></p>
+                        <p className="bg-gray-200 w-[80px] h-[10px] rounded-[10px]"></p>
+                      </div>
+                      <FaAngleDown className="ml-2 text-text-secondary-color" />
                     </div>
-                    <FaAngleDown className="ml-2 text-text-secondary-color" />
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-x-2">
-                    <Avatar
-                      src={user?.photoURL}
-                      size={40}
-                      icon={<UserOutlined />}
-                    />
-                    <div className="flex flex-col">
-                      <p className="text-sm font-medium text-text-color">
-                        {user?.displayName}
-                      </p>
-                      <p className="text-text-small font-normal text-text-secondary-color">
-                        {user?.email}
-                      </p>
+                  ) : (
+                    <div className="flex items-center gap-x-2">
+                      <Avatar
+                        src={user?.photoURL}
+                        size={40}
+                        icon={<UserOutlined />}
+                      />
+                      <div className="flex flex-col">
+                        <p className="text-sm font-medium text-text-color">
+                          {user?.displayName}
+                        </p>
+                        <p className="text-text-small font-normal text-text-secondary-color">
+                          {user?.email}
+                        </p>
+                      </div>
+                      <FaAngleDown className="ml-2 text-text-secondary-color" />
                     </div>
-                    <FaAngleDown className="ml-2 text-text-secondary-color" />
-                  </div>
-                )}
-              </a>
-            </Dropdown>
+                  )}
+                </a>
+              </Dropdown>
+            </div>
           </div>
         </Header>
         <Content

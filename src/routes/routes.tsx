@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import MainLayout from "../layout/MainLayout";
+// import MainLayout from "../layout/MainLayout";
 import About from "../pages/About";
 import Home from "../pages/Home";
 import Register from "../pages/auth/Register";
@@ -12,6 +12,8 @@ import Users from "../pages/profile/Users";
 import Overview from "../pages/Institution/Overview";
 import TestDashboard from "../pages/TestDashboard";
 import PrivateRoute from "./PrivateRoute";
+import Unauthorized from "../pages/error/Unauthorized";
+import Notice from "../pages/Institution/Notice";
 
 const router = createBrowserRouter([
   {
@@ -51,10 +53,18 @@ const router = createBrowserRouter([
         path: "update-profile",
         element: <UpdateProfile />,
       },
+      {
+        path: "notice",
+        element: <Notice />,
+      },
 
       {
         path: "AllUsers",
-        element: <Users />,
+        element: (
+          <PrivateRoute role="teacher">
+            <Users />
+          </PrivateRoute>
+        ),
       },
       {
         path: "institution/overview",
@@ -91,6 +101,10 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/unauthorized",
+    element: <Unauthorized />,
   },
 ]);
 export default router;

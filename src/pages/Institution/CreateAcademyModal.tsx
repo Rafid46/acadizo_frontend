@@ -1,13 +1,45 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Form, Input, Modal } from "antd";
 import TextArea from "antd/es/input/TextArea";
+import useAxios from "../../hooks/useAxios";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import Toast from "../../common/Toast";
 
 const CreateAcademyModal = ({
   createUserModal,
   setCreateUserModal,
-  handleCreateAcademy,
   loading,
 }: any) => {
+  const { data: currentUser }: any = useCurrentUser();
+  const axiosPublic = useAxios();
+  const handleCreateAcademy = async (values: any) => {
+    const userEmail = currentUser?.email;
+    try {
+      console.log("form values", values);
+      const res = await axiosPublic.post("/academy/createAcademy", {
+        academyName: values?.academy_name,
+        academyDescription: values?.academy_description,
+        academyNumber: values?.academy_number,
+        academyCreatedBy: userEmail,
+      });
+      const showNotification = Toast({
+        type: "success",
+        message: "Success",
+        description: "Academy created successfully,",
+      });
+      showNotification();
+      console.log("Response:", res.data);
+    } catch (error) {
+      console.log(error);
+      const errorMessage = error?.response?.data?.message;
+      const showNotification = Toast({
+        type: "warning",
+        message: "Failed",
+        description: errorMessage,
+      });
+      showNotification();
+    }
+  };
   return (
     <div>
       <Modal
@@ -50,12 +82,12 @@ const CreateAcademyModal = ({
                   Academy name
                 </p>
               }
-              // rules={[
-              //   {
-              //     required: true,
-              //     message: "please input academy name",
-              //   },
-              // ]}
+              rules={[
+                {
+                  required: true,
+                  message: "please input academy name",
+                },
+              ]}
             >
               <Input
                 type="text"
@@ -86,6 +118,12 @@ const CreateAcademyModal = ({
 
           <div className="col-span-6">
             <Form.Item
+              rules={[
+                {
+                  required: true,
+                  message: "please input your number of academy members",
+                },
+              ]}
               label={
                 <p className="block text-sm font-medium text-gray-700">
                   Number of academy member
@@ -106,6 +144,7 @@ const CreateAcademyModal = ({
 
           <div className="col-span-6 sm:flex sm:items-center justify-end sm:gap-4 mt-5">
             <Button
+              loading={loading}
               disabled={loading}
               htmlType="submit"
               style={{

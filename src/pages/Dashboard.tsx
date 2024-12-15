@@ -42,7 +42,7 @@ const Dashboard = () => {
   const items: MenuProps["items"] = [
     {
       key: "1",
-      label: <Link to="/update-profile">My Account</Link>,
+      label: <Link to="/dashboard/update-profile">My Account</Link>,
     },
     {
       type: "divider",
