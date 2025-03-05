@@ -7,7 +7,7 @@ import moment from "moment";
 import useAllUser from "../../hooks/useAllUser";
 import { useEffect, useState } from "react";
 import useCurrentUser from "../../hooks/useCurrentUser";
-import { CiBellOn } from "react-icons/ci";
+import { CiBellOn, CiMenuKebab } from "react-icons/ci";
 import NoticeModal from "./NoticeModal";
 
 const InstitutionTable = ({
@@ -91,15 +91,14 @@ const InstitutionTable = ({
                 <a onClick={(e) => e.preventDefault()}>
                   <Button
                     // onClick={() => setNoticeModal(true)}
-                    icon={<CiBellOn />}
+                    icon={<CiMenuKebab className="text-2xl" />}
                     // disabled={isButtonDisabled || loading}
                     // loading={loading}
                     // htmlType="submit"
                     style={{
                       transition: "background-color 0.3s ease",
                     }}
-                    type="primary"
-                    className={`text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color custom_hover`}
+                    className={`cursor-pointer`}
                   ></Button>
                 </a>
               </Dropdown>

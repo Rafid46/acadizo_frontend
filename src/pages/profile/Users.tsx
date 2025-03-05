@@ -3,19 +3,20 @@ import { FaEdit, FaTrashAlt } from "react-icons/fa";
 import useAllUser from "../../hooks/useAllUser";
 import moment from "moment";
 import { useState } from "react";
-import { Button, Modal } from "antd";
+import { Modal } from "antd";
 import useUser from "../../hooks/useUser";
 import Loader from "../../common/Loader";
 const Users = () => {
-  const [AllUserInfo, loading]: any = useAllUser();
+  const { allUsers, loading } = useAllUser();
+  console.log(allUsers, "this is all users");
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [modal1Open, setModal1Open] = useState(false);
-  const { users }: any = useUser();
-  console.log(users, "new users");
+  // const { users }: any = useUser();
+  // console.log(users, "new users");
   const handleUserDetails = (id: string) => {
     console.log(id);
     // Search for the user in AllUserInfo directly
-    const userDetails = AllUserInfo?.find((user: any) => user?.id === id);
+    const userDetails = allUsers?.find((user: any) => user?.id === id);
     setSelectedUser(userDetails);
     console.log(userDetails);
   };
@@ -105,7 +106,7 @@ const Users = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-300">
-                    {AllUserInfo?.map((user: any) => (
+                    {allUsers?.map((user: any) => (
                       <tr
                         key={user?.id}
                         onClick={() => {

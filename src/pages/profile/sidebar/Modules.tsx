@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Collapse } from "antd";
-import { useContext, useState } from "react";
-import { AuthContext } from "../../../providers/AuthProvider";
+import { Collapse } from "antd";
+import { useState } from "react";
+// import { AuthContext } from "../../../providers/AuthProvider";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 const Modules = ({ placeholder, onChange, value }: any) => {
@@ -32,13 +32,13 @@ const Modules = ({ placeholder, onChange, value }: any) => {
           },
         ]}
       />
-      <div className="border border-gray-300 rounded-md shadow-sm p-4 w-full max-w-lg">
+      <div className="rounded-md shadow-sm p-4 w-full max-w-lg">
         <ReactQuill
           theme="snow"
           value={content}
           onChange={handleChange}
           placeholder={placeholder || "Start typing..."}
-          className="text-gray-700"
+          className="text-gray-700 rounded-xl"
         />
       </div>
     </div>
