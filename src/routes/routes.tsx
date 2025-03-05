@@ -61,9 +61,11 @@ const router = createBrowserRouter([
       {
         path: "AllUsers",
         element: (
-          <PrivateRoute role="teacher">
-            <Users />
-          </PrivateRoute>
+          <Users />
+
+          // <PrivateRoute role="teacher">
+          //   <Users />
+          // </PrivateRoute>
         ),
       },
       {

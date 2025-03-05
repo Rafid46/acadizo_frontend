@@ -393,8 +393,7 @@ const TestDashboard = () => {
                       </p>
                       <p
                         className={`font-semibold text-[12px] text-text-second-color -mt-[2px] ${
-                          !currentUser?.academyName &&
-                          "bg-gray-100 rounded-xl p-1"
+                          !currentUser?.academyName && ""
                         }`}
                       >
                         {currentUser?.academyName}

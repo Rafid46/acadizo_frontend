@@ -6,16 +6,16 @@ import useAxios from "./useAxios";
 const useAllUser = () => {
   const axiosPublic = useAxios();
 
-  const allUsers = useQuery({
-    queryKey: ["AllUsers"],
+  const { data: allUsers, isLoading: loading } = useQuery({
+    queryKey: ["allUsers"],
     queryFn: async () => {
-      const res = await axiosPublic.get("http://localhost:3000/api/v1/user");
+      const res = await axiosPublic.get("/api/v1/user");
       console.log(res.data.data);
       return res.data.data;
     },
   });
 
-  return { ...allUsers };
+  return { allUsers, loading };
 };
 
 export default useAllUser;

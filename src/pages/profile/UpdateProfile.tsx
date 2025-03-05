@@ -340,8 +340,8 @@ const UpdateProfile: React.FC = () => {
                   Teacher
                 </a>
               </div>
-              <p className="font-normal text-s text-gray-500  max-sm:text-center">
-                {user?.email}
+              <p className="font-normal text-sm text-gray-500  max-sm:text-center">
+                email: {user?.email}
               </p>
             </div>
             {/* <button className="py-3.5 px-5 flex rounded-full bg-indigo-600 items-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700">
