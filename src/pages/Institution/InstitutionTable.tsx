@@ -123,16 +123,6 @@ const InstitutionTable = ({
                       <table className="table-auto min-w-full rounded-xl">
                         <thead>
                           <tr className="bg-gray-50">
-                            <th>
-                              <div className="flex items-center py-5 px-5">
-                                <input
-                                  type="checkbox"
-                                  value=""
-                                  className="w-5 h-5 appearance-none border border-gray-300 rounded-md mr-2 hover:border-indigo-500 hover:bg-indigo-100 checked:bg-no-repeat checked:bg-center checked:border-indigo-500 checked:bg-indigo-100"
-                                />
-                              </div>
-                            </th>
-
                             <th className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-[#64748b] capitalize">
                               User ID
                             </th>
@@ -172,16 +162,6 @@ const InstitutionTable = ({
                               // }}
                               className="bg-white transition-all duration-500 hover:bg-gray-50 cursor-pointer"
                             >
-                              <td>
-                                <div className="flex items-center py-5 px-5">
-                                  <input
-                                    type="checkbox"
-                                    value=""
-                                    className="w-5 h-5 appearance-none border border-gray-300 rounded-md mr-2 hover:border-indigo-500 hover:bg-indigo-100 checked:bg-no-repeat checked:bg-center checked:border-indigo-500 checked:bg-indigo-100"
-                                  />
-                                </div>
-                              </td>
-
                               <td className="p-5 whitespace-nowrap text-sm leading-6 font-medium text-gray-900">
                                 {user?.id}
                               </td>

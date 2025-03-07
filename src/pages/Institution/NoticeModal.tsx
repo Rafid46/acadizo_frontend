@@ -2,7 +2,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button, Form, Input, Modal, Upload } from "antd";
 import useAxios from "../../hooks/useAxios";
-import useCurrentAcademy from "../../hooks/useCurrentAcademy";
+// import useCurrentAcademy from "../../hooks/useCurrentAcademy";
 import useAcademies from "../../hooks/useAcademies";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import Toast from "../../common/Toast";
@@ -15,10 +15,10 @@ const NoticeModal = ({ noticeModal, setNoticeModal }: any) => {
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const { data: currentAcademy }: any = useCurrentAcademy();
+  // const { data: currentAcademy }: any = useCurrentAcademy();
   const { data: academyLists }: any = useAcademies();
   const { data: currentUser }: any = useCurrentUser();
-  console.log(currentAcademy, "currentacademy");
+  // console.log(currentAcademy, "currentacademy");
   const queryClient = useQueryClient();
   const axiosPublic = useAxios();
   const { refetch }: any = useNotice();
@@ -94,9 +94,9 @@ const NoticeModal = ({ noticeModal, setNoticeModal }: any) => {
   // const handleFileUpload = (e: any) => {
   //   setSelectedFile(e.target.files[0]);
   // };
-  const handleFileChange = ({ file }: any) => {
-    setSelectedFile(file.originFileObj);
-  };
+  // const handleFileChange = ({ file }: any) => {
+  //   setSelectedFile(file.originFileObj);
+  // };
 
   console.log(selectedFile);
   return (

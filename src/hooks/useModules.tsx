@@ -4,7 +4,7 @@ import useAxios from "./useAxios";
 const useModules = () => {
   const axiosPublic = useAxios();
   const { data: allModules, isLoading: loading } = useQuery({
-    queryKey: ["modules"],
+    queryKey: ["allModules"],
     queryFn: async () => {
       const res = await axiosPublic.get("/modules/allModules");
       console.log(res.data.data);
