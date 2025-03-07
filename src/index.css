@@ -132,6 +132,9 @@
 .custom_button_style {
   @apply text-[12px] font-semibold h-[30px] px-4 border-none shadow-none text-white bg-secondary-color;
 }
+.custom_button_style_secondary {
+  @apply text-[12px] font-semibold h-[30px] px-4 border border-gray-400 shadow-none;
+}
 
 .ant-drawer .ant-drawer-body {
   padding: 6px;
