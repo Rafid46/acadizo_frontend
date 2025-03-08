@@ -90,15 +90,12 @@ const InstitutionTable = ({
               <Dropdown menu={{ items: dropItems }}>
                 <a onClick={(e) => e.preventDefault()}>
                   <Button
+                    className="custom_button_style_icon"
                     // onClick={() => setNoticeModal(true)}
-                    icon={<CiMenuKebab className="text-2xl" />}
+                    icon={<CiMenuKebab className="text-3xl" />}
                     // disabled={isButtonDisabled || loading}
                     // loading={loading}
                     // htmlType="submit"
-                    style={{
-                      transition: "background-color 0.3s ease",
-                    }}
-                    className={`cursor-pointer`}
                   ></Button>
                 </a>
               </Dropdown>

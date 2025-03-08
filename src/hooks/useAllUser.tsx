@@ -10,7 +10,7 @@ const useAllUser = () => {
     queryKey: ["allUsers"],
     queryFn: async () => {
       const res = await axiosPublic.get("/api/v1/user");
-      console.log(res.data.data);
+      // console.log(res.data.data);
       return res.data.data;
     },
   });

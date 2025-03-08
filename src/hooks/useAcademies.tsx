@@ -8,7 +8,7 @@ const useAcademies = () => {
     queryKey: ["academyLists"],
     queryFn: async () => {
       const res = await axiosPublic.get("/academy/academyList");
-      console.log(res.data.data);
+      // console.log(res.data.data);
       return res.data.data;
     },
   });

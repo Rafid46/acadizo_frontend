@@ -10,7 +10,7 @@ const useNotice = () => {
     queryKey: ["academyNotices"],
     queryFn: async () => {
       const res = await axiosPublic.get("/academy/notices");
-      console.log(res.data.data);
+      // console.log(res.data.data);
       return res.data.data;
     },
   });
