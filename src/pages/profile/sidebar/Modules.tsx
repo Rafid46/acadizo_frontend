@@ -23,9 +23,9 @@ import useCurrentUser from "../../../hooks/useCurrentUser";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
 import Toast from "../../../common/Toast";
-import ModuleCard from "../../moduleCard";
+import ModuleCard from "../../ModuleCard";
 
-const Modules = ({ placeholder, onChange, value }: any) => {
+const Modules = ({ placeholder, value }: any) => {
   const [open, setOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [content, setContent] = useState<string>(value || "");

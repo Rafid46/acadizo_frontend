@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Badge, Button, Collapse } from "antd";
+import { Badge, Button, Checkbox, Collapse, Dropdown } from "antd";
 import useModules from "../hooks/useModules";
 import { FaRegFileAlt } from "react-icons/fa";
 import { BiDownload } from "react-icons/bi";
 import { useEffect, useState } from "react";
+import { GoKebabHorizontal } from "react-icons/go";
+import { useMutation } from "@tanstack/react-query";
+import useAxios from "../hooks/useAxios";
+import Toast from "../common/Toast";
 
 const ModuleCard = () => {
-  const { allModules }: any = useModules();
+  const { allModules, refetch }: any = useModules();
   const [activeKeys, setActiveKeys] = useState<string[]>([]);
   const [buttonText, setButtonText] = useState("Expand all");
-
+  const axiosPublic = useAxios();
   // Ensure default open when data loads
   useEffect(() => {
     if (allModules?.length > 0) {
@@ -40,6 +44,33 @@ const ModuleCard = () => {
     document.body.removeChild(link);
   };
 
+  const deleteModule = useMutation({
+    mutationKey: ["deleteModule"],
+    mutationFn: (moduleId: string) => {
+      return axiosPublic.delete(`/modules/${moduleId}`);
+    },
+    onSuccess: () => {
+      refetch();
+      const showNotification = Toast({
+        type: "success",
+        message: "",
+        description: "Module deleted successfully",
+      });
+      showNotification();
+    },
+    onError: () => {
+      const showNotification = Toast({
+        type: "error",
+        message: "",
+        description: "Something went wrong",
+      });
+      showNotification();
+    },
+  });
+
+  const handleDeleteModule = (moduleId: any) => {
+    deleteModule?.mutate(moduleId);
+  };
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -53,8 +84,39 @@ const ModuleCard = () => {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         {allModules?.map((module: any, index: number) => (
-          <div key={module?.moduleId} className="">
+          <div className="flex items-start gap-2">
+            <Checkbox />
             <Collapse
+              key={module?.moduleId}
+              expandIcon={() => (
+                <Dropdown
+                  menu={{
+                    items: [
+                      {
+                        key: "1",
+                        label: (
+                          <p
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteModule(module?.moduleId);
+                            }}
+                          >
+                            Delete module
+                          </p>
+                        ),
+                      },
+                    ],
+                  }}
+                  arrow={{ pointAtCenter: true }}
+                >
+                  <Button
+                    onClick={(e) => e.stopPropagation()}
+                    className="custom_button_style_icon"
+                  >
+                    <GoKebabHorizontal />
+                  </Button>
+                </Dropdown>
+              )}
               activeKey={activeKeys}
               onChange={handleCollapseChange}
               defaultActiveKey={"1"}
