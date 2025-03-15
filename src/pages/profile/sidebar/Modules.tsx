@@ -126,7 +126,7 @@ const Modules = ({ placeholder, value }: any) => {
           `}
       </style>
 
-      <ModuleCard />
+      <ModuleCard showDrawer={showDrawer} />
       <FloatButton.Group
         trigger="hover"
         type="primary"
