@@ -191,7 +191,7 @@ const JoinAcademyModal = ({
     <div>
       <Modal
         footer={null}
-        title="Choose & select or join your academy"
+        title="Choose & select or join an academy"
         centered
         open={academyModal}
         onOk={() => setAcademyModal(false)}
@@ -203,7 +203,7 @@ const JoinAcademyModal = ({
               placeholder="Search academy by name"
               value={searchItem}
               onChange={handleSearch}
-              className="w-full input rounded-[12px] px-6 py-2 border focus:outline-none focus:border-primary-color placeholder-gray-400 transition-all duration-300 border-gray-200 placeholder:text-sm"
+              className="w-full input rounded-[5px] px-6 py-2 border focus:outline-none focus:border-primary-color placeholder-gray-400 transition-all duration-300 border-gray-200 placeholder:text-sm"
               type="text"
             />
             <button className="absolute right-3 -translate-y-1/2 top-1/2 p-1">

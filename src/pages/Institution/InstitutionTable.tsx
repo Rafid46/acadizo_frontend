@@ -68,7 +68,7 @@ const InstitutionTable = ({
                 type="primary"
                 className={`text-sm font-semibold h-[40px] px-8 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-gray-200`}
               >
-                Join academy
+                Explore academies
               </Button>
               {currentUser?.role === "teacher" && (
                 <Button

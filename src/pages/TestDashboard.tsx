@@ -24,13 +24,15 @@ import { MdOutlineCollectionsBookmark } from "react-icons/md";
 import logo from "../assets/icons/acadizo_logo.png";
 import icon from "../assets/icons/acadizo_icon.png";
 import { PiStudent } from "react-icons/pi";
-import { FaAngleDown, FaBell } from "react-icons/fa";
+import { FaAngleDown, FaBell, FaRegBell } from "react-icons/fa";
 import { CiUser, CiViewList } from "react-icons/ci";
 import { RiHomeOfficeLine } from "react-icons/ri";
 import { AuthContext } from "../providers/AuthProvider";
 import useCurrentUser from "../hooks/useCurrentUser";
 import { IoMdNotificationsOutline } from "react-icons/io";
+import { RiBookFill } from "react-icons/ri";
 import useCurrentNotice from "../hooks/useCurrentNotice";
+import NotificationPopUp from "./NotificationPopUp";
 
 const { Header, Sider, Content } = Layout;
 
@@ -102,23 +104,23 @@ const TestDashboard = () => {
   const desktopItems: MenuProps["items"] = [
     {
       key: "1",
-      icon: <UserOutlined />,
+      icon: <UserOutlined className="!text-xl" />,
       label: <NavLink to="/dashboard">Dashboard</NavLink>,
     },
     {
       key: "2",
-      icon: <VideoCameraOutlined />,
+      icon: <RiBookFill className="!text-xl" />,
       label: <NavLink to="/dashboard/modules">Modules</NavLink>,
     },
     {
       key: "3",
-      icon: <IoMdNotificationsOutline />,
+      icon: <IoMdNotificationsOutline className="!text-xl" />,
       label: <NavLink to="/dashboard/notice">Notice</NavLink>,
     },
 
     {
       key: "4",
-      icon: <RiHomeOfficeLine />,
+      icon: <RiHomeOfficeLine className="!text-xl" />,
       label: "Institution",
       children: [
         {
@@ -126,18 +128,18 @@ const TestDashboard = () => {
           label: (
             <NavLink to="/dashboard/institution/overview">Overview</NavLink>
           ),
-          icon: <CiViewList />,
+          icon: <CiViewList className="!text-xl" />,
         },
         {
           key: "4-2",
           label: (
             <NavLink to="/dashboard/institution/students">Students</NavLink>
           ),
-          icon: <PiStudent />,
+          icon: <PiStudent className="!text-xl" />,
         },
         {
           key: "4-3",
-          icon: <CiUser />,
+          icon: <CiUser className="!text-xl" />,
           label: (
             <NavLink
               onClick={() => setOpen(false)}
@@ -443,14 +445,15 @@ const TestDashboard = () => {
             <div className="flex items-center">
               <Badge
                 color="#7aba78"
-                className="cursor-pointer"
+                className="cursor-pointer mr-5"
                 count={matchedNotices?.length}
               >
-                <FaBell size={20} />
+                <NotificationPopUp />
               </Badge>
               <Dropdown
+                arrow={{ pointAtCenter: true }}
                 className="custom_dropdown"
-                trigger={["click"]}
+                trigger={["click", "hover"]}
                 menu={{ items }}
               >
                 <a className="px-6">
