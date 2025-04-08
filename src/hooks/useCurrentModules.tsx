@@ -5,15 +5,12 @@ import useModules from "./useModules";
 
 const useCurrentModules = () => {
   const [matchedModules, setMatchedModules] = useState<any[]>([]);
-  const { data: currentUser } = useCurrentUser();
-  const { allModules } = useModules();
+  const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
 
+  const { allModules, loading: isModulesLoading } = useModules();
+  const isLoading = isModulesLoading || isUserLoading;
   useEffect(() => {
-    console.log("✅ allModules:", allModules);
-    console.log("✅ currentUser:", currentUser);
-
-    if (!allModules || !currentUser) {
-      // console.log("waiting for allModules or currentUser...");
+    if (isLoading || !allModules || !currentUser) {
       setMatchedModules([]);
       return;
     }
@@ -24,10 +21,13 @@ const useCurrentModules = () => {
         currentUser?.academyName?.trim().toLowerCase()
     );
 
-    // console.log("🔍 Filtered Modules:", filteredModules);
-    setMatchedModules(filteredModules);
-  }, [allModules, currentUser]);
+    setMatchedModules((prevModules) =>
+      JSON.stringify(prevModules) === JSON.stringify(filteredModules)
+        ? prevModules
+        : filteredModules
+    );
+  }, [allModules, currentUser, isLoading]);
 
-  return matchedModules;
+  return { matchedModules, isLoading };
 };
 export default useCurrentModules;

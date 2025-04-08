@@ -126,7 +126,7 @@ const CreateAcademyModal = ({
               ]}
               label={
                 <p className="block text-sm font-medium text-gray-700">
-                  Number of academy member
+                  Number of member
                 </p>
               }
               name="academy_number"
