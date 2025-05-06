@@ -1,22 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Badge,
-  Button,
-  Checkbox,
-  Col,
-  Collapse,
-  Drawer,
-  Dropdown,
-  Form,
-  Input,
-  Row,
-  Space,
-} from "antd";
+import { Badge, Button, Checkbox, Collapse, Dropdown, Space } from "antd";
 import useModules from "../hooks/useModules";
 import { FaPlus, FaRegFileAlt } from "react-icons/fa";
 import { BiDownload, BiEdit } from "react-icons/bi";
 import { useEffect, useState } from "react";
-import { GoKebabHorizontal } from "react-icons/go";
 import { useMutation } from "@tanstack/react-query";
 import useAxios from "../hooks/useAxios";
 import Toast from "../common/Toast";
@@ -27,17 +14,20 @@ import useAcademies from "../hooks/useAcademies";
 import { MdDeleteOutline } from "react-icons/md";
 import Loader from "../common/Loader";
 import { IoMdMenu } from "react-icons/io";
-import Dragger from "antd/es/upload/Dragger";
-
+import EditModuleDrawer from "./EditModuleDrawer";
+import type { PopconfirmProps } from "antd";
+import { Popconfirm } from "antd";
 const ModuleCard = ({ showDrawer }: any) => {
   const { allModules, refetch }: any = useModules();
   const [activeKeys, setActiveKeys] = useState<string[]>([]);
   const [buttonText, setButtonText] = useState("Expand all");
   const [selectall, setSelectAll] = useState<any[]>([]);
+  const [selectedModule, setSelectedModule] = useState<any>(null);
+  const [open, setOpen] = useState(false);
   const axiosPublic = useAxios();
   const { data: currentUser } = useCurrentUser();
   const { data: academyLists } = useAcademies();
-  const [form] = Form.useForm();
+
   const { matchedModules: academyModules, isLoading }: any =
     useCurrentModules();
   const currentUserEmail = currentUser?.email;
@@ -161,6 +151,43 @@ const ModuleCard = ({ showDrawer }: any) => {
       deleteMultipleModules?.mutate({ moduleIds: selectall, academyId });
     }
   };
+  const showEditDrawer = (module: any) => {
+    setSelectedModule(module);
+    setOpen(true);
+  };
+  // const isDarkColor = (hex: string | undefined | null) => {
+  //   if (typeof hex !== "string") return false; // default to light text
+
+  //   hex = hex.replace("#", "");
+
+  //   if (hex.length === 3) {
+  //     hex = hex
+  //       .split("")
+  //       .map((c) => c + c)
+  //       .join("");
+  //   }
+
+  //   const r = parseInt(hex.substring(0, 2), 16);
+  //   const g = parseInt(hex.substring(2, 2), 16);
+  //   const b = parseInt(hex.substring(4, 2), 16);
+
+  //   return r + g + b < 400;
+  // };
+
+  // const moduleColor = academyModules?.map((module: any) => module?.color);
+  // const textColor = isDarkColor(moduleColor)
+  //   ? "#000000" < "#ffffff"
+  //   : "#000000";
+
+  // const confirm: PopconfirmProps["onConfirm"] = (e: any) => {
+  //   handleDeleteModule(module?.moduleId);
+  //   message.success("Click on Yes");
+  // };
+
+  const cancel: PopconfirmProps["onCancel"] = (e: any) => {
+    console.log(e);
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between">
@@ -212,54 +239,56 @@ const ModuleCard = ({ showDrawer }: any) => {
                   />
                   <Collapse
                     key={module?.moduleId}
-                    expandIcon={() => (
-                      <Dropdown
-                        menu={{
-                          items: [
-                            {
-                              key: "1",
-                              label: (
-                                <p
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteModule(module?.moduleId);
-                                  }}
-                                >
-                                  Delete
-                                </p>
-                              ),
-                              icon: <MdDeleteOutline className="!text-xl" />,
-                            },
-                            {
-                              key: "2",
-                              label: (
-                                <p
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleDeleteModule(module?.moduleId);
-                                  }}
-                                >
-                                  Edit
-                                </p>
-                              ),
-                              icon: <BiEdit className="!text-xl" />,
-                            },
-                          ],
-                        }}
-                        arrow={{ pointAtCenter: true }}
-                      >
-                        <Button
-                          onClick={(e) => e.stopPropagation()}
-                          className="custom_button_style_icon"
-                        >
-                          <IoMdMenu className="!text-xl" />
-                        </Button>
-                      </Dropdown>
-                    )}
+                    // expandIcon={() => (
+                    //   <Dropdown
+                    //     // trigger={["click"]}
+                    //     menu={{
+                    //       items: [
+                    //         {
+                    //           key: "1",
+                    //           label: (
+                    //             <span
+                    //               onClick={(e) => {
+                    //                 e.stopPropagation();
+                    //                 handleDeleteModule(module?.moduleId);
+                    //               }}
+                    //             >
+                    //               Delete
+                    //             </span>
+                    //           ),
+                    //           icon: <MdDeleteOutline className="!text-xl" />,
+                    //         },
+                    //         {
+                    //           key: "2",
+                    //           label: (
+                    //             <span
+                    //               onClick={(e) => {
+                    //                 showEditDrawer(module);
+                    //                 e.stopPropagation();
+                    //               }}
+                    //             >
+                    //               Edit
+                    //             </span>
+                    //           ),
+                    //           icon: <BiEdit className="!text-xl" />,
+                    //         },
+                    //       ],
+                    //     }}
+                    //     arrow={{ pointAtCenter: true }}
+                    //   >
+                    //     <Button
+                    //       onClick={(e) => e.stopPropagation()}
+                    //       className="custom_button_style_icon"
+                    //     >
+                    //       <IoMdMenu className="!text-xl" />
+                    //     </Button>
+                    //   </Dropdown>
+                    // )}
                     activeKey={activeKeys}
                     onChange={handleCollapseChange}
                     defaultActiveKey={"1"}
                     className="w-full lg:w-[500px] mb-4"
+                    style={{ backgroundColor: module?.color }}
                     items={[
                       {
                         key: String(index),
@@ -274,54 +303,128 @@ const ModuleCard = ({ showDrawer }: any) => {
                           </p>
                         ),
                         children: (
-                          <div className="text-sm text-gray-500 flex flex-col">
-                            <div
-                              className="break-words overflow-hidden text-ellipsis max-w-full"
-                              dangerouslySetInnerHTML={{
-                                __html: module?.description,
-                              }}
-                            ></div>
-                            <div>
-                              {module?.file && (
-                                <a
-                                  href={`http://localhost:3000/file/${module?.file}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  download
-                                >
-                                  <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50 mt-3">
-                                    <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]">
-                                      <div className="flex gap-2">
-                                        <div className="text-primary-color text-3xl">
-                                          <FaRegFileAlt />
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="text-sm text-gray-500 flex flex-col">
+                              <div
+                                className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full"
+                                dangerouslySetInnerHTML={{
+                                  __html: module?.description || "",
+                                }}
+                              ></div>
+
+                              <div>
+                                {module?.file && (
+                                  <a
+                                    href={`http://localhost:3000/file/${module?.file}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    download
+                                  >
+                                    <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50 mt-3">
+                                      <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]">
+                                        <div className="flex gap-2">
+                                          <div className="text-primary-color text-3xl">
+                                            <FaRegFileAlt />
+                                          </div>
+
+                                          <div>
+                                            <p className="text-white">
+                                              {module?.file?.length >= 15
+                                                ? `${module?.file?.substring(
+                                                    0,
+                                                    15
+                                                  )}...`
+                                                : module?.file}
+                                            </p>
+                                            <p className="text-gray-500">
+                                              Attachment
+                                            </p>
+                                          </div>
                                         </div>
-                                        <div>
-                                          <p className="text-white">
-                                            {module?.file?.length >= 15
-                                              ? `${module?.file?.substring(
-                                                  0,
-                                                  15
-                                                )}...`
-                                              : module?.file}
-                                          </p>
-                                          <p className="text-gray-500">
-                                            Attachment
-                                          </p>
-                                        </div>
+                                        <button
+                                          onClick={() =>
+                                            handleDownload(module?.file)
+                                          }
+                                          className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
+                                        >
+                                          <BiDownload />
+                                        </button>
                                       </div>
-                                      <button
-                                        onClick={() =>
-                                          handleDownload(module?.file)
-                                        }
-                                        className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
-                                      >
-                                        <BiDownload />
-                                      </button>
                                     </div>
-                                  </div>
-                                </a>
-                              )}
+                                  </a>
+                                )}
+                              </div>
                             </div>
+
+                            <Dropdown
+                              destroyPopupOnHide={false}
+                              trigger={["click", "hover"]}
+                              menu={{
+                                items: [
+                                  {
+                                    key: "1",
+                                    label: (
+                                      <Popconfirm
+                                        title="Delete the module"
+                                        description="Are you sure to delete this module?"
+                                        onConfirm={() =>
+                                          handleDeleteModule(module?.moduleId)
+                                        }
+                                        onCancel={cancel}
+                                        okText="Yes"
+                                        cancelText="No"
+                                      >
+                                        <span>Delete</span>
+                                      </Popconfirm>
+                                    ),
+                                    icon: (
+                                      <MdDeleteOutline className="!text-xl" />
+                                    ),
+                                  },
+                                  {
+                                    key: "2",
+                                    label: "Edit",
+                                    icon: <BiEdit className="!text-xl" />,
+                                    onClick: (e) => {
+                                      e.domEvent.stopPropagation();
+                                      setTimeout(
+                                        () => showEditDrawer(module),
+                                        0
+                                      );
+                                    },
+                                  },
+                                  // {
+                                  //   key: "2",
+                                  //   label: (
+                                  //     <p
+                                  //       className="!border-none bg-transparent hover:bg-transparent"
+                                  //       // icon={<BiEdit className="!text-xl" />}
+                                  //       onClick={(e) => {
+                                  //         e.stopPropagation();
+                                  //         requestAnimationFrame(() => {
+                                  //           console.log("Edit clicked");
+                                  //           showEditDrawer(module);
+                                  //         });
+                                  //       }}
+                                  //     >
+                                  //       Edit
+                                  //     </p>
+                                  //   ),
+                                  //   icon: <BiEdit className="!text-xl" />,
+                                  // },
+                                ],
+                              }}
+                              arrow={{ pointAtCenter: true }}
+                            >
+                              <Button
+                                onClick={(e) => e.stopPropagation()}
+                                className="custom_button_style_icon"
+                              >
+                                <Space>
+                                  <IoMdMenu className="!text-xl" />
+                                </Space>
+                              </Button>
+                            </Dropdown>
                           </div>
                         ),
                       },
@@ -329,6 +432,12 @@ const ModuleCard = ({ showDrawer }: any) => {
                   />
                 </div>
               ))}
+              <EditModuleDrawer
+                setOpen={setOpen}
+                open={open}
+                isLoading={isLoading}
+                module={selectedModule}
+              />
             </div>
           </>
         ) : (

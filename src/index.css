@@ -156,3 +156,31 @@
 .custom_dropdown.ant-dropdown {
   min-width: 230px !important;
 }
+
+.ProseMirror:focus {
+  outline: none;
+}
+.ProseMirror {
+  text-align: left;
+
+  width: 60vw;
+}
+
+.ProseMirror p.is-editor-empty:first-child::before {
+  content: "Enter your thoughts....";
+  float: left;
+  color: #858585;
+  pointer-events: none;
+  height: 0;
+}
+
+.editButton {
+  border: 0;
+  background: none;
+  width: 3rem;
+  height: 3rem;
+  border: 1px solid grey;
+  margin: 0 0.2rem;
+  font-size: 1.5rem;
+  border-radius: 0.4rem;
+}
