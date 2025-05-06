@@ -1,112 +1,39 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Button,
   Col,
   ColorPicker,
   Drawer,
-  FloatButton,
   Form,
   Input,
   Row,
   Space,
-  Tooltip,
 } from "antd";
-import { useRef, useState } from "react";
-// import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
-import { HiMiniSquaresPlus } from "react-icons/hi2";
-
-import { FaPlus } from "react-icons/fa";
 import Dragger from "antd/es/upload/Dragger";
+import { useEffect, useRef, useState } from "react";
+import { BiDownload } from "react-icons/bi";
+import { FaRegFileAlt } from "react-icons/fa";
 import { RiUploadCloudLine } from "react-icons/ri";
-import useAcademies from "../../../hooks/useAcademies";
-import useCurrentUser from "../../../hooks/useCurrentUser";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import useAxios from "../../../hooks/useAxios";
-import Toast from "../../../common/Toast";
-import ModuleCard from "../../ModuleCard";
-import EditButtons from "../../EditButtons";
-import { useEditor } from "@tiptap/react";
-import { EditorContent } from "@tiptap/react";
+// import ReactQuill from "react-quill";
+import useAxios from "../hooks/useAxios";
+import Toast from "../common/Toast";
+import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
 import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
+import EditButtons from "./EditButtons";
 import Highlight from "@tiptap/extension-highlight";
 import TextStyle from "@tiptap/extension-text-style";
 import Color from "@tiptap/extension-color";
-const Modules = () => {
-  const [open, setOpen] = useState(false);
+const EditModuleDrawer = ({ value, open, setOpen, module }: any) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  // const [content, setContent] = useState<string>(value || "");
+  const [content, setContent] = useState<string>(value || "");
   const axiosPublic = useAxios();
-  const { data: currentUser } = useCurrentUser();
-  const { data: academyLists } = useAcademies();
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const editorRef = useRef<any>(null);
-  const showDrawer = () => {
-    setOpen(true);
-  };
-
-  const onClose = () => {
-    setOpen(false);
-  };
-
-  // const handleChange = (newContent: string) => {
-  //   setContent(newContent);
-  //   if (onChange) {
-  //     onChange(newContent);
-  //   }
-  // };
-
-  const { mutate: postModule, isLoading }: any = useMutation({
-    mutationKey: ["postModule"],
-    mutationFn: async (moduleData: any) => {
-      return await axiosPublic.post("/modules/createModules", moduleData);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["allModules"] });
-      const showNotification = Toast({
-        type: "success",
-        message: "Module added successfully",
-        description: "Module added successfully",
-      });
-      form.resetFields();
-      setSelectedFile(null);
-      showNotification();
-      onClose();
-    },
-    onError: (error: any) => {
-      console.error("error posting", error);
-    },
-  });
-
-  const onFinish = (values: any) => {
-    const { title, heading, color } = values;
-    console.log(values);
-    const currentUserEmail = currentUser?.email;
-    const joinedAcademyDetails = academyLists?.find((item: any) =>
-      item?.academyMembers?.some(
-        (member: any) => member?.email === currentUserEmail
-      )
-    );
-    const academyId = joinedAcademyDetails?.academyId;
-    const academyName = joinedAcademyDetails?.academyName;
-    const moduleFormData = new FormData();
-    const description = editorRef.current.getHTML() || "";
-    moduleFormData.append("title", title);
-    moduleFormData.append("heading", heading);
-    moduleFormData.append("description", description);
-    moduleFormData.append("academyId", academyId);
-    moduleFormData.append("academyName", academyName);
-    moduleFormData.append("color", color);
-    if (selectedFile) {
-      moduleFormData.append("file", selectedFile);
-    }
-    postModule(moduleFormData);
-  };
-
   // const modules = {
   //   toolbar: [
   //     [{ header: "1" }, { header: "2" }, { font: [] }],
@@ -128,6 +55,90 @@ const Modules = () => {
   //   "link",
   //   "image",
   // ];
+
+  const onClose = () => {
+    setOpen(false);
+  };
+  const handleDownload = (fileUrl: any) => {
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = fileUrl?.split("/").pop();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  useEffect(() => {
+    if (module) {
+      form.setFieldsValue({
+        heading: module?.heading,
+        title: module?.title,
+        color: module?.color,
+      });
+      setContent(module?.description || "");
+    }
+  }, [module, form]);
+
+  // update module method
+
+  const { mutate: updateModule, isLoading: isUpdateLoading }: any = useMutation(
+    {
+      mutationKey: ["updateModule"],
+      mutationFn: async ({ moduleId, moduleData }: any) => {
+        return await axiosPublic.patch(
+          `/modules/update-module/${moduleId}`,
+          moduleData
+        );
+      },
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["allModules"] });
+        const showNotification = Toast({
+          type: "success",
+          message: "module updated successfully",
+          description: "",
+        });
+        showNotification();
+        form.resetFields();
+        setSelectedFile(null);
+        onClose();
+      },
+
+      onError: (error: any) => {
+        console.error("Error updating module", error);
+        const showNotification = Toast({
+          type: "success",
+          message: "module updated successfully",
+          description: "",
+        });
+        showNotification();
+      },
+    }
+  );
+
+  const onFinish = (values: any) => {
+    const { title, heading, color } = values;
+    // const currentUserEmail = currentUser?.email;
+    // const joinedAcademyDetails = academyLists?.find((item: any) =>
+    //   item?.academyMembers?.some(
+    //     (member: any) => member?.email === currentUserEmail
+    //   )
+    // );
+    // const academyId = joinedAcademyDetails?.academyId;
+    // const academyName = joinedAcademyDetails?.academyName;
+    const description = editorRef.current?.getHTML() || "";
+    const moduleFormdata = new FormData();
+    moduleFormdata.append("title", title);
+    moduleFormdata.append("heading", heading);
+    moduleFormdata.append("description", description);
+    moduleFormdata.append("color", color);
+    if (selectedFile) {
+      moduleFormdata.append("file", selectedFile);
+    }
+    updateModule({
+      moduleId: module?.moduleId,
+      moduleData: moduleFormdata,
+    });
+  };
 
   const editor = useEditor({
     extensions: [
@@ -154,6 +165,7 @@ const Modules = () => {
       }),
       Highlight.configure({ multicolor: true }),
     ],
+    content: module?.description || "",
     onCreate: ({ editor }) => {
       editorRef.current = editor;
     },
@@ -161,31 +173,22 @@ const Modules = () => {
       // No state updates here to prevent re-renders
     },
   });
+
+  useEffect(() => {
+    if (open && module) {
+      form.setFieldsValue({
+        heading: module.heading,
+        title: module.title,
+        color: module.color,
+      });
+      editor?.commands.setContent(module.description || "");
+    }
+  }, [open, module]);
+
   return (
     <div>
-      <style>
-        {`
-        .ant-float-btn-body {
-        background-color:#7ABA78 !important;
-
-        }
-          `}
-      </style>
-
-      <ModuleCard showDrawer={showDrawer} />
-      <FloatButton.Group
-        trigger="hover"
-        type="primary"
-        style={{ insetInlineEnd: 45 }}
-        icon={<FaPlus />}
-      >
-        {/* <FloatButton /> */}
-        <Tooltip title="Add new module">
-          <FloatButton onClick={showDrawer} icon={<HiMiniSquaresPlus />} />
-        </Tooltip>
-      </FloatButton.Group>
       <Drawer
-        title="Add a module"
+        title="Edit module"
         width={720}
         onClose={onClose}
         open={open}
@@ -205,10 +208,10 @@ const Modules = () => {
                 form.submit();
               }}
               type="primary"
-              loading={isLoading}
+              loading={isUpdateLoading}
               htmlType="submit"
             >
-              {isLoading ? "processing..." : "Submit"}
+              {isUpdateLoading ? "processing..." : "Update"}
             </Button>
           </Space>
         }
@@ -227,23 +230,21 @@ const Modules = () => {
                 label={
                   <p className="text-sm font-semibold text-gray-500">Heading</p>
                 }
-                rules={[{ required: true, message: "Please enter heading " }]}
               >
                 <Input placeholder="e.g chapter no" />
               </Form.Item>
             </Col>
-            <Col span={12}>
+            <Col span={10}>
               <Form.Item
                 name="title"
                 label={
                   <p className="text-sm font-semibold text-gray-500">Title</p>
                 }
-                rules={[{ required: true, message: "Please enter title" }]}
               >
                 <Input placeholder="e.g chapter name" />
               </Form.Item>
             </Col>
-            <Col>
+            <Col span={2}>
               <Form.Item
                 valuePropName="value"
                 getValueFromEvent={(color) => color.toHexString()}
@@ -260,18 +261,13 @@ const Modules = () => {
           <Row gutter={16}>
             <Col span={24}>
               <Form.Item
-                // name="description"
                 label={
                   <p className="text-sm font-semibold text-gray-500">
                     Description
                   </p>
                 }
-                rules={[
-                  {
-                    required: true,
-                    message: "please enter description",
-                  },
-                ]}
+                initialValue={content}
+                className=""
               >
                 {editor && <EditButtons editor={editor} />}
                 {editor && (
@@ -285,7 +281,7 @@ const Modules = () => {
                   modules={modules}
                   theme="snow"
                   value={content}
-                  onChange={setContent}
+                  onChange={(value) => setContent(value)}
                   placeholder={placeholder || "Start typing..."}
                   className="text-gray-700 rounded-xl"
                 /> */}
@@ -294,10 +290,50 @@ const Modules = () => {
                   placeholder="e.g chapter description"
                 /> */}
               </Form.Item>
+              {
+                <p className="text-sm font-semibold text-gray-500">
+                  Previous attachments
+                </p>
+              }
+              <div className="mb-5">
+                {module?.file && (
+                  <a
+                    href={`http://localhost:3000/file/${module?.file}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    download
+                  >
+                    <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50 mt-3">
+                      <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]">
+                        <div className="flex gap-2">
+                          <div className="text-primary-color text-3xl">
+                            <FaRegFileAlt />
+                          </div>
+
+                          <div>
+                            <p className="text-white">
+                              {module?.file?.length >= 15
+                                ? `${module?.file?.substring(0, 15)}...`
+                                : module?.file}
+                            </p>
+                            <p className="text-gray-500">Attachment</p>
+                          </div>
+                        </div>
+                        <button
+                          onClick={() => handleDownload(module?.file)}
+                          className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
+                        >
+                          <BiDownload />
+                        </button>
+                      </div>
+                    </div>
+                  </a>
+                )}
+              </div>
               <Form.Item
                 label={
                   <p className="text-sm font-semibold text-gray-500">
-                    Attachment
+                    Update attachment
                   </p>
                 }
               >
@@ -330,4 +366,4 @@ const Modules = () => {
   );
 };
 
-export default Modules;
+export default EditModuleDrawer;
