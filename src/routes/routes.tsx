@@ -14,6 +14,7 @@ import TestDashboard from "../pages/TestDashboard";
 import PrivateRoute from "./PrivateRoute";
 import Unauthorized from "../pages/error/Unauthorized";
 import Notice from "../pages/Institution/Notice";
+import ActivityPage from "../pages/activity/ActivityPage";
 
 const router = createBrowserRouter([
   {
@@ -79,6 +80,10 @@ const router = createBrowserRouter([
       {
         path: "institution/users",
         element: <Overview />,
+      },
+      {
+        path: "activity/posts",
+        element: <ActivityPage />,
       },
     ],
   },

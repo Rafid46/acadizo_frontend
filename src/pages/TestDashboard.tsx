@@ -24,7 +24,7 @@ import { MdOutlineCollectionsBookmark } from "react-icons/md";
 import logo from "../assets/icons/acadizo_logo.png";
 import icon from "../assets/icons/acadizo_icon.png";
 import { PiStudent } from "react-icons/pi";
-import { FaAngleDown, FaBell, FaRegBell } from "react-icons/fa";
+import { FaAngleDown } from "react-icons/fa";
 import { CiUser, CiViewList } from "react-icons/ci";
 import { RiHomeOfficeLine } from "react-icons/ri";
 import { AuthContext } from "../providers/AuthProvider";
@@ -33,6 +33,8 @@ import { IoMdNotificationsOutline } from "react-icons/io";
 import { RiBookFill } from "react-icons/ri";
 import useCurrentNotice from "../hooks/useCurrentNotice";
 import NotificationPopUp from "./NotificationPopUp";
+import { GrWorkshop } from "react-icons/gr";
+import { BsPostcard } from "react-icons/bs";
 
 const { Header, Sider, Content } = Layout;
 
@@ -151,6 +153,32 @@ const TestDashboard = () => {
         },
       ],
     },
+    {
+      key: "5",
+      icon: <GrWorkshop className="!text-xl" />,
+      label: "Activities",
+      children: [
+        {
+          key: "5-1",
+          label: <NavLink to="/dashboard/activity/posts">Posts</NavLink>,
+          icon: <BsPostcard className="!text-xl" />,
+        },
+        {
+          key: "5-2",
+          label: <NavLink to="">Students</NavLink>,
+          icon: <PiStudent className="!text-xl" />,
+        },
+        {
+          key: "5-3",
+          icon: <CiUser className="!text-xl" />,
+          label: (
+            <NavLink onClick={() => setOpen(false)} to="">
+              Users
+            </NavLink>
+          ),
+        },
+      ],
+    },
   ];
   if (currentUser?.role === "teacher") {
     desktopItems.push({
@@ -197,7 +225,8 @@ const TestDashboard = () => {
         
         .ant-menu-item-selected {
          color: #007260 !important;
-         background-color: #f6f6f7 !important;
+         background-color: #DDF6D2 !important;
+        //  border:1px solid #DDDDDD !important;
          border-radius: 12px !important;
     }
         .ant-menu-item-selected .ant-menu-title-content {
@@ -356,11 +385,11 @@ const TestDashboard = () => {
       ) : (
         <Sider
           style={{
-            overflow: "!hidden",
+            overflow: "hidden",
           }}
           collapsedWidth={70}
           width={250}
-          className="!h-screen bg-[#ffffff] border-r border-[#C1D8C3] z-50"
+          className="!h-screen bg-[#ffffff] border-r border-[#C1D8C3]  backfz-50"
           trigger={null}
           collapsible
           collapsed={collapsed}
@@ -451,7 +480,6 @@ const TestDashboard = () => {
                 <NotificationPopUp />
               </Badge>
               <Dropdown
-                arrow={{ pointAtCenter: true }}
                 className="custom_dropdown"
                 trigger={["click", "hover"]}
                 menu={{ items }}

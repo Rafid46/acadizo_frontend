@@ -4,10 +4,10 @@ import { FaEdit, FaPlus, FaTrashAlt } from "react-icons/fa";
 import { PiStudent } from "react-icons/pi";
 import Loader from "../../common/Loader";
 import moment from "moment";
-import useAllUser from "../../hooks/useAllUser";
 import { useEffect, useState } from "react";
 import useCurrentUser from "../../hooks/useCurrentUser";
-import { CiBellOn, CiMenuKebab } from "react-icons/ci";
+import { CgMenuGridO } from "react-icons/cg";
+
 import NoticeModal from "./NoticeModal";
 
 const InstitutionTable = ({
@@ -92,7 +92,7 @@ const InstitutionTable = ({
                   <Button
                     className="custom_button_style_icon"
                     // onClick={() => setNoticeModal(true)}
-                    icon={<CiMenuKebab className="text-3xl" />}
+                    icon={<CgMenuGridO className="text-4xl" />}
                     // disabled={isButtonDisabled || loading}
                     // loading={loading}
                     // htmlType="submit"

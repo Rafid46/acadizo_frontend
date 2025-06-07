@@ -38,11 +38,12 @@ const Notice = () => {
   return (
     <div>
       {matchedNotices?.length === 0 ? (
-        <div className="flex items-center justify-center text-gray-500">
+        <div className="flex items-center justify-center text-gray-500 ">
           No notices available
         </div>
       ) : (
-        <div>
+        <div className="max-w-screen-xl mx-auto p-5 pt-0">
+          <p className="font-semibold text-2xl text-[#030712] mb-5">Notice</p>
           {matchedNotices?.map((item: any) => (
             <article className="rounded-xl  p-0.5  mb-5 border-2 border-gray-200">
               <div className="rounded-[10px] bg-white p-4 sm:p-6">
