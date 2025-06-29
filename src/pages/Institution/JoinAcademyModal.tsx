@@ -1,9 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, List, Modal, Popconfirm, Tooltip } from "antd";
+import { Avatar, Badge, Button, Image, Modal, Popconfirm, Tooltip } from "antd";
 import Loader from "../../common/Loader";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../../hooks/useAxios";
 import Toast from "../../common/Toast";
+import {
+  ArrowBigRightDash,
+  BookOpen,
+  CheckCircle,
+  GraduationCap,
+  Users,
+} from "lucide-react";
+import { IoIosLogOut } from "react-icons/io";
 
 const JoinAcademyModal = ({
   academyModal,
@@ -11,7 +19,6 @@ const JoinAcademyModal = ({
   searchItem,
   handleSearch,
   isListLoading,
-  loading,
   academyLists,
   currentUserEmail,
   currentUserId,
@@ -54,7 +61,8 @@ const JoinAcademyModal = ({
             cancelText="No"
           >
             <Button
-              className={`text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color`}
+              icon={<IoIosLogOut className="h-4 w-4" />}
+              className={`text-sm font-semibold h-[30px] px-6 shadow-none !text-red-400 !bg-transparent border !border-red-400`}
             >
               Leave
             </Button>
@@ -70,6 +78,7 @@ const JoinAcademyModal = ({
             }
           >
             <Button
+              icon={<ArrowBigRightDash className="h-4 w-4" />}
               loading={
                 isListLoading === academy?.academyId ||
                 isPending === academy?.academyId
@@ -81,8 +90,8 @@ const JoinAcademyModal = ({
               }
               className={
                 isUserEmailIncluded
-                  ? "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
-                  : "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
+                  ? "text-sm font-semibold shadow-none text-secondary-color bg-transparent border"
+                  : "text-sm font-semibold shadow-none text-secondary-color bg-transparent border"
               }
               onClick={() =>
                 handleJoinAcademy(academy?.academyName, academy?.academyId)
@@ -187,11 +196,31 @@ const JoinAcademyModal = ({
       showNotification();
     },
   });
+  const data = academyLists?.filter(
+    (academy: any) =>
+      academy?.academyName &&
+      academy?.academyName?.toLowerCase().includes(searchItem?.toLowerCase())
+  );
+  console.log(data);
   return (
     <div>
       <Modal
         footer={null}
-        title="Choose & select or join an academy"
+        title={
+          <div>
+            <div className="space-y-1">
+              <div className="text-2xl font-bold text-slate-900 flex items-center gap-3">
+                <div className="p-[10px] bg-gradient-to-r  to-blue-400 from-teal-500 rounded-lg">
+                  <GraduationCap className="h-5 w-5 text-white" />
+                </div>
+                Choose & Select Academy
+              </div>
+              <p className="text-slate-600 text-sm">
+                Join an academy to start your learning journey
+              </p>
+            </div>
+          </div>
+        }
         centered
         open={academyModal}
         onOk={() => setAcademyModal(false)}
@@ -200,10 +229,10 @@ const JoinAcademyModal = ({
         <div className="">
           <div className="relative my-5">
             <input
-              placeholder="Search academy by name"
+              placeholder="Search academy by name..."
               value={searchItem}
               onChange={handleSearch}
-              className="w-full input rounded-[5px] px-6 py-2 border focus:outline-none focus:border-primary-color placeholder-gray-400 transition-all duration-300 border-gray-200 placeholder:text-sm"
+              className="w-full rounded-[5px] px-6 py-2 border placeholder:text-sm focus:outline-none focus:border-primary-color transition-all duration-300 border-gray-200"
               type="text"
             />
             <button className="absolute right-3 -translate-y-1/2 top-1/2 p-1">
@@ -235,29 +264,93 @@ const JoinAcademyModal = ({
           {isListLoading ? (
             <Loader />
           ) : (
-            <List
-              className="max-h-[50vh] min-h-[50vh] overflow-y-scroll scroll-smooth"
-              loading={loading}
-              dataSource={academyLists?.filter(
-                (academy: any) =>
-                  academy?.academyName &&
-                  academy?.academyName
-                    .toLowerCase()
+            // <List
+            //   className="max-h-[50vh] min-h-[50vh] overflow-y-scroll scroll-smooth"
+            //   loading={loading}
+            //   dataSource={academyLists?.filter(
+            //     (academy: any) =>
+            //       academy?.academyName &&
+            //       academy?.academyName
+            //         .toLowerCase()
+            //         .includes(searchItem?.toLowerCase())
+            //   )}
+            //   renderItem={(academy: any) => (
+            //     <List.Item actions={[getJoinButton(academy)]}>
+            //       <List.Item.Meta
+            //         title={
+            //           <p className="font-semibold">{academy.academyName}</p>
+            //         }
+            //         description={
+            //           <p className="text-sm">{academy.academyDescription}</p>
+            //         }
+            //       />
+            //     </List.Item>
+            //   )}
+            // />
+            <>
+              {academyLists
+                ?.filter((item: any) =>
+                  item?.academyName
+                    ?.toLowerCase()
                     .includes(searchItem?.toLowerCase())
-              )}
-              renderItem={(academy: any) => (
-                <List.Item actions={[getJoinButton(academy)]}>
-                  <List.Item.Meta
-                    title={
-                      <p className="font-semibold">{academy.academyName}</p>
-                    }
-                    description={
-                      <p className="text-sm">{academy.academyDescription}</p>
-                    }
-                  />
-                </List.Item>
-              )}
-            />
+                )
+                .map((item: any) => (
+                  <div
+                    key={item.id}
+                    className="border !border-gray-200 rounded-lg mb-4 hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
+                  >
+                    <div className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="relative">
+                          <Avatar className="h-16 w-16 ring-2 ring-white shadow-lg">
+                            <Image
+                              src={item?.avatar || "/placeholder.svg"}
+                              alt={item?.academyName}
+                            />
+                          </Avatar>
+                          {item?.isJoined === true && (
+                            <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-1">
+                              <CheckCircle className="h-3 w-3 text-white" />
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <h3 className="text-lg font-bold text-slate-900 truncate">
+                                  {item?.academyName}
+                                </h3>
+                                <Badge className="text-xs">
+                                  {item?.category}
+                                </Badge>
+                              </div>
+                              <p className="text-slate-600 text-sm mb-3 line-clamp-2">
+                                {item?.academyDescription}
+                              </p>
+                              <div className="flex items-center gap-4 text-xs text-slate-500">
+                                <div className="flex items-center gap-1">
+                                  <Users className="h-3 w-3" />
+                                  <span>{item?.academyNumber} members</span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <BookOpen className="h-3 w-3" />
+                                  <span>Active</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex-shrink-0">
+                              {getJoinButton(item)}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </>
           )}
         </div>
       </Modal>

@@ -19,7 +19,7 @@ import {
   theme,
 } from "antd";
 import { Link, NavLink, Outlet } from "react-router-dom";
-import { LuHome, LuLogOut } from "react-icons/lu";
+import { LuHome, LuLayoutDashboard, LuLogOut } from "react-icons/lu";
 import { MdOutlineCollectionsBookmark } from "react-icons/md";
 import logo from "../assets/icons/acadizo_logo.png";
 import icon from "../assets/icons/acadizo_icon.png";
@@ -106,36 +106,58 @@ const TestDashboard = () => {
   const desktopItems: MenuProps["items"] = [
     {
       key: "1",
-      icon: <UserOutlined className="!text-xl" />,
-      label: <NavLink to="/dashboard">Dashboard</NavLink>,
+      icon: <LuLayoutDashboard className="!text-xl" />,
+      label: (
+        <NavLink className="font-[500]" to="/dashboard">
+          Dashboard
+        </NavLink>
+      ),
     },
     {
       key: "2",
       icon: <RiBookFill className="!text-xl" />,
-      label: <NavLink to="/dashboard/modules">Modules</NavLink>,
+      label: (
+        <NavLink className="font-[500]" to="/dashboard/modules">
+          Modules
+        </NavLink>
+      ),
     },
     {
       key: "3",
       icon: <IoMdNotificationsOutline className="!text-xl" />,
-      label: <NavLink to="/dashboard/notice">Notice</NavLink>,
+      label: (
+        <NavLink className="font-[500]" to="/dashboard/notice">
+          Notice
+        </NavLink>
+      ),
     },
 
     {
       key: "4",
       icon: <RiHomeOfficeLine className="!text-xl" />,
-      label: "Institution",
+      label: <p className="font-[500]">Institution</p>,
       children: [
         {
           key: "4-1",
           label: (
-            <NavLink to="/dashboard/institution/overview">Overview</NavLink>
+            <NavLink
+              className="font-[500]"
+              to="/dashboard/institution/overview"
+            >
+              Overview
+            </NavLink>
           ),
           icon: <CiViewList className="!text-xl" />,
         },
         {
           key: "4-2",
           label: (
-            <NavLink to="/dashboard/institution/students">Students</NavLink>
+            <NavLink
+              className="font-[500]"
+              to="/dashboard/institution/students"
+            >
+              Students
+            </NavLink>
           ),
           icon: <PiStudent className="!text-xl" />,
         },
@@ -144,6 +166,7 @@ const TestDashboard = () => {
           icon: <CiUser className="!text-xl" />,
           label: (
             <NavLink
+              className="font-[500]"
               onClick={() => setOpen(false)}
               to="/dashboard/institution/users"
             >
@@ -156,23 +179,35 @@ const TestDashboard = () => {
     {
       key: "5",
       icon: <GrWorkshop className="!text-xl" />,
-      label: "Activities",
+      label: <p className="font-[500]">Activities</p>,
       children: [
         {
           key: "5-1",
-          label: <NavLink to="/dashboard/activity/posts">Posts</NavLink>,
+          label: (
+            <NavLink className="font-[500]" to="/dashboard/activity/posts">
+              Posts
+            </NavLink>
+          ),
           icon: <BsPostcard className="!text-xl" />,
         },
         {
           key: "5-2",
-          label: <NavLink to="">Students</NavLink>,
+          label: (
+            <NavLink className="font-[500]" to="">
+              Students
+            </NavLink>
+          ),
           icon: <PiStudent className="!text-xl" />,
         },
         {
           key: "5-3",
           icon: <CiUser className="!text-xl" />,
           label: (
-            <NavLink onClick={() => setOpen(false)} to="">
+            <NavLink
+              className="font-[500]"
+              onClick={() => setOpen(false)}
+              to=""
+            >
               Users
             </NavLink>
           ),
@@ -184,7 +219,11 @@ const TestDashboard = () => {
     desktopItems.push({
       key: "5",
       icon: <UploadOutlined />,
-      label: <NavLink to="/dashboard/AllUsers">All users</NavLink>,
+      label: (
+        <NavLink className="font-[500]" to="/dashboard/AllUsers">
+          All users
+        </NavLink>
+      ),
     });
   }
   useEffect(() => {
@@ -214,7 +253,7 @@ const TestDashboard = () => {
     }
         .ant-menu-item:hover {
          background-color: #f6f6f7 !important;
-         border-radius: 12px !important;
+         border-radius: 10px !important;
          color: #007260 !important;
 
     }
@@ -225,9 +264,9 @@ const TestDashboard = () => {
         
         .ant-menu-item-selected {
          color: #007260 !important;
-         background-color: #DDF6D2 !important;
+         background-color: #F2FFE9 !important;
         //  border:1px solid #DDDDDD !important;
-         border-radius: 12px !important;
+         border-radius: 10px !important;
     }
         .ant-menu-item-selected .ant-menu-title-content {
          color: #007260 !important;
@@ -304,7 +343,7 @@ const TestDashboard = () => {
             items={[
               {
                 key: "1",
-                icon: <UserOutlined />,
+                icon: <LuLayoutDashboard />,
                 label: (
                   <NavLink onClick={() => setOpen(false)} to="/about">
                     Dashboard
@@ -367,6 +406,47 @@ const TestDashboard = () => {
                       </NavLink>
                     ),
                     icon: <PiStudent />,
+                  },
+                  {
+                    key: "5",
+                    icon: <GrWorkshop className="!text-xl" />,
+                    label: <p className="font-[500]">Activities</p>,
+                    children: [
+                      {
+                        key: "5-1",
+                        label: (
+                          <NavLink
+                            className="font-[500]"
+                            to="/dashboard/activity/posts"
+                          >
+                            Posts
+                          </NavLink>
+                        ),
+                        icon: <BsPostcard className="!text-xl" />,
+                      },
+                      {
+                        key: "5-2",
+                        label: (
+                          <NavLink className="font-[500]" to="">
+                            Students
+                          </NavLink>
+                        ),
+                        icon: <PiStudent className="!text-xl" />,
+                      },
+                      {
+                        key: "5-3",
+                        icon: <CiUser className="!text-xl" />,
+                        label: (
+                          <NavLink
+                            className="font-[500]"
+                            onClick={() => setOpen(false)}
+                            to=""
+                          >
+                            Users
+                          </NavLink>
+                        ),
+                      },
+                    ],
                   },
                   {
                     key: "3",

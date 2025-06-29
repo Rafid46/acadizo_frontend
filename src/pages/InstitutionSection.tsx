@@ -12,7 +12,7 @@ import CreateAcademyModal from "./Institution/CreateAcademyModal";
 const InstitutionSection = () => {
   const [createUserModal, setCreateUserModal] = useState(false);
   const [academyModal, setAcademyModal] = useState(false);
-  const [searchItem, setSearchItem] = useState(" ");
+  const [searchItem, setSearchItem] = useState("");
   const [joinedAcademyDetails, setJoinedAcademyDetails] = useState<any[]>([]);
   // const [isListLoading, setIsListLoading] = useState(true);
   // const queryClient = useQueryClient();

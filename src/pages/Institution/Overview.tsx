@@ -14,7 +14,7 @@ import { PiStudent } from "react-icons/pi";
 const Overview = () => {
   const { data: currentUser }: any = useCurrentUser();
   const [academyModal, setAcademyModal] = useState(false);
-  const [searchItem, setSearchItem] = useState(" ");
+  const [searchItem, setSearchItem] = useState("");
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchItem(e.target.value);
   };
@@ -177,7 +177,7 @@ const Overview = () => {
           </Button>
           <Modal
             footer={null}
-            title="Choose & select or join your academy"
+            title=" & select or join your academy"
             centered
             open={academyModal}
             onOk={() => setAcademyModal(false)}
