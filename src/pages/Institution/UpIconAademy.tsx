@@ -86,12 +86,12 @@ const UpIconAcademy = ({
           accept="image/*"
           className="hidden"
         />
-        {!selectedFile ? (
+        {/* {!selectedFile ? (
           <button
             onClick={handleUploadClick}
             className="px-4 py-2 text-sm font-bold text-white bg-blue-500 rounded cursor-pointer"
           >
-            Choose icon
+            icon
           </button>
         ) : (
           <>
@@ -111,7 +111,7 @@ const UpIconAcademy = ({
               Cancel
             </button>
           </>
-        )}
+        )} */}
       </div>
       {error && <p className="text-sm text-red-500">{error}</p>}
     </div>

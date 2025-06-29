@@ -31,6 +31,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Toast from "../../common/Toast";
 import ActivityCard from "./ActivityCard";
 import useCurrentActivities from "../../hooks/useCurrentAcitivies";
+import { BookOpen } from "lucide-react";
 
 const ActivityPage = () => {
   const { RangePicker } = DatePicker;
@@ -274,7 +275,17 @@ const ActivityPage = () => {
         </Form>
       </Drawer>
       <div className="flex items-start gap-2">
-        <p className="font-semibold text-2xl text-[#030712] mb-5">Activities</p>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+              <BookOpen className="h-6 w-6 text-white" />
+            </div>
+            Activities
+          </h1>
+          <p className="text-slate-600">
+            Ask questions, share knowledge, and engage with your peers
+          </p>
+        </div>
       </div>
       <div>
         <ActivityCard allActivities={allActivities} />

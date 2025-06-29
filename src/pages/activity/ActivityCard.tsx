@@ -23,16 +23,13 @@ const ActivityCard = ({ allActivities }: any) => {
     <div className="">
       <style>
         {` 
-                .ant-btn-variant-solid{
-                    background-color: #7ABA78 !important;
-                }
-                    
-   
-                
-                `}
+          .ant-btn-variant-solid{
+              background-color: #7ABA78 !important;
+        }
+        `}
       </style>
-      <div className="flex items-center justify-between">
-        <div className="relative mt-2 w-3/4">
+      <div className="flex items-center justify-between mt-5">
+        <div className="relative mt-2 w-full">
           <CiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-6 w-6" />
           <input
             type="text"

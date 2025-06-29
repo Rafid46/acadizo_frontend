@@ -122,6 +122,7 @@
 
 .custom_hover:hover {
   background-color: #35915a !important;
+  color: white !important;
 }
 .custom_hover_second:hover {
   border-color: #35915a !important;
