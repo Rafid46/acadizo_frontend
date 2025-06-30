@@ -168,7 +168,6 @@
 }
 
 .ProseMirror p.is-editor-empty:first-child::before {
-  content: "Write something....";
   float: left;
   color: #858585;
   pointer-events: none;

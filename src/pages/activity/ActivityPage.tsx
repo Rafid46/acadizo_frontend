@@ -42,7 +42,8 @@ const ActivityPage = () => {
   const axiosPublic = useAxios();
   const { data: currentUser } = useCurrentUser();
   const { data: academyLists } = useAcademies();
-  const { matchedActivity: allActivities } = useCurrentActivities();
+  const { matchedActivity: allActivities, isLoading: isActivityLoading } =
+    useCurrentActivities();
   const queryClient = useQueryClient();
   const showDrawer = () => {
     setOpen(true);
@@ -277,9 +278,11 @@ const ActivityPage = () => {
       <div className="flex items-start gap-2">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
-            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
-              <BookOpen className="h-6 w-6 text-white" />
-            </div>
+            <Tooltip title="Submit your answer">
+              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+                <BookOpen className="h-6 w-6 text-white" />
+              </div>
+            </Tooltip>
             Activities
           </h1>
           <p className="text-slate-600">
@@ -288,7 +291,10 @@ const ActivityPage = () => {
         </div>
       </div>
       <div>
-        <ActivityCard allActivities={allActivities} />
+        <ActivityCard
+          allActivities={allActivities}
+          loading={isActivityLoading}
+        />
       </div>
     </div>
   );
