@@ -143,18 +143,20 @@ const InstitutionTable = ({
                 </Button>
               )}
 
-              <Dropdown arrow={true} menu={{ items: dropItems }}>
-                <a onClick={(e) => e.preventDefault()}>
-                  <Button
-                    className="!px-[20px] py-[19px]"
-                    // onClick={() => setNoticeModal(true)}
-                    icon={<SlOptionsVertical className="text-base" />}
-                    // disabled={isButtonDisabled || loading}
-                    // loading={loading}
-                    // htmlType="submit"
-                  ></Button>
-                </a>
-              </Dropdown>
+              {currentUser?.role === "teacher" && (
+                <Dropdown arrow={true} menu={{ items: dropItems }}>
+                  <a onClick={(e) => e.preventDefault()}>
+                    <Button
+                      className="!px-[20px] py-[19px]"
+                      // onClick={() => setNoticeModal(true)}
+                      icon={<SlOptionsVertical className="text-base" />}
+                      // disabled={isButtonDisabled || loading}
+                      // loading={loading}
+                      // htmlType="submit"
+                    ></Button>
+                  </a>
+                </Dropdown>
+              )}
               <NoticeModal
                 setNoticeModal={setNoticeModal}
                 noticeModal={noticeModal}

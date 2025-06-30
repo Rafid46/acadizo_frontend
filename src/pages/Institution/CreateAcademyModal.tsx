@@ -4,6 +4,7 @@ import TextArea from "antd/es/input/TextArea";
 import useAxios from "../../hooks/useAxios";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import Toast from "../../common/Toast";
+import { School } from "lucide-react";
 
 const CreateAcademyModal = ({
   createUserModal,
@@ -29,7 +30,7 @@ const CreateAcademyModal = ({
       });
       showNotification();
       console.log("Response:", res.data);
-    } catch (error) {
+    } catch (error: any) {
       console.log(error);
       const errorMessage = error?.response?.data?.message;
       const showNotification = Toast({
@@ -44,7 +45,21 @@ const CreateAcademyModal = ({
     <div>
       <Modal
         footer={null}
-        title="Create your own academy"
+        title={
+          <div>
+            <div className="space-y-1">
+              <div className="text-2xl font-bold text-slate-900 flex items-center gap-3">
+                <div className="p-[10px] bg-gradient-to-r  to-purple-400 from-teal-500 rounded-lg">
+                  <School className="h-5 w-5 text-white" />
+                </div>
+                Create your own academy
+              </div>
+              <p className="text-slate-600 text-sm">
+                Create an academy to start your teaching journey
+              </p>
+            </div>
+          </div>
+        }
         centered
         open={createUserModal}
         onOk={() => setCreateUserModal(false)}
@@ -151,9 +166,9 @@ const CreateAcademyModal = ({
                 transition: "background-color 0.3s ease",
               }}
               type="primary"
-              className={`text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color custom_hover`}
+              className={`w-full text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color custom_hover`}
             >
-              {loading ? "Creating" : "Create"}
+              {loading ? "Creating" : "Create academy"}
             </Button>
           </div>
         </Form>

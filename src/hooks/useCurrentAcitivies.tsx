@@ -7,8 +7,8 @@ const useCurrentActivities = () => {
   const [matchedActivity, setMatchedActivity] = useState<any[]>([]);
   const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
 
-  const { allActivities, loading: isModulesLoading } = useActivities();
-  const isLoading = isModulesLoading || isUserLoading;
+  const { allActivities, loading: isActivityLoading } = useActivities();
+  const isLoading = isActivityLoading || isUserLoading;
   useEffect(() => {
     if (isLoading || !allActivities || !currentUser) {
       setMatchedActivity([]);
