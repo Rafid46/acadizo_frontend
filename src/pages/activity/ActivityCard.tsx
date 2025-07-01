@@ -2,8 +2,9 @@
 import { BiDownload } from "react-icons/bi";
 import { CgMenuGridO } from "react-icons/cg";
 import { FaRegFileAlt } from "react-icons/fa";
-import { IoIosSearch } from "react-icons/io";
+import { IoIosSearch, IoMdTime } from "react-icons/io";
 import { IoBookSharp } from "react-icons/io5";
+import { GoDotFill } from "react-icons/go";
 import moment from "moment-timezone";
 import {
   Avatar,
@@ -15,30 +16,132 @@ import {
   theme,
   Tooltip,
 } from "antd";
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import empty from "../../assets/images/emptypng.png";
 import Loader from "../../common/Loader";
 import EditButtons from "../EditButtons";
 import Dragger from "antd/es/upload/Dragger";
 import { RiUploadCloudLine } from "react-icons/ri";
-import { EditorContent, useEditor } from "@tiptap/react";
-import TextStyle from "@tiptap/extension-text-style";
-import Color from "@tiptap/extension-color";
-import StarterKit from "@tiptap/starter-kit";
-import TextAlign from "@tiptap/extension-text-align";
-import Highlight from "@tiptap/extension-highlight";
-import Underline from "@tiptap/extension-underline";
-import Placeholder from "@tiptap/extension-placeholder";
+import { EditorContent } from "@tiptap/react";
+
 import { GrFormAttachment } from "react-icons/gr";
+import { FcOvertime } from "react-icons/fc";
 import { LucideUsersRound } from "lucide-react";
+import useTiptapEditor from "../../hooks/useTiptapEditor";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Toast from "../../common/Toast";
+import useAxios from "../../hooks/useAxios";
+import useCurrentUser from "../../hooks/useCurrentUser";
+import useAcademies from "../../hooks/useAcademies";
 const ActivityCard = ({ allActivities, loading }: any) => {
   const [open, setOpen] = useState(false);
   const [openAnswer, setOpenAnswer] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [form] = Form.useForm();
-  const editorRef = useRef<any>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { token } = theme.useToken();
+  const editor = useTiptapEditor();
+  const axiosPublic = useAxios();
+  const { data: currentUser } = useCurrentUser();
+  const { data: academyLists } = useAcademies();
+  const queryClient = useQueryClient();
+  // const editorRef = useRef<any>(null);
+  const { mutate: postAnswer, isLoading: isSubmitting }: any = useMutation({
+    mutationKey: ["postAnswer"],
+    mutationFn: async ({
+      answerData,
+      activityId,
+    }: {
+      answerData: any;
+      activityId: string;
+    }) => {
+      return await axiosPublic.post(
+        `/activity/${activityId}/answer`,
+        answerData
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allActivities"] });
+      const showNotification = Toast({
+        type: "success",
+        message: "Answer submitted successfully",
+        description: "Answer submitted successfully",
+      });
+      form.resetFields();
+      setSelectedFile(null);
+      showNotification();
+    },
+    onError: (error: any) => {
+      console.error("error posting", error);
+    },
+  });
+  const onFinish = () => {
+    const currentUserEmail = currentUser?.email;
+    const joinedAcademyDetails = academyLists?.find((item: any) =>
+      item?.academyMembers?.some(
+        (member: any) => member?.email === currentUserEmail
+      )
+    );
+
+    const activityId = selectedItem?.activityId;
+    const studentId = currentUser?.id;
+    const studentFirstName = currentUser?.firstName;
+    const studentLastName = currentUser?.lastName;
+    const academyId = joinedAcademyDetails?.academyId;
+    const academyName = joinedAcademyDetails?.academyName;
+
+    // Validation
+    if (!activityId) {
+      console.error("No activity id selected");
+      return;
+    }
+
+    if (!studentId) {
+      console.error("No student id found");
+      return;
+    }
+
+    if (!academyId) {
+      console.error("No academy found for current user");
+      return;
+    }
+    if (!studentFirstName || !studentLastName) {
+      console.error("No name found for current user");
+      return;
+    }
+
+    const answerDescription = editor?.getHTML() || "";
+
+    // Check if answer description is empty (excluding HTML tags)
+    const textContent = editor?.getText() || "";
+    if (!textContent.trim()) {
+      const showNotification = Toast({
+        type: "error",
+        message: "Please provide an answer",
+        description: "Answer description cannot be empty",
+      });
+      showNotification();
+      return;
+    }
+
+    const answerFormData = new FormData();
+    answerFormData.append("answerDescription", answerDescription);
+    answerFormData.append("academyId", academyId);
+    answerFormData.append("academyName", academyName);
+    answerFormData.append("studentId", studentId);
+    answerFormData.append("firstName", studentFirstName);
+    answerFormData.append("lastName", studentLastName);
+    if (selectedFile) {
+      answerFormData.append("file", selectedFile);
+    }
+
+    console.log("Submitting answer for activity:", selectedItem);
+    console.log("Activity ID:", activityId);
+
+    postAnswer({ answerData: answerFormData, activityId });
+  };
+
   const handleDownload = (fileUrl: any) => {
     const link = document.createElement("a");
     link.href = fileUrl;
@@ -47,42 +150,6 @@ const ActivityCard = ({ allActivities, loading }: any) => {
     link.click();
     document.body.removeChild(link);
   };
-  const editor = useEditor({
-    extensions: [
-      Placeholder.configure({
-        placeholder: "Write something...",
-      }),
-      Underline,
-      TextStyle,
-      Color,
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
-        bulletList: {
-          HTMLAttributes: {
-            class: "list-disc ml-3",
-          },
-        },
-        orderedList: {
-          HTMLAttributes: {
-            class: "list-decimal ml-3",
-          },
-        },
-      }),
-      TextAlign.configure({
-        types: ["heading", "paragraph"],
-      }),
-      Highlight.configure({ multicolor: true }),
-    ],
-    onCreate: ({ editor }) => {
-      editorRef.current = editor;
-    },
-    onUpdate: () => {
-      // No state updates here to prevent re-renders
-    },
-  });
-  const { token } = theme.useToken();
 
   return (
     <div className="">
@@ -135,16 +202,20 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                 >
                   <div className="">
                     <div className="flex items-center justify-between">
-                      <p className="text-[9px] font-semibold  bg-[#DDF6D2] py-[2px] px-[8px] rounded-full w-fit text-secondary-color mb-2">
-                        {activity?.createdAt &&
-                          moment(activity?.createdAt)
-                            .tz("Asia/Dhaka")
-                            .format("D MMMM YYYY . h:mm A")}
-                      </p>
+                      <div className="flex items-center gap-1 mb-2">
+                        <IoMdTime />
+                        <p className="text-[9px] font-semibold  bg-[#DDF6D2] py-[2px] px-[8px] rounded-full w-fit text-secondary-color">
+                          {activity?.createdAt &&
+                            moment(activity?.createdAt)
+                              .tz("Asia/Dhaka")
+                              .format("D MMMM YYYY . h:mm A")}
+                        </p>
+                      </div>
                       <div
                         onClick={(e: React.MouseEvent) => {
                           e.stopPropagation();
                           setOpenAnswer(true);
+                          setSelectedItem(activity);
                         }}
                       >
                         <Tooltip title="Submit your answer">
@@ -153,7 +224,8 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                       </div>
                     </div>
 
-                    <h2 className="text-xl font-bold">
+                    <h2 className="text-2xl font-bold flex items-center gap-2">
+                      <GoDotFill className="text-blue-500" />
                       {activity?.activityTitle}
                     </h2>
                     <h2 className="text-lg font-semibold">
@@ -269,33 +341,167 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                   </p>
                                 </p>
                                 <Avatar.Group>
-                                  <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
-                                  <a href="https://ant.design">
-                                    <Avatar
-                                      style={{ backgroundColor: "#f56a00" }}
-                                    >
-                                      K
-                                    </Avatar>
-                                  </a>
-                                  <Tooltip title="Ant User" placement="top">
-                                    <Avatar
-                                      style={{ backgroundColor: "#87d068" }}
-                                    />
+                                  <Tooltip
+                                    title={activity?.answers?.[0]?.studentId}
+                                    placement="top"
+                                  >
+                                    <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
                                   </Tooltip>
-                                  <Avatar
-                                    style={{ backgroundColor: "#1677ff" }}
-                                  />
                                 </Avatar.Group>
-                                <p className="text-[10px] font-semibold  bg-[#f1d1ef] py-[2px] px-[8px] rounded-full w-fit text-purple-600 mb-2">
-                                  4 responses
+                                <p className="text-[10px] font-semibold  bg-[#f1d1ef] py-[2px] px-[8px] rounded-full w-fit text-purple-600">
+                                  {activity?.answers?.length || 0} responses
                                 </p>
                               </div>
                               <Divider className="mt-2 border-blue-100 mb-0" />
                             </div>
                           ),
                           children: (
-                            <div>
-                              <p>This is content of panel 1</p>
+                            <div className="space-y-4">
+                              {activity.answers &&
+                              activity.answers.length > 0 ? (
+                                activity.answers.map(
+                                  (answer: any, index: number) => (
+                                    <div
+                                      key={index}
+                                      className="bg-white border-[1px] p-3 rounded-lg"
+                                    >
+                                      <div className="pb-3">
+                                        <div className="flex items-center justify-between">
+                                          <div className="flex items-center gap-3">
+                                            <div className="">
+                                              <Avatar src="/placeholder.svg?height=40&width=40" />
+                                            </div>
+                                            <div>
+                                              <h3 className="font-semibold text-slate-800">
+                                                {answer?.firstName}{" "}
+                                                {answer?.lastName}
+                                              </h3>
+                                              <p className="text-sm text-slate-500">
+                                                Student Response #{answer.id}
+                                              </p>
+                                            </div>
+                                          </div>
+                                          {/* <Badge
+                                            variant="outline"
+                                            className="text-xs"
+                                          >
+                                            Response {index + 1}
+                                          </Badge> */}
+                                        </div>
+                                      </div>
+                                      <div className="space-y-4">
+                                        {/* Answer Content */}
+                                        <div className="bg-slate-50 rounded-lg p-4 border-l-4 border-l-blue-500">
+                                          <div
+                                            className="prose prose-sm break-words"
+                                            dangerouslySetInnerHTML={{
+                                              __html:
+                                                answer?.answerDescription ||
+                                                "<p>Description is empty</p>",
+                                            }}
+                                          />
+                                        </div>
+
+                                        {/* Submission Time */}
+                                        {/* <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+                                          <div className="flex items-center gap-2 text-sm text-slate-500">
+                                            <Clock className="w-4 h-4" />
+                                            <span>
+                                              Submitted at: {answer.submittedAt}
+                                            </span>
+                                          </div>
+                                          <div className="flex gap-2">
+                                            <Button
+                                              size="sm"
+                                              variant="outline"
+                                              className="text-xs bg-transparent"
+                                            >
+                                              Grade
+                                            </Button>
+                                            <Button
+                                              size="sm"
+                                              variant="outline"
+                                              className="text-xs bg-transparent"
+                                            >
+                                              Feedback
+                                            </Button>
+                                          </div>
+                                        </div> */}
+                                      </div>
+
+                                      {!answer?.file ? (
+                                        <div className="text-md text-gray-400 mt-2 italic flex items-center">
+                                          <GrFormAttachment className="text-2xl" />
+                                          No attachments
+                                        </div>
+                                      ) : (
+                                        <div className="!w-full">
+                                          {answer?.file && (
+                                            <a
+                                              onClick={(e) =>
+                                                e.stopPropagation()
+                                              }
+                                              href={`http://localhost:3000/file/${answer?.file}`}
+                                              target="_blank"
+                                              rel="noopener noreferrer"
+                                              download
+                                            >
+                                              <div className="flex flex-col gap-2 w-full text-[10px] sm:text-xs z-50 mt-3">
+                                                <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#292b33] px-[10px]">
+                                                  <div className="flex gap-2">
+                                                    <div className="text-primary-color text-3xl">
+                                                      <FaRegFileAlt />
+                                                    </div>
+
+                                                    <div>
+                                                      <p className="text-white">
+                                                        {answer?.file?.length >=
+                                                        15
+                                                          ? `${answer?.file?.substring(
+                                                              0,
+                                                              15
+                                                            )}...`
+                                                          : answer?.file}
+                                                      </p>
+                                                      <p className="text-gray-500">
+                                                        Attachment
+                                                      </p>
+                                                    </div>
+                                                  </div>
+                                                  <button
+                                                    onClick={() =>
+                                                      handleDownload(
+                                                        answer?.file
+                                                      )
+                                                    }
+                                                    className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
+                                                  >
+                                                    <BiDownload />
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            </a>
+                                          )}
+                                        </div>
+                                      )}
+                                      <div className="flex items-center gap-2 mt-2">
+                                        <FcOvertime />
+                                        <p className="text-[10px] text-gray-500 mt-1">
+                                          {" "}
+                                          Submitted at:{" "}
+                                          {moment(answer?.createdAt)
+                                            .tz("Asia/Dhaka")
+                                            .format("D MMM YYYY, h:mm A")}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  )
+                                )
+                              ) : (
+                                <p className="text-gray-400 italic">
+                                  No answers submitted yet.
+                                </p>
+                              )}
                             </div>
                           ),
                         },
@@ -306,7 +512,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
               ))}
               <Modal
                 footer={null}
-                title="Submit your answer"
+                title={`Submit your answer - ${selectedItem?.activityTitle}`}
                 centered
                 open={openAnswer}
                 onOk={() => setOpenAnswer(false)}
@@ -318,7 +524,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                     hideRequiredMark
                     form={form}
                     encType="multipart/form-data"
-                    // onFinish={onFinish}
+                    onFinish={onFinish}
                   >
                     <Form.Item
                       // name="activityDescription"
@@ -380,11 +586,14 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                           Cancel
                         </Button>
                         <Button
+                          htmlType="submit"
                           onClick={() => setOpenAnswer(false)}
                           type="primary"
                           className="custom_button_style"
+                          loading={isSubmitting}
+                          disabled={isSubmitting}
                         >
-                          Submit
+                          {isSubmitting ? "Submitting..." : "Submit Answer"}
                         </Button>
                       </div>
                     </Form.Item>

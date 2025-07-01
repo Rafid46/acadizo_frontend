@@ -14,14 +14,7 @@ import {
 import { FaPlus } from "react-icons/fa";
 import { RiContactsBookUploadFill, RiUploadCloudLine } from "react-icons/ri";
 import { useRef, useState } from "react";
-import { EditorContent, useEditor } from "@tiptap/react";
-import TextStyle from "@tiptap/extension-text-style";
-import Color from "@tiptap/extension-color";
-import StarterKit from "@tiptap/starter-kit";
-import TextAlign from "@tiptap/extension-text-align";
-import Highlight from "@tiptap/extension-highlight";
-import Underline from "@tiptap/extension-underline";
-import Placeholder from "@tiptap/extension-placeholder";
+import { EditorContent } from "@tiptap/react";
 import EditButtons from "../EditButtons";
 import Dragger from "antd/es/upload/Dragger";
 import useAxios from "../../hooks/useAxios";
@@ -32,6 +25,7 @@ import Toast from "../../common/Toast";
 import ActivityCard from "./ActivityCard";
 import useCurrentActivities from "../../hooks/useCurrentAcitivies";
 import { BookOpen } from "lucide-react";
+import useTiptapEditor from "../../hooks/useTiptapEditor";
 
 const ActivityPage = () => {
   const { RangePicker } = DatePicker;
@@ -53,41 +47,7 @@ const ActivityPage = () => {
     setOpen(false);
   };
 
-  const editor = useEditor({
-    extensions: [
-      Placeholder.configure({
-        placeholder: "Write something...",
-      }),
-      Underline,
-      TextStyle,
-      Color,
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
-        bulletList: {
-          HTMLAttributes: {
-            class: "list-disc ml-3",
-          },
-        },
-        orderedList: {
-          HTMLAttributes: {
-            class: "list-decimal ml-3",
-          },
-        },
-      }),
-      TextAlign.configure({
-        types: ["heading", "paragraph"],
-      }),
-      Highlight.configure({ multicolor: true }),
-    ],
-    onCreate: ({ editor }) => {
-      editorRef.current = editor;
-    },
-    onUpdate: () => {
-      // No state updates here to prevent re-renders
-    },
-  });
+  const editor = useTiptapEditor();
 
   const { mutate: postModule, isLoading }: any = useMutation({
     mutationKey: ["postActivity"],
