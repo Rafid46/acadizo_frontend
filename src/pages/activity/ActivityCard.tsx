@@ -76,68 +76,99 @@ const ActivityCard = ({ allActivities, loading }: any) => {
       console.error("error posting", error);
     },
   });
+  // const onFinish = () => {
+  //   const currentUserEmail = currentUser?.email;
+  //   const joinedAcademyDetails = academyLists?.find((item: any) =>
+  //     item?.academyMembers?.some(
+  //       (member: any) => member?.email === currentUserEmail
+  //     )
+  //   );
+
+  //   const activityId = selectedItem?.activityId;
+  //   const studentId = currentUser?.id;
+  //   const studentFirstName = currentUser?.firstName;
+  //   const studentLastName = currentUser?.lastName;
+  //   const studentEmail = currentUser?.email;
+  //   const academyId = joinedAcademyDetails?.academyId;
+  //   const academyName = joinedAcademyDetails?.academyName;
+
+  //   // Validation
+  //   if (!activityId) {
+  //     console.error("No activity id selected");
+  //     return;
+  //   }
+
+  //   if (!studentId) {
+  //     console.error("No student id found");
+  //     return;
+  //   }
+
+  //   if (!academyId) {
+  //     console.error("No academy found for current user");
+  //     return;
+  //   }
+  //   if (!studentFirstName || !studentLastName || !studentEmail) {
+  //     console.error("No name found for current user");
+  //     return;
+  //   }
+
+  //   const answerDescription = editor?.getHTML() || "";
+
+  //   // Check if answer description is empty (excluding HTML tags)
+  //   const textContent = editor?.getText() || "";
+  //   if (!textContent.trim()) {
+  //     const showNotification = Toast({
+  //       type: "error",
+  //       message: "Please provide an answer",
+  //       description: "Answer description cannot be empty",
+  //     });
+  //     showNotification();
+  //     return;
+  //   }
+
+  //   const answerFormData = new FormData();
+  //   answerFormData.append("answerDescription", answerDescription);
+  //   answerFormData.append("academyId", academyId);
+  //   answerFormData.append("academyName", academyName);
+  //   answerFormData.append("studentId", studentId);
+  //   answerFormData.append("firstName", studentFirstName);
+  //   answerFormData.append("lastName", studentLastName);
+  //   answerFormData.append("studentEmail", studentEmail);
+
+  //   if (selectedFile) {
+  //     answerFormData.append("file", selectedFile);
+  //   }
+
+  //   console.log("Submitting answer for activity:", selectedItem);
+  //   console.log("Activity ID:", activityId);
+
+  //   postAnswer({ answerData: answerFormData, activityId });
+  // };
   const onFinish = () => {
+    const student = {
+      firstName: currentUser?.firstName,
+      lastName: currentUser?.lastName,
+      email: currentUser?.email,
+      photoURL: currentUser?.photoURL,
+      id: currentUser?.id,
+    };
     const currentUserEmail = currentUser?.email;
     const joinedAcademyDetails = academyLists?.find((item: any) =>
       item?.academyMembers?.some(
         (member: any) => member?.email === currentUserEmail
       )
     );
-
     const activityId = selectedItem?.activityId;
-    const studentId = currentUser?.id;
-    const studentFirstName = currentUser?.firstName;
-    const studentLastName = currentUser?.lastName;
     const academyId = joinedAcademyDetails?.academyId;
     const academyName = joinedAcademyDetails?.academyName;
-
-    // Validation
-    if (!activityId) {
-      console.error("No activity id selected");
-      return;
-    }
-
-    if (!studentId) {
-      console.error("No student id found");
-      return;
-    }
-
-    if (!academyId) {
-      console.error("No academy found for current user");
-      return;
-    }
-    if (!studentFirstName || !studentLastName) {
-      console.error("No name found for current user");
-      return;
-    }
-
-    const answerDescription = editor?.getHTML() || "";
-
-    // Check if answer description is empty (excluding HTML tags)
-    const textContent = editor?.getText() || "";
-    if (!textContent.trim()) {
-      const showNotification = Toast({
-        type: "error",
-        message: "Please provide an answer",
-        description: "Answer description cannot be empty",
-      });
-      showNotification();
-      return;
-    }
-
     const answerFormData = new FormData();
-    answerFormData.append("answerDescription", answerDescription);
+    answerFormData.append("answerDescription", editor?.getHTML() || "");
     answerFormData.append("academyId", academyId);
     answerFormData.append("academyName", academyName);
-    answerFormData.append("studentId", studentId);
-    answerFormData.append("firstName", studentFirstName);
-    answerFormData.append("lastName", studentLastName);
+    answerFormData.append("student", JSON.stringify(student)); // send full user
     if (selectedFile) {
       answerFormData.append("file", selectedFile);
     }
-
-    console.log("Submitting answer for activity:", selectedItem);
-    console.log("Activity ID:", activityId);
 
     postAnswer({ answerData: answerFormData, activityId });
   };
@@ -158,9 +189,9 @@ const ActivityCard = ({ allActivities, loading }: any) => {
           .ant-btn-variant-solid{
               background-color: #7ABA78 !important;
         }
-              .ant-collapse {
+          .ant-collapse {
               background: #F9FAFB !important;
-              }
+        }
         `}
       </style>
       <>
@@ -345,11 +376,14 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                     title={activity?.answers?.[0]?.studentId}
                                     placement="top"
                                   >
-                                    <Avatar src="https://api.dicebear.com/7.x/miniavs/svg?seed=1" />
+                                    <Avatar
+                                      src={activity?.answers?.[0]?.photoUrl}
+                                    />
                                   </Tooltip>
                                 </Avatar.Group>
                                 <p className="text-[10px] font-semibold  bg-[#f1d1ef] py-[2px] px-[8px] rounded-full w-fit text-purple-600">
-                                  {activity?.answers?.length || 0} responses
+                                  {activity?.answers?.student?.length || 0}{" "}
+                                  responses
                                 </p>
                               </div>
                               <Divider className="mt-2 border-blue-100 mb-0" />
@@ -357,8 +391,8 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                           ),
                           children: (
                             <div className="space-y-4">
-                              {activity.answers &&
-                              activity.answers.length > 0 ? (
+                              {activity?.answers &&
+                              activity?.answers.length > 0 ? (
                                 activity.answers.map(
                                   (answer: any, index: number) => (
                                     <div
@@ -368,80 +402,51 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                       <div className="pb-3">
                                         <div className="flex items-center justify-between">
                                           <div className="flex items-center gap-3">
-                                            <div className="">
-                                              <Avatar src="/placeholder.svg?height=40&width=40" />
-                                            </div>
+                                            <Avatar
+                                              src={answer?.student?.photoURL}
+                                            />
                                             <div>
-                                              <h3 className="font-semibold text-slate-800">
-                                                {answer?.firstName}{" "}
-                                                {answer?.lastName}
+                                              <h3 className="font-semibold text-md text-slate-800">
+                                                {answer?.student?.firstName}{" "}
+                                                {answer?.student?.lastName}
+                                                {
+                                                  answer?.student?.academyName
+                                                }{" "}
+                                                {answer?.student?.gender}
                                               </h3>
-                                              <p className="text-sm text-slate-500">
-                                                Student Response #{answer.id}
+                                              <p className="text-[11px] text-slate-500">
+                                                {answer?.student?.email}
                                               </p>
                                             </div>
                                           </div>
-                                          {/* <Badge
-                                            variant="outline"
-                                            className="text-xs"
-                                          >
-                                            Response {index + 1}
-                                          </Badge> */}
                                         </div>
                                       </div>
                                       <div className="space-y-4">
                                         {/* Answer Content */}
-                                        <div className="bg-slate-50 rounded-lg p-4 border-l-4 border-l-blue-500">
+                                        <div className="bg-slate-100 rounded-lg p-4 border-l-4 border-l-blue-500">
                                           <div
                                             className="prose prose-sm break-words"
                                             dangerouslySetInnerHTML={{
                                               __html:
                                                 answer?.answerDescription ||
-                                                "<p>Description is empty</p>",
+                                                "<p>No description provided</p>",
                                             }}
                                           />
                                         </div>
 
-                                        {/* Submission Time */}
-                                        {/* <div className="flex items-center justify-between pt-2 border-t border-slate-100">
-                                          <div className="flex items-center gap-2 text-sm text-slate-500">
-                                            <Clock className="w-4 h-4" />
-                                            <span>
-                                              Submitted at: {answer.submittedAt}
-                                            </span>
+                                        {/* Attachments */}
+                                        {!answer?.student?.file ? (
+                                          <div className="text-md text-gray-400 mt-2 italic flex items-center">
+                                            <GrFormAttachment className="text-2xl" />
+                                            No attachments
                                           </div>
-                                          <div className="flex gap-2">
-                                            <Button
-                                              size="sm"
-                                              variant="outline"
-                                              className="text-xs bg-transparent"
-                                            >
-                                              Grade
-                                            </Button>
-                                            <Button
-                                              size="sm"
-                                              variant="outline"
-                                              className="text-xs bg-transparent"
-                                            >
-                                              Feedback
-                                            </Button>
-                                          </div>
-                                        </div> */}
-                                      </div>
-
-                                      {!answer?.file ? (
-                                        <div className="text-md text-gray-400 mt-2 italic flex items-center">
-                                          <GrFormAttachment className="text-2xl" />
-                                          No attachments
-                                        </div>
-                                      ) : (
-                                        <div className="!w-full">
-                                          {answer?.file && (
+                                        ) : (
+                                          <div className="!w-full">
                                             <a
                                               onClick={(e) =>
                                                 e.stopPropagation()
                                               }
-                                              href={`http://localhost:3000/file/${answer?.file}`}
+                                              href={`http://localhost:3000/file/${answer?.student?.file}`}
                                               target="_blank"
                                               rel="noopener noreferrer"
                                               download
@@ -455,13 +460,14 @@ const ActivityCard = ({ allActivities, loading }: any) => {
 
                                                     <div>
                                                       <p className="text-white">
-                                                        {answer?.file?.length >=
-                                                        15
-                                                          ? `${answer?.file?.substring(
+                                                        {answer?.student?.file
+                                                          ?.length >= 15
+                                                          ? `${answer?.student?.file?.substring(
                                                               0,
                                                               15
                                                             )}...`
-                                                          : answer?.file}
+                                                          : answer?.student
+                                                              ?.file}
                                                       </p>
                                                       <p className="text-gray-500">
                                                         Attachment
@@ -471,7 +477,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                                   <button
                                                     onClick={() =>
                                                       handleDownload(
-                                                        answer?.file
+                                                        answer?.student?.file
                                                       )
                                                     }
                                                     className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
@@ -481,18 +487,17 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                                 </div>
                                               </div>
                                             </a>
-                                          )}
+                                          </div>
+                                        )}
+                                        <div className="flex items-center gap-2 mt-2">
+                                          <FcOvertime />
+                                          <p className="text-[10px] text-gray-500 mt-1">
+                                            Submitted at:{" "}
+                                            {moment(answer?.student?.createdAt)
+                                              .tz("Asia/Dhaka")
+                                              .format("D MMM YYYY, h:mm A")}
+                                          </p>
                                         </div>
-                                      )}
-                                      <div className="flex items-center gap-2 mt-2">
-                                        <FcOvertime />
-                                        <p className="text-[10px] text-gray-500 mt-1">
-                                          {" "}
-                                          Submitted at:{" "}
-                                          {moment(answer?.createdAt)
-                                            .tz("Asia/Dhaka")
-                                            .format("D MMM YYYY, h:mm A")}
-                                        </p>
                                       </div>
                                     </div>
                                   )
