@@ -172,6 +172,7 @@
   color: #858585;
   pointer-events: none;
   height: 0;
+  content: "Write something...";
 }
 
 .editButton {

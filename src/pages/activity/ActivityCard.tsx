@@ -1,18 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { BiDownload } from "react-icons/bi";
+import { BiDownload, BiEdit } from "react-icons/bi";
 import { CgMenuGridO } from "react-icons/cg";
 import { FaRegFileAlt } from "react-icons/fa";
 import { IoIosSearch, IoMdTime } from "react-icons/io";
 import { IoBookSharp } from "react-icons/io5";
-import { GoDotFill } from "react-icons/go";
+import { motion, AnimatePresence } from "framer-motion";
 import moment from "moment-timezone";
 import {
   Avatar,
+  Badge,
   Button,
   Collapse,
   Divider,
+  Dropdown,
   Form,
   Modal,
+  Space,
   theme,
   Tooltip,
 } from "antd";
@@ -27,13 +30,15 @@ import { EditorContent } from "@tiptap/react";
 
 import { GrFormAttachment } from "react-icons/gr";
 import { FcOvertime } from "react-icons/fc";
-import { LucideUsersRound } from "lucide-react";
+import { LucideUsersRound, Users } from "lucide-react";
 import useTiptapEditor from "../../hooks/useTiptapEditor";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Toast from "../../common/Toast";
 import useAxios from "../../hooks/useAxios";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import useAcademies from "../../hooks/useAcademies";
+import { MdDeleteOutline, MdOutlineMail } from "react-icons/md";
+import { SlOptionsVertical } from "react-icons/sl";
 const ActivityCard = ({ allActivities, loading }: any) => {
   const [open, setOpen] = useState(false);
   const [openAnswer, setOpenAnswer] = useState(false);
@@ -182,6 +187,32 @@ const ActivityCard = ({ allActivities, loading }: any) => {
     document.body.removeChild(link);
   };
 
+  const deleteModule = useMutation({
+    mutationKey: ["deleteActivity"],
+    mutationFn: (activityId: string) => {
+      return axiosPublic.delete(`/activity/${activityId}/delete`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["allActivities"] });
+      Toast({
+        type: "success",
+        message: "Activity deleted successfully",
+        description: "Activity deleted successfully",
+      });
+    },
+    onError: (error: any) => {
+      console.error("Error deleting activity:", error);
+      Toast({
+        type: "error",
+        message: "Failed to delete activity",
+        description: "An error occurred while deleting the activity.",
+      });
+    },
+  });
+
+  const handleDeleteActivity = (activityId: string) => {
+    deleteModule.mutate(activityId);
+  };
   return (
     <div className="">
       <style>
@@ -222,123 +253,171 @@ const ActivityCard = ({ allActivities, loading }: any) => {
               </div>
             </div>
 
+            {/* card */}
             <div className="bg-gray-50 rounded-2xl px-5 pt-5 pb-2 mt-4">
-              {allActivities?.map((activity: any) => (
-                <div
-                  onClick={() => {
-                    setOpen(true);
-                    setSelectedItem(activity);
-                  }}
-                  className="group w-full border-slate-200 border bg-white  rounded-xl overflow-hidden px-6 py-6 gap-y-4 mb-4 cursor-pointer transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
-                >
-                  <div className="">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1 mb-2">
-                        <IoMdTime />
-                        <p className="text-[9px] font-semibold  bg-[#DDF6D2] py-[2px] px-[8px] rounded-full w-fit text-secondary-color">
-                          {activity?.createdAt &&
-                            moment(activity?.createdAt)
-                              .tz("Asia/Dhaka")
-                              .format("D MMMM YYYY . h:mm A")}
+              <AnimatePresence>
+                {allActivities?.map((activity: any, index: number) => (
+                  // main card
+                  <motion.div
+                    key={activity?.activityId}
+                    initial={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9, y: -20 }}
+                    transition={{ duration: 0.3 }}
+                    className=""
+                  >
+                    <div
+                      onClick={() => {
+                        setOpen(true);
+                        setSelectedItem(activity);
+                      }}
+                      className="group w-full border-slate-400 border bg-white  rounded-xl overflow-hidden px-6 py-6 gap-y-4 mb-4 cursor-pointer transition-all duration-300 transform"
+                    >
+                      <div className="">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1 mb-2">
+                            <IoMdTime />
+                            <p className="text-[9px] font-semibold  bg-[#DDF6D2] py-[2px] px-[8px] rounded-full w-fit text-secondary-color">
+                              {activity?.createdAt &&
+                                moment(activity?.createdAt)
+                                  .tz("Asia/Dhaka")
+                                  .format("D MMMM YYYY . h:mm A")}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <div
+                              onClick={(e: React.MouseEvent) => {
+                                e.stopPropagation();
+                                setOpenAnswer(true);
+                                setSelectedItem(activity);
+                              }}
+                            >
+                              <Tooltip title="Submit your answer">
+                                <IoBookSharp className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-4xl p-2 hover:bg-lime-200 rounded-full m-1" />
+                              </Tooltip>
+                            </div>
+                            {currentUser?.role === "teacher" && (
+                              <Dropdown
+                                className="p-0"
+                                destroyPopupOnHide={false}
+                                trigger={["click", "hover"]}
+                                menu={{
+                                  items: [
+                                    {
+                                      key: "1",
+                                      label: "Edit",
+                                      icon: <BiEdit className="!text-xl" />,
+                                      onClick: (e) => {
+                                        e.domEvent.stopPropagation();
+                                        // setTimeout(() => showEditDrawer(module), 0);
+                                      },
+                                    },
+                                    {
+                                      key: "2",
+                                      label: <span>Delete</span>,
+                                      icon: (
+                                        <MdDeleteOutline className="!text-xl" />
+                                      ),
+                                      onClick: (e) => {
+                                        {
+                                          e.domEvent.stopPropagation();
+                                          handleDeleteActivity(
+                                            activity?.activityId
+                                          );
+                                        }
+                                        // setTimeout(() => showEditDrawer(module), 0);
+                                      },
+                                    },
+                                  ],
+                                }}
+                                arrow={{ pointAtCenter: true }}
+                              >
+                                <Button
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="custom_button_style_icon"
+                                >
+                                  <Space>
+                                    <SlOptionsVertical className="!text-lg" />
+                                  </Space>
+                                </Button>
+                              </Dropdown>
+                            )}
+                          </div>
+                        </div>
+
+                        <h2 className="text-2xl font-bold flex items-center gap-2">
+                          {/* <GoDotFill className="text-blue-500" /> */}
+                          <p className="bg-blue-500 rounded-full p-1 text-white text-xs w-6 h-6 flex items-center justify-center">
+                            {index + 1}
+                          </p>
+                          {activity?.activityTitle}
+                        </h2>
+
+                        <p className="text-sm text-zinc-900">
+                          {activity?.createdBy}
                         </p>
                       </div>
-                      <div
-                        onClick={(e: React.MouseEvent) => {
-                          e.stopPropagation();
-                          setOpenAnswer(true);
-                          setSelectedItem(activity);
-                        }}
-                      >
-                        <Tooltip title="Submit your answer">
-                          <IoBookSharp className="hidden group-hover:block fill-current stroke-current text-4xl p-2 hover:bg-lime-200  rounded-full m-1" />
-                        </Tooltip>
-                      </div>
-                    </div>
 
-                    <h2 className="text-2xl font-bold flex items-center gap-2">
-                      <GoDotFill className="text-blue-500" />
-                      {activity?.activityTitle}
-                    </h2>
-                    <h2 className="text-lg font-semibold">
-                      <p>
-                        {activity.activityDate && (
-                          <p>
-                            {activity.activityDate
-                              .split(",")
-                              .map((date: any) =>
-                                date.split(" ").slice(0, 4).join(" ")
-                              )
-                              .join(" -- ")}
-                          </p>
-                        )}
-                      </p>
-                    </h2>
-                    <p className="text-sm text-zinc-900">
-                      {activity?.createdBy}
-                    </p>
-                  </div>
+                      <div className="">
+                        <div className="text-sm text-gray-500 flex flex-col">
+                          <div
+                            className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full"
+                            dangerouslySetInnerHTML={{
+                              __html: activity?.activityDescription || "",
+                            }}
+                          ></div>
 
-                  <div className="">
-                    <div className="text-sm text-gray-500 flex flex-col">
-                      <div
-                        className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full"
-                        dangerouslySetInnerHTML={{
-                          __html: activity?.activityDescription || "",
-                        }}
-                      ></div>
+                          {!activity?.file ? (
+                            <div className="text-md text-gray-400 mt-2 italic flex items-center gap-2">
+                              <GrFormAttachment className="text-2xl" />
+                              No attachments
+                            </div>
+                          ) : (
+                            <div className="w-fit">
+                              {activity?.file && (
+                                <a
+                                  onClick={(e) => e.stopPropagation()}
+                                  href={`http://localhost:3000/file/${activity?.file}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  download
+                                >
+                                  <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50 mt-3">
+                                    <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]">
+                                      <div className="flex gap-2">
+                                        <div className="text-primary-color text-3xl">
+                                          <FaRegFileAlt />
+                                        </div>
 
-                      {!activity?.file ? (
-                        <div className="text-md text-gray-400 mt-2 italic flex items-center gap-2">
-                          <GrFormAttachment className="text-2xl" />
-                          No attachments
-                        </div>
-                      ) : (
-                        <div className="w-fit">
-                          {activity?.file && (
-                            <a
-                              onClick={(e) => e.stopPropagation()}
-                              href={`http://localhost:3000/file/${activity?.file}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              download
-                            >
-                              <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50 mt-3">
-                                <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]">
-                                  <div className="flex gap-2">
-                                    <div className="text-primary-color text-3xl">
-                                      <FaRegFileAlt />
-                                    </div>
-
-                                    <div>
-                                      <p className="text-white">
-                                        {activity?.file?.length >= 15
-                                          ? `${activity?.file?.substring(
-                                              0,
-                                              15
-                                            )}...`
-                                          : activity?.file}
-                                      </p>
-                                      <p className="text-gray-500">
-                                        Attachment
-                                      </p>
+                                        <div>
+                                          <p className="text-white">
+                                            {activity?.file?.length >= 15
+                                              ? `${activity?.file?.substring(
+                                                  0,
+                                                  15
+                                                )}...`
+                                              : activity?.file}
+                                          </p>
+                                          <p className="text-gray-500">
+                                            Attachment
+                                          </p>
+                                        </div>
+                                      </div>
+                                      <button
+                                        onClick={() =>
+                                          handleDownload(activity?.file)
+                                        }
+                                        className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
+                                      >
+                                        <BiDownload />
+                                      </button>
                                     </div>
                                   </div>
-                                  <button
-                                    onClick={() =>
-                                      handleDownload(activity?.file)
-                                    }
-                                    className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
-                                  >
-                                    <BiDownload />
-                                  </button>
-                                </div>
-                              </div>
-                            </a>
+                                </a>
+                              )}
+                            </div>
                           )}
                         </div>
-                      )}
-                    </div>
-                    {/* <div className="flex  justify-start gap-x-4 text-sm text-zinc-400 mt-5">
+                        {/* <div className="flex  justify-start gap-x-4 text-sm text-zinc-400 mt-5">
                       <div className="flex items-center space-x-1 cursor-pointer">
                         ❤️ <span>22</span>
                       </div>
@@ -349,172 +428,355 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                         👁️ <span>332</span>
                       </div>
                     </div> */}
-                  </div>
-                  <div className="mt-3" onClick={(e) => e.stopPropagation()}>
-                    <Collapse
-                      bordered={false}
-                      // expandIcon={({ isActive }) => (
-                      //   <CaretRightOutlined rotate={isActive ? 90 : 0} />
-                      // )}
-                      style={{ background: token.colorBgContainer }}
-                      defaultActiveKey={["1"]}
-                      items={[
-                        {
-                          key: "1",
-                          label: (
-                            <div className="-mt-[5px]">
-                              <div className="flex items-center gap-x-2">
-                                <p className="text-gray-600 flex items-center gap-x-2">
-                                  <LucideUsersRound width={18} />
-                                  <p className="font-semibold text-sm">
-                                    {" "}
-                                    Students answer
-                                  </p>
-                                </p>
-                                <Avatar.Group>
-                                  <Tooltip
-                                    title={activity?.answers?.[0]?.studentId}
-                                    placement="top"
-                                  >
-                                    <Avatar
-                                      src={activity?.answers?.[0]?.photoUrl}
-                                    />
-                                  </Tooltip>
-                                </Avatar.Group>
-                                <p className="text-[10px] font-semibold  bg-[#f1d1ef] py-[2px] px-[8px] rounded-full w-fit text-purple-600">
-                                  {activity?.answers?.student?.length || 0}{" "}
-                                  responses
-                                </p>
-                              </div>
-                              <Divider className="mt-2 border-blue-100 mb-0" />
-                            </div>
-                          ),
-                          children: (
-                            <div className="space-y-4">
-                              {activity?.answers &&
-                              activity?.answers.length > 0 ? (
-                                activity.answers.map(
-                                  (answer: any, index: number) => (
-                                    <div
-                                      key={index}
-                                      className="bg-white border-[1px] p-3 rounded-lg"
-                                    >
-                                      <div className="pb-3">
-                                        <div className="flex items-center justify-between">
-                                          <div className="flex items-center gap-3">
+                      </div>
+                      <div
+                        className="mt-3"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Collapse
+                          bordered={false}
+                          // expandIcon={({ isActive }) => (
+                          //   <CaretRightOutlined rotate={isActive ? 90 : 0} />
+                          // )}
+                          style={{ background: token.colorBgContainer }}
+                          defaultActiveKey={["1"]}
+                          items={[
+                            {
+                              key: "1",
+                              label: (
+                                <div className="-mt-[5px]">
+                                  <div className="flex items-center gap-x-2">
+                                    <p className="text-gray-600 flex items-center gap-x-2">
+                                      <LucideUsersRound width={18} />
+                                      <p className="font-semibold text-sm">
+                                        {" "}
+                                        Students answer
+                                      </p>
+                                    </p>
+                                    <Avatar.Group maxCount={5}>
+                                      {activity?.answers?.map(
+                                        (answer: any, index: number) => (
+                                          <Tooltip
+                                            key={answer?.student?.id || index}
+                                            title={`${answer?.student?.firstName} ${answer?.student?.lastName}`}
+                                          >
                                             <Avatar
-                                              src={answer?.student?.photoURL}
-                                            />
-                                            <div>
-                                              <h3 className="font-semibold text-md text-slate-800">
-                                                {answer?.student?.firstName}{" "}
-                                                {answer?.student?.lastName}
-                                                {
-                                                  answer?.student?.academyName
-                                                }{" "}
-                                                {answer?.student?.gender}
-                                              </h3>
-                                              <p className="text-[11px] text-slate-500">
-                                                {answer?.student?.email}
-                                              </p>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div className="space-y-4">
-                                        {/* Answer Content */}
-                                        <div className="bg-slate-100 rounded-lg p-4 border-l-4 border-l-blue-500">
-                                          <div
-                                            className="prose prose-sm break-words"
-                                            dangerouslySetInnerHTML={{
-                                              __html:
-                                                answer?.answerDescription ||
-                                                "<p>No description provided</p>",
-                                            }}
-                                          />
-                                        </div>
-
-                                        {/* Attachments */}
-                                        {!answer?.student?.file ? (
-                                          <div className="text-md text-gray-400 mt-2 italic flex items-center">
-                                            <GrFormAttachment className="text-2xl" />
-                                            No attachments
-                                          </div>
-                                        ) : (
-                                          <div className="!w-full">
-                                            <a
-                                              onClick={(e) =>
-                                                e.stopPropagation()
+                                              src={
+                                                answer?.student?.photoURL ||
+                                                "/placeholder.svg"
                                               }
-                                              href={`http://localhost:3000/file/${answer?.student?.file}`}
-                                              target="_blank"
-                                              rel="noopener noreferrer"
-                                              download
-                                            >
-                                              <div className="flex flex-col gap-2 w-full text-[10px] sm:text-xs z-50 mt-3">
-                                                <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#292b33] px-[10px]">
-                                                  <div className="flex gap-2">
-                                                    <div className="text-primary-color text-3xl">
-                                                      <FaRegFileAlt />
+                                            />
+                                          </Tooltip>
+                                        )
+                                      )}
+                                    </Avatar.Group>
+                                    <p className="text-[10px] font-semibold bg-[#f1d1ef] py-[2px] px-[8px] rounded-full w-fit text-purple-600">
+                                      {activity?.answers?.length || 0}
+                                      <span className="ml-1">responses</span>
+                                    </p>
+                                  </div>
+                                  <Divider className="mt-2 border-blue-100 mb-0" />
+                                </div>
+                              ),
+                              children: (
+                                <div className="space-y-4">
+                                  {currentUser?.role === "student" ||
+                                  activity?.answers?.student?.id ===
+                                    currentUser?.id ? (
+                                    <>
+                                      {activity?.answers &&
+                                      activity?.answers.length > 0 ? (
+                                        activity.answers
+                                          ?.filter(
+                                            (ans: any) =>
+                                              currentUser?.role === "student" &&
+                                              ans?.student?.id ===
+                                                currentUser?.id
+                                          )
+                                          ?.map(
+                                            (answer: any, index: number) => (
+                                              <div
+                                                key={index}
+                                                className="bg-white border-[1px] p-3 rounded-lg"
+                                              >
+                                                <div className="pb-3">
+                                                  <div className="flex items-center justify-between">
+                                                    <div className="flex items-center gap-3">
+                                                      <Avatar
+                                                        size={40}
+                                                        src={
+                                                          answer?.student
+                                                            ?.photoURL
+                                                        }
+                                                      />
+                                                      <div>
+                                                        <h3 className="font-semibold text-md text-slate-800 leading-[13px]">
+                                                          {
+                                                            answer?.student
+                                                              ?.firstName
+                                                          }{" "}
+                                                          {
+                                                            answer?.student
+                                                              ?.lastName
+                                                          }
+                                                          {
+                                                            answer?.student
+                                                              ?.academyName
+                                                          }{" "}
+                                                          {
+                                                            answer?.student
+                                                              ?.gender
+                                                          }
+                                                        </h3>
+                                                        <p className="text-[11px] text-slate-500">
+                                                          {
+                                                            answer?.student
+                                                              ?.email
+                                                          }
+                                                        </p>
+                                                      </div>
                                                     </div>
+                                                  </div>
+                                                </div>
+                                                <div className="space-y-4">
+                                                  {/* Answer Content */}
+                                                  <div className="bg-slate-100 rounded-lg p-4 border-l-4 border-l-blue-500">
+                                                    <div
+                                                      className="prose prose-sm break-words"
+                                                      dangerouslySetInnerHTML={{
+                                                        __html:
+                                                          answer?.answerDescription ||
+                                                          "<p>No description provided</p>",
+                                                      }}
+                                                    />
+                                                  </div>
 
+                                                  {/* Attachments */}
+                                                  {!answer?.file ? (
+                                                    <div className="text-md text-gray-400 mt-2 italic flex items-center">
+                                                      <GrFormAttachment className="text-2xl" />
+                                                      No attachments
+                                                    </div>
+                                                  ) : (
+                                                    <div className="!w-full">
+                                                      <a
+                                                        onClick={(e) =>
+                                                          e.stopPropagation()
+                                                        }
+                                                        href={`http://localhost:3000/file/${answer?.file}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        download
+                                                      >
+                                                        <div className="flex flex-col gap-2 w-full text-[10px] sm:text-xs z-50 mt-3">
+                                                          <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#292b33] px-[10px]">
+                                                            <div className="flex gap-2">
+                                                              <div className="text-primary-color text-3xl">
+                                                                <FaRegFileAlt />
+                                                              </div>
+
+                                                              <div>
+                                                                <p className="text-white">
+                                                                  {answer?.file
+                                                                    ?.length >=
+                                                                  15
+                                                                    ? `${answer?.file?.substring(
+                                                                        0,
+                                                                        15
+                                                                      )}...`
+                                                                    : answer?.file}
+                                                                </p>
+                                                                <p className="text-gray-500">
+                                                                  Attachment
+                                                                </p>
+                                                              </div>
+                                                            </div>
+                                                            <button
+                                                              onClick={() =>
+                                                                handleDownload(
+                                                                  answer?.file
+                                                                )
+                                                              }
+                                                              className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
+                                                            >
+                                                              <BiDownload />
+                                                            </button>
+                                                          </div>
+                                                        </div>
+                                                      </a>
+                                                    </div>
+                                                  )}
+                                                  <div className="flex items-center gap-2 mt-2">
+                                                    <FcOvertime />
+                                                    <p className="text-[10px] text-gray-500 mt-1">
+                                                      Submitted at:{" "}
+                                                      {moment(
+                                                        answer?.student
+                                                          ?.createdAt
+                                                      )
+                                                        .tz("Asia/Dhaka")
+                                                        .format(
+                                                          "D MMM YYYY, h:mm A"
+                                                        )}
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            )
+                                          )
+                                      ) : (
+                                        <p className="text-gray-400 italic">
+                                          No answers submitted yet.
+                                        </p>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      {activity?.answers &&
+                                      activity?.answers.length > 0 ? (
+                                        activity.answers?.map(
+                                          (answer: any, index: number) => (
+                                            <div
+                                              key={index}
+                                              className="bg-white border-[1px] p-3 rounded-lg"
+                                            >
+                                              <div className="pb-3">
+                                                <div className="flex items-center justify-between">
+                                                  <div className="flex items-center gap-3">
+                                                    <Avatar
+                                                      size={40}
+                                                      src={
+                                                        answer?.student
+                                                          ?.photoURL
+                                                      }
+                                                    />
                                                     <div>
-                                                      <p className="text-white">
-                                                        {answer?.student?.file
-                                                          ?.length >= 15
-                                                          ? `${answer?.student?.file?.substring(
-                                                              0,
-                                                              15
-                                                            )}...`
-                                                          : answer?.student
-                                                              ?.file}
-                                                      </p>
-                                                      <p className="text-gray-500">
-                                                        Attachment
+                                                      <h3 className="font-semibold text-md text-slate-800 leading-[13px]">
+                                                        {
+                                                          answer?.student
+                                                            ?.firstName
+                                                        }{" "}
+                                                        {
+                                                          answer?.student
+                                                            ?.lastName
+                                                        }
+                                                        {
+                                                          answer?.student
+                                                            ?.academyName
+                                                        }{" "}
+                                                        {
+                                                          answer?.student
+                                                            ?.gender
+                                                        }
+                                                      </h3>
+                                                      <p className="text-[11px] text-slate-500">
+                                                        {answer?.student?.email}
                                                       </p>
                                                     </div>
                                                   </div>
-                                                  <button
-                                                    onClick={() =>
-                                                      handleDownload(
-                                                        answer?.student?.file
-                                                      )
-                                                    }
-                                                    className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
-                                                  >
-                                                    <BiDownload />
-                                                  </button>
                                                 </div>
                                               </div>
-                                            </a>
-                                          </div>
-                                        )}
-                                        <div className="flex items-center gap-2 mt-2">
-                                          <FcOvertime />
-                                          <p className="text-[10px] text-gray-500 mt-1">
-                                            Submitted at:{" "}
-                                            {moment(answer?.student?.createdAt)
-                                              .tz("Asia/Dhaka")
-                                              .format("D MMM YYYY, h:mm A")}
-                                          </p>
-                                        </div>
-                                      </div>
-                                    </div>
-                                  )
-                                )
-                              ) : (
-                                <p className="text-gray-400 italic">
-                                  No answers submitted yet.
-                                </p>
-                              )}
-                            </div>
-                          ),
-                        },
-                      ]}
-                    />
-                  </div>
-                </div>
-              ))}
+                                              <div className="space-y-4">
+                                                {/* Answer Content */}
+                                                <div className="bg-slate-100 rounded-lg p-4 border-l-4 border-l-blue-500">
+                                                  <div
+                                                    className="prose prose-sm break-words"
+                                                    dangerouslySetInnerHTML={{
+                                                      __html:
+                                                        answer?.answerDescription ||
+                                                        "<p>No description provided</p>",
+                                                    }}
+                                                  />
+                                                </div>
+
+                                                {/* Attachments */}
+                                                {!answer?.file ? (
+                                                  <div className="text-md text-gray-400 mt-2 italic flex items-center">
+                                                    <GrFormAttachment className="text-2xl" />
+                                                    No attachments
+                                                  </div>
+                                                ) : (
+                                                  <div className="!w-full">
+                                                    <a
+                                                      onClick={(e) =>
+                                                        e.stopPropagation()
+                                                      }
+                                                      href={`http://localhost:3000/file/${answer?.file}`}
+                                                      target="_blank"
+                                                      rel="noopener noreferrer"
+                                                      download
+                                                    >
+                                                      <div className="flex flex-col gap-2 w-full text-[10px] sm:text-xs z-50 mt-3">
+                                                        <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#292b33] px-[10px]">
+                                                          <div className="flex gap-2">
+                                                            <div className="text-primary-color text-3xl">
+                                                              <FaRegFileAlt />
+                                                            </div>
+
+                                                            <div>
+                                                              <p className="text-white">
+                                                                {answer?.file
+                                                                  ?.length >= 15
+                                                                  ? `${answer?.file?.substring(
+                                                                      0,
+                                                                      15
+                                                                    )}...`
+                                                                  : answer?.file}
+                                                              </p>
+                                                              <p className="text-gray-500">
+                                                                Attachment
+                                                              </p>
+                                                            </div>
+                                                          </div>
+                                                          <button
+                                                            onClick={() =>
+                                                              handleDownload(
+                                                                answer?.file
+                                                              )
+                                                            }
+                                                            className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
+                                                          >
+                                                            <BiDownload />
+                                                          </button>
+                                                        </div>
+                                                      </div>
+                                                    </a>
+                                                  </div>
+                                                )}
+                                                <div className="flex items-center gap-2 mt-2">
+                                                  <FcOvertime />
+                                                  <p className="text-[10px] text-gray-500 mt-1">
+                                                    Submitted at:{" "}
+                                                    {moment(
+                                                      answer?.student?.createdAt
+                                                    )
+                                                      .tz("Asia/Dhaka")
+                                                      .format(
+                                                        "D MMM YYYY, h:mm A"
+                                                      )}
+                                                  </p>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          )
+                                        )
+                                      ) : (
+                                        <p className="text-gray-400 italic">
+                                          No answers submitted yet.
+                                        </p>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
+                              ),
+                            },
+                          ]}
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
               <Modal
                 footer={null}
                 title={`Submit your answer - ${selectedItem?.activityTitle}`}
@@ -620,7 +882,86 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                       __html: selectedItem?.activityDescription || "",
                     }}
                   ></div>
-                </div>{" "}
+                </div>
+                {!selectedItem?.file ? (
+                  <div className="text-md text-gray-400 mt-2 italic flex items-center">
+                    <GrFormAttachment className="text-2xl" />
+                    No attachments
+                  </div>
+                ) : (
+                  <div className="!w-full">
+                    <a
+                      onClick={(e) => e.stopPropagation()}
+                      href={`http://localhost:3000/file/${selectedItem?.file}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download
+                    >
+                      <div className="flex flex-col gap-2 w-full text-[10px] sm:text-xs z-50 mt-3">
+                        <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#292b33] px-[10px]">
+                          <div className="flex gap-2">
+                            <div className="text-primary-color text-3xl">
+                              <FaRegFileAlt />
+                            </div>
+
+                            <div>
+                              <p className="text-white">
+                                {selectedItem?.file?.length >= 15
+                                  ? `${selectedItem?.file?.substring(0, 15)}...`
+                                  : selectedItem?.file}
+                              </p>
+                              <p className="text-gray-500">Attachment</p>
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleDownload(selectedItem?.file)}
+                            className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
+                          >
+                            <BiDownload />
+                          </button>
+                        </div>
+                      </div>
+                    </a>
+                  </div>
+                )}
+                <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-100">
+                  <p className="text-lg font-semibold text-slate-700">
+                    <span className="flex items-center gap-2">
+                      <Users className="h-5 w-5 text-gray-600" />
+                      Responses
+                      <Badge count={selectedItem?.answers?.length || 0} />
+                    </span>
+                  </p>
+                  {selectedItem?.answers && selectedItem?.answers.length > 0 ? (
+                    selectedItem.answers?.map((answer: any) => (
+                      <div>
+                        <div className="mt-3">
+                          <div className="flex items-center gap-3">
+                            <Avatar
+                              size={40}
+                              src={answer?.student?.photoURL}
+                              className="w-8 h-8"
+                            ></Avatar>
+                            <div className="flex-1">
+                              <p className="text-sm font-bold text-slate-700">
+                                {answer?.student?.firstName}{" "}
+                                {answer?.student?.lastName}
+                              </p>
+                              <p className="text-xs text-slate-500 flex items-center gap-1">
+                                <MdOutlineMail className="text-sm" />
+                                {answer?.student?.email}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-400 italic">
+                      No answers submitted yet.
+                    </p>
+                  )}
+                </div>
               </Modal>
             </div>
           </>

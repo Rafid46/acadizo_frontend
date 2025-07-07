@@ -13,7 +13,7 @@ import {
 } from "antd";
 import { FaPlus } from "react-icons/fa";
 import { RiContactsBookUploadFill, RiUploadCloudLine } from "react-icons/ri";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { EditorContent } from "@tiptap/react";
 import EditButtons from "../EditButtons";
 import Dragger from "antd/es/upload/Dragger";
@@ -31,7 +31,6 @@ const ActivityPage = () => {
   const { RangePicker } = DatePicker;
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-  const editorRef = useRef<any>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const axiosPublic = useAxios();
   const { data: currentUser } = useCurrentUser();
@@ -86,7 +85,7 @@ const ActivityPage = () => {
     const academyId = joinedAcademyDetails?.academyId;
     const academyName = joinedAcademyDetails?.academyName;
     const moduleFormData = new FormData();
-    const activityDescription = editorRef.current.getHTML() || "";
+    const activityDescription = editor?.getHTML() || "";
     moduleFormData.append("activityTitle", activityTitle);
     moduleFormData.append("activityDescription", activityDescription);
     moduleFormData.append("activityDate", activityDate);
