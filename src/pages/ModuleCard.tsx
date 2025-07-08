@@ -7,6 +7,7 @@ import {
   Dropdown,
   Popover,
   Space,
+  theme,
   Tooltip,
 } from "antd";
 
@@ -29,6 +30,9 @@ import type { PopconfirmProps } from "antd";
 import { Popconfirm } from "antd";
 import moment from "moment";
 import { LiaExpandArrowsAltSolid } from "react-icons/lia";
+import { Grid3X3, List } from "lucide-react";
+import { RiSoundModuleFill } from "react-icons/ri";
+import { FcOvertime } from "react-icons/fc";
 
 const ModuleCard = ({ showDrawer }: any) => {
   const { allModules, refetch }: any = useModules();
@@ -40,10 +44,11 @@ const ModuleCard = ({ showDrawer }: any) => {
   const [selectedModule, setSelectedModule] = useState<any>(null);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [viewMode, setViewMode] = useState("grid");
   const axiosPublic = useAxios();
   const { data: currentUser } = useCurrentUser();
   const { data: academyLists } = useAcademies();
-
+  const { token } = theme.useToken();
   const { matchedModules: academyModules, isLoading }: any =
     useCurrentModules();
   const currentUserEmail = currentUser?.email;
@@ -222,11 +227,27 @@ const ModuleCard = ({ showDrawer }: any) => {
       item?.description?.toLowerCase()?.includes(search) ||
       item?.heading?.toLowerCase()?.includes(search)
   );
+
+  const toggleView = (mode: "grid" | "list") => {
+    setViewMode(mode);
+  };
   return (
     <div className="max-w-screen-xl mx-auto p-5 pt-0">
       <div className="flex items-center justify-between">
-        <div className="flex items-start gap-2">
-          <p className="font-semibold text-2xl text-[#030712] mb-5">Modules</p>
+        <div className="flex items-start gap-2 mb-5">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+              <Tooltip title="Submit your answer">
+                <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+                  <RiSoundModuleFill className="h-6 w-6 text-white" />
+                </div>
+              </Tooltip>
+              Modules
+            </h1>
+            <p className="text-slate-600">
+              Ask questions, share knowledge, and engage with your peers
+            </p>
+          </div>
 
           {academyModules?.length !== 0 && (
             <>
@@ -253,42 +274,80 @@ const ModuleCard = ({ showDrawer }: any) => {
             </>
           )}
         </div>
-        <div className="flex items-center gap-2 mb-4">
-          <div className="pl-[9px] overflow-hidden w-[30px] h-[30px] hover:w-[270px] bg-[#7ABA78] shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">
-            <div className="flex items-center justify-center fill-white">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                id="Isolation_Mode"
-                data-name="Isolation Mode"
-                viewBox="0 0 24 24"
-                width="12"
-                height="12"
-              >
-                <path d="M18.9,16.776A10.539,10.539,0,1,0,16.776,18.9l5.1,5.1L24,21.88ZM10.5,18A7.5,7.5,0,1,1,18,10.5,7.507,7.507,0,0,1,10.5,18Z"></path>
-              </svg>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
+            <div className="pl-[9px] overflow-hidden w-[30px] h-[30px] hover:w-[270px] bg-[#7ABA78] shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">
+              <div className="flex items-center justify-center fill-white">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  id="Isolation_Mode"
+                  data-name="Isolation Mode"
+                  viewBox="0 0 24 24"
+                  width="12"
+                  height="12"
+                >
+                  <path d="M18.9,16.776A10.539,10.539,0,1,0,16.776,18.9l5.1,5.1L24,21.88ZM10.5,18A7.5,7.5,0,1,1,18,10.5,7.507,7.507,0,0,1,10.5,18Z"></path>
+                </svg>
+              </div>
+              <input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Search modules...."
+                type="text"
+                className="outline-none text-[12px] bg-transparent w-full text-white font-normal px-4 placeholder:text-white"
+              />
             </div>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search modules...."
-              type="text"
-              className="outline-none text-[12px] bg-transparent w-full text-white font-normal px-4 placeholder:text-white"
-            />
+            <Button
+              onClick={handleToggleCollapse}
+              className="custom_button_style_icon w-fit"
+            >
+              {buttonText}
+            </Button>
           </div>
-          <Button
-            onClick={handleToggleCollapse}
-            className="custom_button_style_icon w-fit"
-          >
-            {buttonText}
-          </Button>
+          <div className="flex items-center bg-white rounded-lg border border-gray-200 p-1 shadow-sm">
+            <Button
+              type={viewMode === "grid" ? "primary" : "default"}
+              onClick={() => toggleView("grid")}
+              className={`
+                h-8 px-3 rounded-md transition-all duration-200
+                ${
+                  viewMode === "grid"
+                    ? "!bg-gray-400 !text-white shadow-sm !hover:bg-blue-600"
+                    : "!text-gray-600 !hover:text-gray-900 !hover:bg-gray-50"
+                }
+              `}
+            >
+              <Grid3X3 className="w-4 h-4 mr-1" />
+              Grid
+            </Button>
+            <Button
+              type={viewMode === "list" ? "primary" : "default"}
+              onClick={() => toggleView("list")}
+              className={`
+                h-8 px-3 rounded-md transition-all duration-200
+                ${
+                  viewMode === "list"
+                    ? "!bg-gray-400 !text-white shadow-sm !hover:bg-blue-600"
+                    : "!text-gray-600 !hover:text-gray-900 !hover:bg-gray-50"
+                }
+              `}
+            >
+              <List className="w-4 h-4 mr-1" />
+              List
+            </Button>
+          </div>
         </div>
       </div>
       <div>
         {isLoading ? (
           <Loader />
         ) : academyModules?.length > 0 ? (
-          <div className="bg-gray-50 rounded-2xl p-5 h-screen">
-            <div className="grid grid-cols-1 gap-4 lg:gap-2 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="bg-gray-50 rounded-2xl p-5 h-full">
+            <div
+              className={`grid grid-cols-1 gap-4 lg:gap-2 sm:grid-cols-2 ${
+                viewMode === "grid" ? "lg:grid-cols-3" : "lg:grid-cols-1"
+              }`}
+            >
               {filteredData?.map((module: any, index: number) => (
                 <div key={module?.moduleId} className="flex items-start gap-2">
                   <Checkbox
@@ -296,6 +355,8 @@ const ModuleCard = ({ showDrawer }: any) => {
                     checked={selectall?.includes(module?.moduleId)}
                   />
                   <Collapse
+                    bordered={false}
+                    style={{ background: token.colorBgContainer }}
                     key={module?.moduleId}
                     // expandIcon={() => (
                     //   <Dropdown
@@ -345,8 +406,9 @@ const ModuleCard = ({ showDrawer }: any) => {
                     activeKey={activeKeys}
                     onChange={handleCollapseChange}
                     defaultActiveKey={"1"}
-                    className="w-full lg:w-[500px] mb-4"
-                    style={{ backgroundColor: module?.color }}
+                    className={`w-full ${
+                      viewMode === "grid" ? "lg:w-[500px]" : "lg:w-full"
+                    } mb-4`}
                     items={[
                       {
                         key: String(index),
@@ -364,13 +426,13 @@ const ModuleCard = ({ showDrawer }: any) => {
                         children: (
                           <div className="flex items-start justify-between gap-2">
                             <div className="flex flex-col">
-                              <p className="text-[10px] text-gray-400">
+                              {/* <p className="text-[10px] text-gray-400">
                                 {module?.createdAt &&
                                   moment(module?.createdAt).format(
                                     "DD-MM-YYYY"
                                   )}
-                              </p>
-                              <div className="text-sm text-gray-500 flex flex-col">
+                              </p> */}
+                              <div className="text-sm text-gray-500 flex flex-col bg-white rounded-lg p-3">
                                 <div
                                   className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full"
                                   dangerouslySetInnerHTML={{
@@ -420,6 +482,15 @@ const ModuleCard = ({ showDrawer }: any) => {
                                     </a>
                                   )}
                                 </div>
+                              </div>
+                              <div className="flex items-center gap-2 mt-2">
+                                <FcOvertime />
+                                <p className="text-[10px] text-gray-800 mt-1">
+                                  Submitted at:{" "}
+                                  {moment(module?.createdAt)
+                                    .tz("Asia/Dhaka")
+                                    .format("D MMM YYYY, h:mm A")}
+                                </p>
                               </div>
                             </div>
                             <div className="flex ">
