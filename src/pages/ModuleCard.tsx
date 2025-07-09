@@ -49,6 +49,7 @@ const ModuleCard = ({ showDrawer }: any) => {
   const { data: currentUser } = useCurrentUser();
   const { data: academyLists } = useAcademies();
   const { token } = theme.useToken();
+
   const { matchedModules: academyModules, isLoading }: any =
     useCurrentModules();
   const currentUserEmail = currentUser?.email;
@@ -231,6 +232,7 @@ const ModuleCard = ({ showDrawer }: any) => {
   const toggleView = (mode: "grid" | "list") => {
     setViewMode(mode);
   };
+
   return (
     <div className="max-w-screen-xl mx-auto p-5 pt-0">
       <div className="flex items-center justify-between">
@@ -248,7 +250,8 @@ const ModuleCard = ({ showDrawer }: any) => {
               Ask questions, share knowledge, and engage with your peers
             </p>
           </div>
-
+        </div>
+        <div className="flex items-center gap-2">
           {academyModules?.length !== 0 && (
             <>
               <div className="flex items-center gap-2 border border-gray-400 rounded-lg py-1 text-sm px-2">
@@ -262,53 +265,56 @@ const ModuleCard = ({ showDrawer }: any) => {
 
                 <p>Select all</p>
               </div>
-              {selectall?.length > 0 && (
-                <Button
-                  icon={<MdDeleteOutline />}
-                  onClick={handleDeleteAllModules}
-                  className="mb-4 custom_button_style_secondary w-fit"
-                >
-                  Delete
-                </Button>
-              )}
+
+              <Button
+                danger
+                disabled={selectall?.length === 0}
+                icon={<MdDeleteOutline />}
+                onClick={handleDeleteAllModules}
+                className="custom_button_style_secondary w-fit"
+              >
+                Delete
+              </Button>
             </>
           )}
         </div>
+      </div>
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-2">
-            <div className="pl-[9px] overflow-hidden w-[30px] h-[30px] hover:w-[270px] bg-[#7ABA78] shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">
-              <div className="flex items-center justify-center fill-white">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  id="Isolation_Mode"
-                  data-name="Isolation Mode"
-                  viewBox="0 0 24 24"
-                  width="12"
-                  height="12"
-                >
-                  <path d="M18.9,16.776A10.539,10.539,0,1,0,16.776,18.9l5.1,5.1L24,21.88ZM10.5,18A7.5,7.5,0,1,1,18,10.5,7.507,7.507,0,0,1,10.5,18Z"></path>
-                </svg>
-              </div>
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search modules...."
-                type="text"
-                className="outline-none text-[12px] bg-transparent w-full text-white font-normal px-4 placeholder:text-white"
-              />
+          <div className="pl-[9px] overflow-hidden w-[30px] h-[30px] hover:w-[270px] bg-[#7ABA78] shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">
+            <div className="flex items-center justify-center fill-white">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                id="Isolation_Mode"
+                data-name="Isolation Mode"
+                viewBox="0 0 24 24"
+                width="12"
+                height="12"
+              >
+                <path d="M18.9,16.776A10.539,10.539,0,1,0,16.776,18.9l5.1,5.1L24,21.88ZM10.5,18A7.5,7.5,0,1,1,18,10.5,7.507,7.507,0,0,1,10.5,18Z"></path>
+              </svg>
             </div>
-            <Button
-              onClick={handleToggleCollapse}
-              className="custom_button_style_icon w-fit"
-            >
-              {buttonText}
-            </Button>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search modules...."
+              type="text"
+              className="outline-none text-[12px] bg-transparent w-full text-white font-normal px-4 placeholder:text-white"
+            />
           </div>
-          <div className="flex items-center bg-white rounded-lg border border-gray-200 p-1 shadow-sm">
-            <Button
-              type={viewMode === "grid" ? "primary" : "default"}
-              onClick={() => toggleView("grid")}
-              className={`
+          <Button
+            onClick={handleToggleCollapse}
+            className="custom_button_style_icon w-fit"
+          >
+            {buttonText}
+          </Button>
+        </div>
+
+        <div className="flex items-center bg-white rounded-lg border border-gray-200 p-1 shadow-sm gap-2">
+          <Button
+            type={viewMode === "grid" ? "primary" : "default"}
+            onClick={() => toggleView("grid")}
+            className={`
                 h-8 px-3 rounded-md transition-all duration-200
                 ${
                   viewMode === "grid"
@@ -316,14 +322,14 @@ const ModuleCard = ({ showDrawer }: any) => {
                     : "!text-gray-600 !hover:text-gray-900 !hover:bg-gray-50"
                 }
               `}
-            >
-              <Grid3X3 className="w-4 h-4 mr-1" />
-              Grid
-            </Button>
-            <Button
-              type={viewMode === "list" ? "primary" : "default"}
-              onClick={() => toggleView("list")}
-              className={`
+          >
+            <Grid3X3 className="w-4 h-4 mr-1" />
+            Grid
+          </Button>
+          <Button
+            type={viewMode === "list" ? "primary" : "default"}
+            onClick={() => toggleView("list")}
+            className={`
                 h-8 px-3 rounded-md transition-all duration-200
                 ${
                   viewMode === "list"
@@ -331,11 +337,10 @@ const ModuleCard = ({ showDrawer }: any) => {
                     : "!text-gray-600 !hover:text-gray-900 !hover:bg-gray-50"
                 }
               `}
-            >
-              <List className="w-4 h-4 mr-1" />
-              List
-            </Button>
-          </div>
+          >
+            <List className="w-4 h-4 mr-1" />
+            List
+          </Button>
         </div>
       </div>
       <div>
@@ -356,7 +361,10 @@ const ModuleCard = ({ showDrawer }: any) => {
                   />
                   <Collapse
                     bordered={false}
-                    style={{ background: token.colorBgContainer }}
+                    style={{
+                      background: token.colorBgContainer,
+                      backgroundColor: module?.color,
+                    }}
                     key={module?.moduleId}
                     // expandIcon={() => (
                     //   <Dropdown
@@ -432,7 +440,11 @@ const ModuleCard = ({ showDrawer }: any) => {
                                     "DD-MM-YYYY"
                                   )}
                               </p> */}
-                              <div className="text-sm text-gray-500 flex flex-col bg-white rounded-lg p-3">
+                              <div
+                                className={`text-sm text-gray-500 flex flex-col bg-white rounded-lg p-3 ${
+                                  viewMode === "list" && "!w-[1100px]"
+                                }`}
+                              >
                                 <div
                                   className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full"
                                   dangerouslySetInnerHTML={{

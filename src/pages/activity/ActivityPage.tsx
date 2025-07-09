@@ -84,11 +84,19 @@ const ActivityPage = () => {
     const teacherLastName = currentUser?.lastName;
     const academyId = joinedAcademyDetails?.academyId;
     const academyName = joinedAcademyDetails?.academyName;
+
     const moduleFormData = new FormData();
     const activityDescription = editor?.getHTML() || "";
+    if (activityDate?.length === 2) {
+      const startDate = activityDate[0].format("YYYY-MM-DD");
+      const endDate = activityDate[1].format("YYYY-MM-DD");
+
+      moduleFormData.append("startDate", startDate);
+      moduleFormData.append("endDate", endDate);
+    }
     moduleFormData.append("activityTitle", activityTitle);
     moduleFormData.append("activityDescription", activityDescription);
-    moduleFormData.append("activityDate", activityDate);
+    // moduleFormData.append("activityDate", formattedDate);
     moduleFormData.append("academyId", academyId);
     moduleFormData.append("academyName", academyName);
     moduleFormData.append("teacherId", teacherId);

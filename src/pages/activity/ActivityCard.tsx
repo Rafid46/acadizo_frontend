@@ -10,14 +10,20 @@ import {
   Avatar,
   Badge,
   Button,
+  Card,
+  Col,
   Collapse,
   Divider,
   Dropdown,
   Form,
   Modal,
+  Progress,
+  Row,
   Space,
+  Tag,
   theme,
   Tooltip,
+  Typography,
 } from "antd";
 import React, { useState } from "react";
 import { CiSearch } from "react-icons/ci";
@@ -30,7 +36,7 @@ import { EditorContent } from "@tiptap/react";
 
 import { GrFormAttachment } from "react-icons/gr";
 import { FcOvertime } from "react-icons/fc";
-import { LucideUsersRound, Users } from "lucide-react";
+import { ArrowRight, Calendar, LucideUsersRound, Users } from "lucide-react";
 import useTiptapEditor from "../../hooks/useTiptapEditor";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Toast from "../../common/Toast";
@@ -39,12 +45,15 @@ import useCurrentUser from "../../hooks/useCurrentUser";
 import useAcademies from "../../hooks/useAcademies";
 import { MdDeleteOutline, MdOutlineMail } from "react-icons/md";
 import { SlOptionsVertical } from "react-icons/sl";
+import ActivityEditModule from "./ActivityEditModule";
+import dayjs from "dayjs";
 const ActivityCard = ({ allActivities, loading }: any) => {
   const [open, setOpen] = useState(false);
   const [openAnswer, setOpenAnswer] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [openEditActivity, setOpenEditActivity] = useState(false);
   const { token } = theme.useToken();
   const editor = useTiptapEditor();
   const axiosPublic = useAxios();
@@ -213,6 +222,104 @@ const ActivityCard = ({ allActivities, loading }: any) => {
   const handleDeleteActivity = (activityId: string) => {
     deleteModule.mutate(activityId);
   };
+
+  const showDrawerActivity = (activity: any) => {
+    setSelectedItem(activity);
+    setOpenEditActivity(true);
+  };
+
+  const onCloseActivity = () => {
+    setOpenEditActivity(false);
+  };
+
+  // const date = "Tue, 08 Jul 2025 18:00:00 GMT,Wed, 27 Aug 2025 18:00:00 GMT";
+  // const splitdate = date?.split(",")?.slice(0, 2);
+  // const splitdate2 = date?.split(",")?.slice(2, 4);
+  // console.log(splitdate, splitdate2, "dateee");
+  // const date = "Tue, 08 Jul 2025 18:00:00 GMT,Wed, 27 Aug 2025 18:00:00 GMT";
+
+  // // Split into two parts
+  // const parts = date.split(",");
+
+  // Reconstruct start and end by removing time and GMT
+  // const endDate = `${date.split(",")[2].trim()}, ${
+  //   date.split(",")[3].trim().split(" ")[0]
+  // } ${date.split(",")[3].trim().split(" ")[1]} ${
+  //   date.split(",")[3].trim().split(" ")[2]
+  // }`;
+
+  // console.log("Start:", startDate);
+  // console.log("End:", endDate);
+  const { Text } = Typography;
+
+  // Enhanced deadline status calculation
+  const getDeadlineStatus = (activity: any) => {
+    if (!activity?.startDate || !activity?.endDate)
+      return {
+        status: "unknown",
+        color: "default",
+        label: "No Date",
+        progressColor: "#d9d9d9",
+      };
+
+    const today = new Date();
+    const start = new Date(activity.startDate);
+    const end = new Date(activity.endDate);
+
+    if (today < start) {
+      return {
+        status: "upcoming",
+        color: "blue",
+        label: "Upcoming",
+        progressColor: "#1890ff",
+        bgColor: "#f0f9ff",
+        borderColor: "#bfdbfe",
+      };
+    } else if (today >= start && today <= end) {
+      return {
+        status: "active",
+        color: "green",
+        label: "Active",
+        progressColor: "#52c41a",
+        bgColor: "#f0f9f0",
+        borderColor: "#bbf7d0",
+      };
+    } else {
+      return {
+        status: "ended",
+        color: "red",
+        label: "Ended",
+        progressColor: "#ff4d4f",
+        bgColor: "#fff2f0",
+        borderColor: "#ffccc7",
+      };
+    }
+  };
+
+  // Enhanced progress calculation
+  const getProgress = (activity: any) => {
+    if (!activity?.startDate || !activity?.endDate) return 0;
+
+    const today = new Date();
+    const start = new Date(activity.startDate);
+    const end = new Date(activity.endDate);
+    const total = end.getTime() - start.getTime();
+    const elapsed = today.getTime() - start.getTime();
+    const progress = Math.max(0, Math.min(100, (elapsed / total) * 100));
+    return progress;
+  };
+
+  // Enhanced days remaining calculation
+  const getDaysRemaining = (activity: any) => {
+    if (!activity?.endDate) return 0;
+
+    const today = new Date();
+    const end = new Date(activity.endDate);
+    const diffTime = end.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
   return (
     <div className="">
       <style>
@@ -270,7 +377,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                         setOpen(true);
                         setSelectedItem(activity);
                       }}
-                      className="group w-full border-slate-400 border bg-white  rounded-xl overflow-hidden px-6 py-6 gap-y-4 mb-4 cursor-pointer transition-all duration-300 transform"
+                      className="group w-full border-slate-200 border bg-white  rounded-xl overflow-hidden px-6 py-6 gap-y-4 mb-4 cursor-pointer transition-all duration-300 transform"
                     >
                       <div className="">
                         <div className="flex items-center justify-between">
@@ -308,7 +415,10 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                       icon: <BiEdit className="!text-xl" />,
                                       onClick: (e) => {
                                         e.domEvent.stopPropagation();
-                                        // setTimeout(() => showEditDrawer(module), 0);
+                                        setTimeout(
+                                          () => showDrawerActivity(activity),
+                                          0
+                                        );
                                       },
                                     },
                                     {
@@ -356,6 +466,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                           {activity?.createdBy}
                         </p>
                       </div>
+                      {/* Date Range with Arrow */}
 
                       <div className="">
                         <div className="text-sm text-gray-500 flex flex-col">
@@ -365,7 +476,133 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                               __html: activity?.activityDescription || "",
                             }}
                           ></div>
+                          <Card
+                            size="small"
+                            className="mb-4 mt-2"
+                            style={{
+                              backgroundColor:
+                                getDeadlineStatus(activity).bgColor,
+                              border: `1px solid ${
+                                getDeadlineStatus(activity).borderColor
+                              }`,
+                            }}
+                          >
+                            {/* Header with status */}
+                            <div className="flex items-center justify-between mb-4">
+                              <Space size="small">
+                                <Calendar className="w-4 h-4 text-gray-600" />
+                                <Text strong>Activity Period</Text>
+                              </Space>
+                              <Tag
+                                color={getDeadlineStatus(activity).color}
+                                className="border-1 mr-0 font-semibold"
+                              >
+                                {getDeadlineStatus(activity).label}
+                              </Tag>
+                            </div>
 
+                            {/* Date Range */}
+                            <Row gutter={16} className="mb-4">
+                              <Col span={10}>
+                                <div>
+                                  <Text
+                                    type="secondary"
+                                    className="text-xs block mb-1"
+                                  >
+                                    Start Date
+                                  </Text>
+                                  <Text strong className="text-sm">
+                                    {dayjs(activity?.startDate).format(
+                                      "DD-MM-YYYY"
+                                    ) || "Not set"}
+                                  </Text>
+                                </div>
+                              </Col>
+                              <Col
+                                span={4}
+                                className="flex items-center justify-center"
+                              >
+                                <ArrowRight className="w-4 h-4 text-gray-400" />
+                              </Col>
+                              <Col span={10} className="text-right">
+                                <div>
+                                  <Text
+                                    type="secondary"
+                                    className="text-xs block mb-1"
+                                  >
+                                    End Date
+                                  </Text>
+                                  <Text
+                                    strong
+                                    className={`text-sm ${
+                                      getDeadlineStatus(activity).status ===
+                                      "ended"
+                                        ? "text-red-600"
+                                        : getDeadlineStatus(activity).status ===
+                                          "active"
+                                        ? "text-green-600"
+                                        : "text-blue-600"
+                                    }`}
+                                  >
+                                    {dayjs(activity?.endDate).format(
+                                      "DD-MM-YYYY"
+                                    ) || "not set"}
+                                  </Text>
+                                </div>
+                              </Col>
+                            </Row>
+
+                            {/* Progress Section */}
+                            <div className="space-y-2">
+                              <div className="flex justify-between items-center">
+                                <Text type="secondary" className="text-xs">
+                                  Progress
+                                </Text>
+                                <Space size="small">
+                                  <Text type="secondary" className="text-xs">
+                                    {Math.round(getProgress(activity))}%
+                                  </Text>
+                                  {getDaysRemaining(activity) > 0 && (
+                                    <Text type="secondary" className="text-xs">
+                                      • {getDaysRemaining(activity)} days
+                                      remaining
+                                    </Text>
+                                  )}
+                                  {getDaysRemaining(activity) === 0 && (
+                                    <Text type="warning" className="text-xs">
+                                      • Due today
+                                    </Text>
+                                  )}
+                                  {getDaysRemaining(activity) < 0 && (
+                                    <Text type="danger" className="text-xs">
+                                      • {Math.abs(getDaysRemaining(activity))}{" "}
+                                      days overdue
+                                    </Text>
+                                  )}
+                                </Space>
+                              </div>
+                              <Progress
+                                percent={getProgress(activity)}
+                                strokeColor={
+                                  getDeadlineStatus(activity).progressColor
+                                }
+                                showInfo={false}
+                                size="small"
+                              />
+
+                              {/* Additional deadline info */}
+                              {getDeadlineStatus(activity).status ===
+                                "active" &&
+                                getDaysRemaining(activity) <= 3 && (
+                                  <div className="flex items-center gap-1 mt-2">
+                                    <FcOvertime className="text-sm" />
+                                    <Text type="warning" className="text-xs">
+                                      Deadline approaching soon!
+                                    </Text>
+                                  </div>
+                                )}
+                            </div>
+                          </Card>
                           {!activity?.file ? (
                             <div className="text-md text-gray-400 mt-2 italic flex items-center gap-2">
                               <GrFormAttachment className="text-2xl" />
@@ -538,6 +775,24 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                                     </div>
                                                   </div>
                                                 </div>
+                                                <div
+                                                  className={`p-4 rounded-xl border mb-4`}
+                                                >
+                                                  <div className="flex items-center justify-between mb-3">
+                                                    <div className="flex items-center gap-2">
+                                                      <Calendar className="w-4 h-4 text-gray-600" />
+                                                      <span className="font-medium text-gray-900">
+                                                        Activity Period
+                                                      </span>
+                                                    </div>
+                                                    {/* <Badge
+                                                      variant="secondary"
+                                                      className={`${deadlineInfo.textColor} bg-transparent border-0 text-xs font-medium`}
+                                                    >
+                                                      {deadlineInfo.label}
+                                                    </Badge> */}
+                                                  </div>
+                                                </div>
                                                 <div className="space-y-4">
                                                   {/* Answer Content */}
                                                   <div className="bg-slate-100 rounded-lg p-4 border-l-4 border-l-blue-500">
@@ -676,6 +931,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                                   </div>
                                                 </div>
                                               </div>
+
                                               <div className="space-y-4">
                                                 {/* Answer Content */}
                                                 <div className="bg-slate-100 rounded-lg p-4 border-l-4 border-l-blue-500">
@@ -777,6 +1033,14 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                   </motion.div>
                 ))}
               </AnimatePresence>
+              <ActivityEditModule
+                setSelectedFile={setSelectedFile}
+                selectedFile={selectedFile}
+                setOpenEditActivity={setOpenEditActivity}
+                openEditActivity={openEditActivity}
+                onCloseActivity={onCloseActivity}
+                activity={selectedItem}
+              />
               <Modal
                 footer={null}
                 title={`Submit your answer - ${selectedItem?.activityTitle}`}
