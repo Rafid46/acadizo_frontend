@@ -59,6 +59,7 @@ const EditModuleDrawer = ({ value, open, setOpen, module }: any) => {
   const onClose = () => {
     setOpen(false);
   };
+
   const handleDownload = (fileUrl: any) => {
     const link = document.createElement("a");
     link.href = fileUrl;
