@@ -159,25 +159,41 @@ const Overview = () => {
   });
   return (
     <div>
-      {currentUser?.academyName === null || undefined || "" ? (
-        <div className="absolute top-[50%] left-[50%]">
-          <Button
-            onClick={() => setAcademyModal(true)}
-            icon={<PiStudent />}
-            // disabled={isButtonDisabled || loading}
-            // loading={loading}
-            htmlType="submit"
-            style={{
-              transition: "background-color 0.3s ease",
-            }}
-            type="primary"
-            className={`text-sm font-semibold h-[40px] px-8 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-gray-200`}
-          >
-            Join academy
-          </Button>
+      {currentUser?.academyName === null ||
+      undefined ||
+      "" ||
+      !currentUser?.academyName?.trim() ? (
+        <div className="flex min-h-[70vh] items-center justify-center">
+          <div className="w-full max-w-md text-center  border border-gray-200 rounded-lg py-8 px-10">
+            <div>
+              <div className="text-2xl font-bold text-gray-800">
+                Join an Academy
+              </div>
+              <div className="text-gray-600 mt-2">
+                Unlock a world of knowledge and connect with fellow learners.
+                Click below to get started on your educational journey!
+              </div>
+            </div>
+            <div className="flex justify-center p-6">
+              <Button
+                onClick={() => setAcademyModal(true)}
+                icon={<PiStudent />}
+                // disabled={isButtonDisabled || loading}
+                // loading={loading}
+                htmlType="submit"
+                style={{
+                  transition: "background-color 0.3s ease",
+                }}
+                type="primary"
+                className={`text-sm font-semibold h-[40px] px-8 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-gray-200`}
+              >
+                Join academy
+              </Button>
+            </div>
+          </div>
           <Modal
             footer={null}
-            title=" & select or join your academy"
+            title="Choose & select or join your academy"
             centered
             open={academyModal}
             onOk={() => setAcademyModal(false)}

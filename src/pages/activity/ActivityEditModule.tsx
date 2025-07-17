@@ -2,11 +2,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button, Col, DatePicker, Drawer, Form, Input, Row, Space } from "antd";
 import { RiUploadCloudLine } from "react-icons/ri";
-import useTiptapEditor from "../../hooks/useTiptapEditor";
+
 import EditButtons from "../EditButtons";
 import { EditorContent } from "@tiptap/react";
 import Dragger from "antd/es/upload/Dragger";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaRegFileAlt } from "react-icons/fa";
 import { BiDownload } from "react-icons/bi";
 import dayjs from "dayjs";
@@ -15,6 +15,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../../hooks/useAxios";
 import Toast from "../../common/Toast";
 import moment from "moment";
+import { useTiptapEditor } from "../../hooks/useTiptapEditor";
 
 const ActivityEditModule = ({
   setSelectedFile,
@@ -24,10 +25,21 @@ const ActivityEditModule = ({
   activity,
 }: any) => {
   const { RangePicker } = DatePicker;
-
-  const editor = useTiptapEditor();
-  //   const [content, setContent] = useState<string>("");
+  const [editorContent, setEditorContent] = useState("");
   const [form] = Form.useForm();
+
+  const editor = useTiptapEditor({
+    content: form.getFieldValue("activityDescription") || "",
+    shouldOptimizeRendering: true,
+  });
+  useEffect(() => {
+    const value = form.getFieldValue("activityDescription");
+    if (value) {
+      setEditorContent(value);
+    }
+  }, [form]);
+  //   const [content, setContent] = useState<string>("");
+
   const queryClient = useQueryClient();
   const axiosPublic = useAxios();
 

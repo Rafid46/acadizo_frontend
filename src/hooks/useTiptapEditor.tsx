@@ -8,9 +8,22 @@ import Highlight from "@tiptap/extension-highlight";
 import Underline from "@tiptap/extension-underline";
 import Placeholder from "@tiptap/extension-placeholder";
 import { useRef } from "react";
-const useTiptapEditor = () => {
+
+interface UseTiptapEditorProps {
+  content?: string;
+  shouldOptimizeRendering?: boolean;
+}
+
+export const useTiptapEditor = ({
+  content = "",
+  shouldOptimizeRendering = true,
+}: UseTiptapEditorProps) => {
   const editorRef = useRef<any>(null);
-  return useEditor({
+
+  const editor = useEditor({
+    content,
+    shouldRerenderOnTransaction: !shouldOptimizeRendering,
+    immediatelyRender: true,
     extensions: [
       Placeholder.configure({
         placeholder: "Write something...",
@@ -41,10 +54,7 @@ const useTiptapEditor = () => {
     onCreate: ({ editor }) => {
       editorRef.current = editor;
     },
-    onUpdate: () => {
-      // No state updates here to prevent re-renders
-    },
   });
-};
 
-export default useTiptapEditor;
+  return editor;
+};

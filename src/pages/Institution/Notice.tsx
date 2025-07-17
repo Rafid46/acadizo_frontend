@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import useNotice from "../../hooks/useNotice";
 import moment from "moment";
-import { FaRegFileAlt } from "react-icons/fa";
-import { BiDownload } from "react-icons/bi";
+import { Bell, Download, FileText } from "lucide-react";
+import { Button } from "antd";
 
 const Notice = () => {
   const { data: currentUser }: any = useCurrentUser();
@@ -43,7 +43,20 @@ const Notice = () => {
         </div>
       ) : (
         <div className="max-w-screen-xl mx-auto p-5 pt-0">
-          <p className="font-semibold text-2xl text-[#030712] mb-5">Notice</p>
+          <div className="mb-8">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-slate-900 rounded-lg">
+                <Bell className="w-6 h-6 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold text-slate-900">
+                Notice Board
+              </h1>
+            </div>
+            <p className="text-slate-600">
+              Stay updated with the latest announcements and important
+              information
+            </p>
+          </div>
           {matchedNotices?.map((item: any) => (
             <article className="rounded-xl  p-0.5  mb-5 border-2 border-gray-200">
               <div className="rounded-[10px] bg-white p-4 sm:p-6">
@@ -66,14 +79,14 @@ const Notice = () => {
                       rel="noopener noreferrer"
                       download
                     >
-                      <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50 mt-3">
-                        <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]">
+                      {/* <div className="flex flex-col gap-2 w-full  text-[10px] sm:text-xs z-50 mt-3">
+                        <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#eff1fa] px-[10px]">
                           <div className="flex gap-2">
                             <div className="text-primary-color text-3xl">
                               <FaRegFileAlt />
                             </div>
                             <div>
-                              <p className="text-white">
+                              <p className="text-zinc-800 text-[14px] font-semibold mb-2">
                                 {item?.file?.length >= 15
                                   ? `${item?.file?.substring(0, 15)}...`
                                   : item?.file}
@@ -88,6 +101,29 @@ const Notice = () => {
                             <BiDownload />
                           </button>
                         </div>
+                      </div> */}
+                      <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg border border-slate-200">
+                        <div className="flex items-center gap-3">
+                          <div className="p-2 bg-slate-200 rounded-md">
+                            <FileText className="w-4 h-4 text-slate-600" />
+                          </div>
+                          <div>
+                            <p className="font-medium text-slate-900 text-sm">
+                              {item?.file?.length >= 15
+                                ? `${item?.file?.substring(0, 15)}...`
+                                : item?.file}
+                            </p>
+                            <p className="text-xs text-slate-500">Attachment</p>
+                          </div>
+                        </div>
+                        <Button
+                          type="primary"
+                          onClick={() => handleDownload(item?.file)}
+                          className="primary custom_button_style"
+                        >
+                          <Download className="w-4 h-4 mr-2" />
+                          Download
+                        </Button>
                       </div>
                     </a>
                   )}

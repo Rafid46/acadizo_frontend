@@ -135,7 +135,7 @@ const TestDashboard = () => {
     {
       key: "4",
       icon: <RiHomeOfficeLine className="!text-xl" />,
-      label: <p className="font-[500]">Institution</p>,
+      label: <p className="font-[500]">Academy</p>,
       children: [
         {
           key: "4-1",
@@ -190,28 +190,28 @@ const TestDashboard = () => {
           ),
           icon: <BsPostcard className="!text-xl" />,
         },
-        {
-          key: "5-2",
-          label: (
-            <NavLink className="font-[500]" to="">
-              Students
-            </NavLink>
-          ),
-          icon: <PiStudent className="!text-xl" />,
-        },
-        {
-          key: "5-3",
-          icon: <CiUser className="!text-xl" />,
-          label: (
-            <NavLink
-              className="font-[500]"
-              onClick={() => setOpen(false)}
-              to=""
-            >
-              Users
-            </NavLink>
-          ),
-        },
+        // {
+        //   key: "5-2",
+        //   label: (
+        //     <NavLink className="font-[500]" to="">
+        //       Students
+        //     </NavLink>
+        //   ),
+        //   icon: <PiStudent className="!text-xl" />,
+        // },
+        // {
+        //   key: "5-3",
+        //   icon: <CiUser className="!text-xl" />,
+        //   label: (
+        //     <NavLink
+        //       className="font-[500]"
+        //       onClick={() => setOpen(false)}
+        //       to=""
+        //     >
+        //       Users
+        //     </NavLink>
+        //   ),
+        // },
       ],
     },
   ];
@@ -345,7 +345,7 @@ const TestDashboard = () => {
                 key: "1",
                 icon: <LuLayoutDashboard />,
                 label: (
-                  <NavLink onClick={() => setOpen(false)} to="/about">
+                  <NavLink onClick={() => setOpen(false)} to="/dashboard">
                     Dashboard
                   </NavLink>
                 ),
@@ -354,25 +354,31 @@ const TestDashboard = () => {
                 key: "2",
                 icon: <VideoCameraOutlined />,
                 label: (
-                  <NavLink onClick={() => setOpen(false)} to="/modules">
+                  <NavLink
+                    onClick={() => setOpen(false)}
+                    to="/dashboard/modules"
+                  >
                     Modules
                   </NavLink>
                 ),
               },
+              // {
+              //   key: "3",
+              //   icon: <CiUser />,
+              //   label: (
+              //     <NavLink onClick={() => setOpen(false)} to="/users">
+              //       Users
+              //     </NavLink>
+              //   ),
+              // },
               {
                 key: "3",
-                icon: <CiUser />,
-                label: (
-                  <NavLink onClick={() => setOpen(false)} to="/users">
-                    Users
-                  </NavLink>
-                ),
-              },
-              {
-                key: "4",
                 icon: <IoMdNotificationsOutline />,
                 label: (
-                  <NavLink onClick={() => setOpen(false)} to="/notice">
+                  <NavLink
+                    onClick={() => setOpen(false)}
+                    to="/dashboard/notice"
+                  >
                     Notice
                   </NavLink>
                 ),
@@ -381,14 +387,14 @@ const TestDashboard = () => {
               {
                 key: "4",
                 icon: <RiHomeOfficeLine />,
-                label: "Institution",
+                label: "Academy",
                 children: [
                   {
                     key: "4-1",
                     label: (
                       <NavLink
                         onClick={() => setOpen(false)}
-                        to="/institution/overview"
+                        to="/dashboard/institution/overview"
                       >
                         Overview
                       </NavLink>
@@ -400,63 +406,67 @@ const TestDashboard = () => {
                     label: (
                       <NavLink
                         onClick={() => setOpen(false)}
-                        to="/institution/overview"
+                        to="/dashboard/institution/overview"
                       >
                         Students
                       </NavLink>
                     ),
                     icon: <PiStudent />,
                   },
-                  {
-                    key: "5",
-                    icon: <GrWorkshop className="!text-xl" />,
-                    label: <p className="font-[500]">Activities</p>,
-                    children: [
-                      {
-                        key: "5-1",
-                        label: (
-                          <NavLink
-                            className="font-[500]"
-                            to="/dashboard/activity/posts"
-                          >
-                            Posts
-                          </NavLink>
-                        ),
-                        icon: <BsPostcard className="!text-xl" />,
-                      },
-                      {
-                        key: "5-2",
-                        label: (
-                          <NavLink className="font-[500]" to="">
-                            Students
-                          </NavLink>
-                        ),
-                        icon: <PiStudent className="!text-xl" />,
-                      },
-                      {
-                        key: "5-3",
-                        icon: <CiUser className="!text-xl" />,
-                        label: (
-                          <NavLink
-                            className="font-[500]"
-                            onClick={() => setOpen(false)}
-                            to=""
-                          >
-                            Users
-                          </NavLink>
-                        ),
-                      },
-                    ],
-                  },
+
                   {
                     key: "3",
                     icon: <CiUser />,
                     label: (
-                      <NavLink onClick={() => setOpen(false)} to="/users">
+                      <NavLink
+                        onClick={() => setOpen(false)}
+                        to="/dashboard/institution/users"
+                      >
                         Users
                       </NavLink>
                     ),
                   },
+                ],
+              },
+              {
+                key: "5",
+                icon: <GrWorkshop className="!text-xl" />,
+                label: <p className="font-[500]">Activities</p>,
+                children: [
+                  {
+                    key: "5-1",
+                    label: (
+                      <NavLink
+                        className="font-[500]"
+                        to="/dashboard/activity/posts"
+                      >
+                        Posts
+                      </NavLink>
+                    ),
+                    icon: <BsPostcard className="!text-xl" />,
+                  },
+                  // {
+                  //   key: "5-2",
+                  //   label: (
+                  //     <NavLink className="font-[500]" to="">
+                  //       Students
+                  //     </NavLink>
+                  //   ),
+                  //   icon: <PiStudent className="!text-xl" />,
+                  // },
+                  // {
+                  //   key: "5-3",
+                  //   icon: <CiUser className="!text-xl" />,
+                  //   label: (
+                  //     <NavLink
+                  //       className="font-[500]"
+                  //       onClick={() => setOpen(false)}
+                  //       to=""
+                  //     >
+                  //       Users
+                  //     </NavLink>
+                  //   ),
+                  // },
                 ],
               },
             ]}

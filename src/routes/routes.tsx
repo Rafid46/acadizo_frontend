@@ -15,6 +15,7 @@ import PrivateRoute from "./PrivateRoute";
 import Unauthorized from "../pages/error/Unauthorized";
 import Notice from "../pages/Institution/Notice";
 import ActivityPage from "../pages/activity/ActivityPage";
+import Homepage from "../pages/Home/Homepage";
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
         <TestDashboard />
       </PrivateRoute>
     ),
+  },
+  {
+    path: "/home",
+    element: <Homepage />,
   },
 
   {
