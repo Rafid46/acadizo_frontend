@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Button,
@@ -13,9 +14,7 @@ import {
 } from "antd";
 import { FaPlus } from "react-icons/fa";
 import { RiContactsBookUploadFill, RiUploadCloudLine } from "react-icons/ri";
-import { useState } from "react";
-import { EditorContent } from "@tiptap/react";
-import EditButtons from "../EditButtons";
+import { useEffect, useState } from "react";
 import Dragger from "antd/es/upload/Dragger";
 import useAxios from "../../hooks/useAxios";
 import useCurrentUser from "../../hooks/useCurrentUser";
@@ -25,13 +24,19 @@ import Toast from "../../common/Toast";
 import ActivityCard from "./ActivityCard";
 import useCurrentActivities from "../../hooks/useCurrentAcitivies";
 import { BookOpen } from "lucide-react";
-import useTiptapEditor from "../../hooks/useTiptapEditor";
+
+import { useActivityStore } from "../../store/ActivityStore";
+import EditorWrapper from "../../common/EditorWrapper";
+
+import { useTiptapEditor } from "../../hooks/useTiptapEditor";
 
 const ActivityPage = () => {
   const { RangePicker } = DatePicker;
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const { setSelectedFile, selectedFile } = useActivityStore();
+  const [editorContent, setEditorContent] = useState("");
   const axiosPublic = useAxios();
   const { data: currentUser } = useCurrentUser();
   const { data: academyLists } = useAcademies();
@@ -46,7 +51,16 @@ const ActivityPage = () => {
     setOpen(false);
   };
 
-  const editor = useTiptapEditor();
+  const editor = useTiptapEditor({
+    content: form.getFieldValue("activityDescription") || "",
+    shouldOptimizeRendering: true,
+  });
+  useEffect(() => {
+    const value = form.getFieldValue("activityDescription");
+    if (value) {
+      setEditorContent(value);
+    }
+  }, [form]);
 
   const { mutate: postModule, isLoading }: any = useMutation({
     mutationKey: ["postActivity"],
@@ -61,6 +75,7 @@ const ActivityPage = () => {
         description: "Activity added successfully",
       });
       form.resetFields();
+      editor?.commands.clearContent();
       setSelectedFile(null);
       showNotification();
       onClose();
@@ -201,14 +216,8 @@ const ActivityPage = () => {
                   },
                 ]}
               >
-                {editor && <EditButtons editor={editor} />}
-                {editor && (
-                  <EditorContent
-                    placeholder="Write something..."
-                    editor={editor}
-                    className="bg-gray-50 rounded-xl p-4 w-full max-w-full overflow-x-hidden"
-                  />
-                )}
+                {/* <TextArea /> */}
+                <EditorWrapper editor={editor} />
               </Form.Item>
               <Form.Item
                 label={

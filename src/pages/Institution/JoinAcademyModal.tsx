@@ -287,7 +287,7 @@ const JoinAcademyModal = ({
             //     </List.Item>
             //   )}
             // />
-            <>
+            <div>
               {academyLists
                 ?.filter((item: any) =>
                   item?.academyName
@@ -350,7 +350,7 @@ const JoinAcademyModal = ({
                     </div>
                   </div>
                 ))}
-            </>
+            </div>
           )}
         </div>
       </Modal>

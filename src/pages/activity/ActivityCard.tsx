@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BiDownload, BiEdit } from "react-icons/bi";
 import { CgMenuGridO } from "react-icons/cg";
@@ -25,7 +26,7 @@ import {
   Tooltip,
   Typography,
 } from "antd";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import empty from "../../assets/images/emptypng.png";
 import Loader from "../../common/Loader";
@@ -37,7 +38,7 @@ import { EditorContent } from "@tiptap/react";
 import { GrFormAttachment } from "react-icons/gr";
 import { FcOvertime } from "react-icons/fc";
 import { ArrowRight, Calendar, LucideUsersRound, Users } from "lucide-react";
-import useTiptapEditor from "../../hooks/useTiptapEditor";
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Toast from "../../common/Toast";
 import useAxios from "../../hooks/useAxios";
@@ -47,15 +48,29 @@ import { MdDeleteOutline, MdOutlineMail } from "react-icons/md";
 import { SlOptionsVertical } from "react-icons/sl";
 import ActivityEditModule from "./ActivityEditModule";
 import dayjs from "dayjs";
+import { useTiptapEditor } from "../../hooks/useTiptapEditor";
 const ActivityCard = ({ allActivities, loading }: any) => {
   const [open, setOpen] = useState(false);
+  const [editorContent, setEditorContent] = useState("");
   const [openAnswer, setOpenAnswer] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [form] = Form.useForm();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [openEditActivity, setOpenEditActivity] = useState(false);
+  const [searchItem, setSearchItem] = useState("");
+  const [filteredMember, setFilteredMember] = useState<any[]>([]);
   const { token } = theme.useToken();
-  const editor = useTiptapEditor();
+
+  const editor = useTiptapEditor({
+    content: form.getFieldValue("activityDescription") || "",
+    shouldOptimizeRendering: true,
+  });
+  useEffect(() => {
+    const value = form.getFieldValue("activityDescription");
+    if (value) {
+      setEditorContent(value);
+    }
+  }, [form]);
   const axiosPublic = useAxios();
   const { data: currentUser } = useCurrentUser();
   const { data: academyLists } = useAcademies();
@@ -232,24 +247,6 @@ const ActivityCard = ({ allActivities, loading }: any) => {
     setOpenEditActivity(false);
   };
 
-  // const date = "Tue, 08 Jul 2025 18:00:00 GMT,Wed, 27 Aug 2025 18:00:00 GMT";
-  // const splitdate = date?.split(",")?.slice(0, 2);
-  // const splitdate2 = date?.split(",")?.slice(2, 4);
-  // console.log(splitdate, splitdate2, "dateee");
-  // const date = "Tue, 08 Jul 2025 18:00:00 GMT,Wed, 27 Aug 2025 18:00:00 GMT";
-
-  // // Split into two parts
-  // const parts = date.split(",");
-
-  // Reconstruct start and end by removing time and GMT
-  // const endDate = `${date.split(",")[2].trim()}, ${
-  //   date.split(",")[3].trim().split(" ")[0]
-  // } ${date.split(",")[3].trim().split(" ")[1]} ${
-  //   date.split(",")[3].trim().split(" ")[2]
-  // }`;
-
-  // console.log("Start:", startDate);
-  // console.log("End:", endDate);
   const { Text } = Typography;
 
   // Enhanced deadline status calculation
@@ -320,6 +317,24 @@ const ActivityCard = ({ allActivities, loading }: any) => {
     return diffDays;
   };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchItem(value);
+
+    if (value?.trim().length === 0) {
+      setFilteredMember([]);
+      return;
+    }
+
+    const filtered = allActivities?.filter(
+      (activity: any) =>
+        activity?.activityTitle?.toLowerCase().includes(value.toLowerCase()) ||
+        activity?.firstName?.toLowerCase().includes(value.toLowerCase()) ||
+        activity?.lastName?.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredMember(filtered);
+  };
+
   return (
     <div className="">
       <style>
@@ -341,6 +356,8 @@ const ActivityCard = ({ allActivities, loading }: any) => {
               <div className="relative mt-2 w-full">
                 <CiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-6 w-6" />
                 <input
+                  value={searchItem}
+                  onChange={handleSearch}
                   type="text"
                   placeholder="Search activities...."
                   className="block w-full rounded-xl border border-neutral-300 bg-transparent py-[11px] pl-10 pr-20 text-base/6 text-neutral-950 ring-4 ring-transparent transition placeholder:text-neutral-500 focus:border-[#7ABA78] focus:outline-none focus:ring-neutral-950/5"
@@ -363,7 +380,10 @@ const ActivityCard = ({ allActivities, loading }: any) => {
             {/* card */}
             <div className="bg-gray-50 rounded-2xl px-5 pt-5 pb-2 mt-4">
               <AnimatePresence>
-                {allActivities?.map((activity: any, index: number) => (
+                {(searchItem?.trim().length > 0
+                  ? filteredMember
+                  : allActivities
+                )?.map((activity: any, index: number) => (
                   // main card
                   <motion.div
                     key={activity?.activityId}
@@ -471,7 +491,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                       <div className="">
                         <div className="text-sm text-gray-500 flex flex-col">
                           <div
-                            className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full"
+                            className="break-words overflow-hidden text-ellipsis max-w-full"
                             dangerouslySetInnerHTML={{
                               __html: activity?.activityDescription || "",
                             }}
@@ -507,7 +527,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                 <div>
                                   <Text
                                     type="secondary"
-                                    className="text-xs block mb-1"
+                                    className="text-xs block mb-1 font-bold"
                                   >
                                     Start Date
                                   </Text>
@@ -528,7 +548,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                 <div>
                                   <Text
                                     type="secondary"
-                                    className="text-xs block mb-1"
+                                    className="text-xs block mb-1 font-bold"
                                   >
                                     End Date
                                   </Text>
@@ -559,11 +579,25 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                   Progress
                                 </Text>
                                 <Space size="small">
-                                  <Text type="secondary" className="text-xs">
+                                  <Text
+                                    type="secondary"
+                                    className={`text-sm font-bold ${
+                                      getDeadlineStatus(activity).status ===
+                                      "ended"
+                                        ? "text-red-600"
+                                        : getDeadlineStatus(activity).status ===
+                                          "active"
+                                        ? "text-green-600"
+                                        : "text-blue-600"
+                                    }`}
+                                  >
                                     {Math.round(getProgress(activity))}%
                                   </Text>
                                   {getDaysRemaining(activity) > 0 && (
-                                    <Text type="secondary" className="text-xs">
+                                    <Text
+                                      type="secondary"
+                                      className="text-xs text-muted-foreground font-bold"
+                                    >
                                       • {getDaysRemaining(activity)} days
                                       remaining
                                     </Text>
@@ -682,15 +716,19 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                               key: "1",
                               label: (
                                 <div className="-mt-[5px]">
-                                  <div className="flex items-center gap-x-2">
+                                  <div className="flex flex-col sm:flex-row sm:items-center gap-y-2 gap-x-2">
                                     <p className="text-gray-600 flex items-center gap-x-2">
                                       <LucideUsersRound width={18} />
-                                      <p className="font-semibold text-sm">
-                                        {" "}
+                                      <span className="font-semibold text-sm">
                                         Students answer
-                                      </p>
+                                      </span>
                                     </p>
-                                    <Avatar.Group maxCount={5}>
+                                    <Avatar.Group
+                                      size={"small"}
+                                      maxCount={5}
+                                      className="flex-wrap"
+                                      style={{ display: "flex" }}
+                                    >
                                       {activity?.answers?.map(
                                         (answer: any, index: number) => (
                                           <Tooltip
@@ -698,6 +736,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                             title={`${answer?.student?.firstName} ${answer?.student?.lastName}`}
                                           >
                                             <Avatar
+                                              size={"small"}
                                               src={
                                                 answer?.student?.photoURL ||
                                                 "/placeholder.svg"
@@ -709,7 +748,11 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                     </Avatar.Group>
                                     <p className="text-[10px] font-semibold bg-[#f1d1ef] py-[2px] px-[8px] rounded-full w-fit text-purple-600">
                                       {activity?.answers?.length || 0}
-                                      <span className="ml-1">responses</span>
+                                      <span className="ml-1">
+                                        {activity?.answers?.length <= 1
+                                          ? "response"
+                                          : "responses"}
+                                      </span>
                                     </p>
                                   </div>
                                   <Divider className="mt-2 border-blue-100 mb-0" />
