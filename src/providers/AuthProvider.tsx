@@ -9,8 +9,8 @@ import {
   signOut,
   updateProfile,
   signInWithPopup,
-  GoogleAuthProvider,
   UserCredential,
+  GoogleAuthProvider,
 } from "firebase/auth";
 import { app } from "../firebase/firebase.config";
 
@@ -30,7 +30,7 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | null>(null);
 
 const auth = getAuth(app);
-
+const googleProvider = new GoogleAuthProvider();
 interface AuthProviderProps {
   children: ReactNode;
 }
@@ -38,7 +38,7 @@ interface AuthProviderProps {
 const AuthProvider = ({ children }: AuthProviderProps) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const googleProvider = new GoogleAuthProvider();
+  // const googleProvider = new GoogleAuthProvider();
 
   //   create user
   const createUser = (email: string, password: string) => {
@@ -96,7 +96,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     });
 
     return () => unsubscribe();
-  }, [user]);
+  }, []);
   const authInfo: AuthContextType = {
     user,
     loading,

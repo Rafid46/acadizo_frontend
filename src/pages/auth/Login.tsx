@@ -8,6 +8,7 @@ import banner from "../../assets/images/login_pattern.jpg";
 import { AuthContext } from "../../providers/AuthProvider";
 import useAxios from "../../hooks/useAxios";
 import { useLocation, useNavigate } from "react-router-dom";
+import Toast from "../../common/Toast";
 const Login = () => {
   const axiosPublic = useAxios();
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
@@ -44,29 +45,87 @@ const Login = () => {
         setLoading(false);
       });
   };
+
+  // google sign in
   const handleGoogleSignIn = () => {
-    googleSignIn().then((result: any) => {
-      console.log(result.user);
+    setLoading(true);
 
-      const [firstName, ...rest] = result.user.displayName.split(" ");
-      const lastName = rest.join(" ");
+    googleSignIn()
+      .then(async (result: any) => {
+        const user = result?.user;
+        if (!user) {
+          notification.error({
+            message: "Google Sign-In Failed",
+            description: "No user info received",
+          });
+          setLoading(false);
+          return;
+        }
 
-      const userInfo = {
-        email: result.user?.email,
-        firstName: firstName || "Unknown", // Default to avoid empty fields
-        lastName: lastName || " ",
-        role: "teacher",
-      };
+        const displayName = user.displayName || "Unknown";
+        const [firstName, ...rest] = displayName.split(" ");
+        const lastName = rest.join(" ") || " ";
+        const email = user.email;
+        const role = " ";
 
-      axiosPublic
-        .post("http://localhost:3000/api/v1/user/create-user", userInfo)
-        .then((res: any) => {
-          console.log(res.data);
-        })
-        .catch((error) => {
-          console.error("Error saving user data:", error);
+        try {
+          // Check if user already exists
+          const existingUser = await axiosPublic.get(
+            `/api/v1/user/${encodeURIComponent(email)}`
+          );
+
+          if (existingUser?.data) {
+            const showNotification = Toast({
+              type: "success",
+              message: "Welcome Back!",
+              description: `${firstName}`,
+            });
+            showNotification();
+            navigate("/dashboard");
+            return;
+          }
+        } catch (err: any) {
+          console.log("User not found, proceeding to create...");
+        }
+
+        // Create new user
+        const userData = {
+          email,
+          firstName,
+          lastName,
+          password: "GoogleAuth@123",
+          role,
+        };
+
+        try {
+          const createRes = await axiosPublic.post(
+            "/api/v1/user/create-user",
+            userData
+          );
+
+          notification.success({
+            message: "Welcome!",
+            description: "Account created successfully.",
+          });
+          navigate("/dashboard");
+        } catch (err: any) {
+          console.error("❌ Failed to save Google user:", err.message);
+          notification.error({
+            message: "Create User Failed",
+            description: err.response?.data?.message || "Try again later",
+          });
+        } finally {
+          setLoading(false);
+        }
+      })
+      .catch((error: any) => {
+        console.error("❌ Google Sign-In Failed:", error.message);
+        notification.error({
+          message: "Google Sign-In Error",
+          description: error.message || "Try again later",
         });
-    });
+        setLoading(false);
+      });
   };
 
   const onFieldsChange = (_: any, allFields: any) => {

@@ -20,6 +20,13 @@
   /* font-family: "poppins", sans-serif !important; */
   font-family: "inter", sans-serif !important;
 }
+.is-editor-empty::before {
+  content: attr(data-placeholder);
+  color: #a0aec0; /* Tailwind gray-400 */
+  float: left;
+  pointer-events: none;
+  height: 0;
+}
 
 /* loader */
 /* From Uiverse.io by SchawnnahJ */

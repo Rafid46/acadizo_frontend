@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "antd";
+import { Avatar } from "antd";
 import moment from "moment";
 import { CiCalendar, CiStar } from "react-icons/ci";
-import { FiMoreVertical } from "react-icons/fi";
-import UpIconAcademy from "./UpIconAademy";
+import useCurrentModules from "../../hooks/useCurrentModules";
+import useCurrentActivities from "../../hooks/useCurrentAcitivies";
 
 const BannerPart = ({ joinedAcademyDetails }: any) => {
+  const { matchedModules }: any = useCurrentModules();
+  const { matchedActivity }: any = useCurrentActivities();
+
   return (
     <div>
       <div className="max-w-full mx-auto">
@@ -19,8 +22,27 @@ const BannerPart = ({ joinedAcademyDetails }: any) => {
               <div className="flex-1">
                 {/* Profile image */}
                 <div className="relative -mt-16 mb-4 flex justify-between items-start">
-                  <UpIconAcademy joinedAcademyDetails={joinedAcademyDetails} />
+                  <Avatar
+                    size={100}
+                    src={
+                      joinedAcademyDetails?.[0]?.academyLogoUrl || // Your image URL
+                      undefined
+                    }
+                    className="flex items-center justify-center"
+                    style={{
+                      backgroundImage: `url("https://vercel.com/api/www/avatar/eb3qpvJHzzjxaYdU9mUIuAO9")`,
+                    }}
+                  >
+                    {joinedAcademyDetails?.[0]?.academyName && (
+                      <p className="text-gray-600 font-bold text-[20px]">
+                        {joinedAcademyDetails?.[0].academyName
+                          .charAt(0)
+                          .toUpperCase()}
+                      </p>
+                    )}
+                  </Avatar>
                 </div>
+
                 <div className="flex lg:flex-row flex-col items-center justify-between">
                   {/* Profile info */}
                   <div>
@@ -34,7 +56,7 @@ const BannerPart = ({ joinedAcademyDetails }: any) => {
                   {/* Stats */}
                   {/* Action buttons */}
                   <div className="flex-col">
-                    <div className="flex items-center gap-2 pt-4">
+                    {/* <div className="flex items-center gap-2 pt-4">
                       <Button className="rounded-full bg-gray-100 hover:bg-gray-200">
                         Message
                       </Button>
@@ -42,22 +64,22 @@ const BannerPart = ({ joinedAcademyDetails }: any) => {
                       <Button ghost>
                         <FiMoreVertical className="w-4 h-4" />
                       </Button>
-                    </div>
+                    </div> */}
                     <div className="flex gap-4 mt-6">
                       <div className="bg-[#EEF2FE] rounded-2xl p-6">
                         <div className="text-2xl font-bold text-purple-600">
-                          351
+                          {matchedModules?.length}
                         </div>
                         <div className="text-gray-600 text-sm mt-5 font-semibold">
-                          Completed Sessions
+                          Modules
                         </div>
                       </div>
                       <div className="bg-[#F0F9FF] rounded-2xl p-6 ">
                         <div className="text-2xl font-bold text-purple-600">
-                          2+
+                          {matchedActivity?.length}
                         </div>
                         <div className="text-gray-600 text-sm mt-5 font-semibold">
-                          Years Experiences
+                          Activities
                         </div>
                       </div>
                     </div>

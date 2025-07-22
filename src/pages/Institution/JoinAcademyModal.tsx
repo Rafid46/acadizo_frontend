@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Avatar, Badge, Button, Image, Modal, Popconfirm, Tooltip } from "antd";
+import { Avatar, Badge, Button, Modal, Popconfirm, Tooltip } from "antd";
 import Loader from "../../common/Loader";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../../hooks/useAxios";
@@ -27,6 +27,7 @@ const JoinAcademyModal = ({
   currentUserLastName,
   userId,
   currentUserPhotoURL,
+  refetch,
 }: any) => {
   const queryClient = useQueryClient();
   const axiosPublic = useAxios();
@@ -166,7 +167,9 @@ const JoinAcademyModal = ({
       });
     },
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ["academyLists"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["allAcademies"] });
+      setAcademyModal(false);
       const showNotification = Toast({
         type: "success",
         message: "",
@@ -187,7 +190,11 @@ const JoinAcademyModal = ({
       });
     },
     onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ["academyLists"] });
+      queryClient.invalidateQueries({ queryKey: ["allAcademies"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+
+      refetch();
+      setAcademyModal(false);
       const showNotification = Toast({
         type: "success",
         message: "",
@@ -296,18 +303,31 @@ const JoinAcademyModal = ({
                 )
                 .map((item: any) => (
                   <div
-                    key={item.id}
+                    key={item?.id}
                     className="border !border-gray-200 rounded-lg mb-4 hover:shadow-lg transition-all duration-200 hover:scale-[1.02]"
                   >
                     <div className="p-6">
                       <div className="flex items-start gap-4">
                         <div className="relative">
-                          <Avatar className="h-16 w-16 ring-2 ring-white shadow-lg">
-                            <Image
-                              src={item?.avatar || "/placeholder.svg"}
-                              alt={item?.academyName}
-                            />
-                          </Avatar>
+                          <div className="">
+                            <Avatar
+                              size={70}
+                              src={
+                                item?.[0]?.academyLogoUrl || // Your image URL
+                                undefined
+                              }
+                              className="flex items-center justify-center"
+                              style={{
+                                backgroundImage: `url("https://vercel.com/api/www/avatar/eb3qpvJHzzjxaYdU9mUIuAO9")`,
+                              }}
+                            >
+                              {item?.academyName && (
+                                <p className="text-gray-600 font-bold text-[20px]">
+                                  {item.academyName.charAt(0).toUpperCase()}
+                                </p>
+                              )}
+                            </Avatar>
+                          </div>
                           {item?.isJoined === true && (
                             <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-1">
                               <CheckCircle className="h-3 w-3 text-white" />

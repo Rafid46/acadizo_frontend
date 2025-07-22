@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from "react";
 import {
   MenuFoldOutlined,
   MenuOutlined,
-  UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
 } from "@ant-design/icons";
@@ -20,12 +19,11 @@ import {
 } from "antd";
 import { Link, NavLink, Outlet } from "react-router-dom";
 import { LuHome, LuLayoutDashboard, LuLogOut } from "react-icons/lu";
-import { MdOutlineCollectionsBookmark } from "react-icons/md";
 import logo from "../assets/icons/acadizo_logo.png";
 import icon from "../assets/icons/acadizo_icon.png";
 import { PiStudent } from "react-icons/pi";
 import { FaAngleDown } from "react-icons/fa";
-import { CiUser, CiViewList } from "react-icons/ci";
+import { CiViewList } from "react-icons/ci";
 import { RiHomeOfficeLine } from "react-icons/ri";
 import { AuthContext } from "../providers/AuthProvider";
 import useCurrentUser from "../hooks/useCurrentUser";
@@ -69,14 +67,14 @@ const TestDashboard = () => {
     },
     {
       key: "2",
-      label: "Dashboard",
+      label: <Link to="/dashboard/">Dashboard</Link>,
       icon: <LuHome />,
     },
-    {
-      key: "3",
-      label: "Saved",
-      icon: <MdOutlineCollectionsBookmark />,
-    },
+    // {
+    //   key: "3",
+    //   label: "Saved",
+    //   icon: <MdOutlineCollectionsBookmark />,
+    // },
     {
       type: "divider",
     },
@@ -161,19 +159,19 @@ const TestDashboard = () => {
           ),
           icon: <PiStudent className="!text-xl" />,
         },
-        {
-          key: "4-3",
-          icon: <CiUser className="!text-xl" />,
-          label: (
-            <NavLink
-              className="font-[500]"
-              onClick={() => setOpen(false)}
-              to="/dashboard/institution/users"
-            >
-              Users
-            </NavLink>
-          ),
-        },
+        // {
+        //   key: "4-3",
+        //   icon: <CiUser className="!text-xl" />,
+        //   label: (
+        //     <NavLink
+        //       className="font-[500]"
+        //       onClick={() => setOpen(false)}
+        //       to="/dashboard/institution/users"
+        //     >
+        //       Users
+        //     </NavLink>
+        //   ),
+        // },
       ],
     },
     {
@@ -215,17 +213,17 @@ const TestDashboard = () => {
       ],
     },
   ];
-  if (currentUser?.role === "teacher") {
-    desktopItems.push({
-      key: "5",
-      icon: <UploadOutlined />,
-      label: (
-        <NavLink className="font-[500]" to="/dashboard/AllUsers">
-          All users
-        </NavLink>
-      ),
-    });
-  }
+  // if (currentUser?.role === "teacher") {
+  //   desktopItems.push({
+  //     key: "5",
+  //     icon: <UploadOutlined />,
+  //     label: (
+  //       <NavLink className="font-[500]" to="/dashboard/AllUsers">
+  //         All users
+  //       </NavLink>
+  //     ),
+  //   });
+  // }
   useEffect(() => {
     if (window.innerWidth < 746) {
       setIsMobile(true);
@@ -414,18 +412,18 @@ const TestDashboard = () => {
                     icon: <PiStudent />,
                   },
 
-                  {
-                    key: "3",
-                    icon: <CiUser />,
-                    label: (
-                      <NavLink
-                        onClick={() => setOpen(false)}
-                        to="/dashboard/institution/users"
-                      >
-                        Users
-                      </NavLink>
-                    ),
-                  },
+                  // {
+                  //   key: "3",
+                  //   icon: <CiUser />,
+                  //   label: (
+                  //     <NavLink
+                  //       onClick={() => setOpen(false)}
+                  //       to="/dashboard/institution/users"
+                  //     >
+                  //       Users
+                  //     </NavLink>
+                  //   ),
+                  // },
                 ],
               },
               {
@@ -609,9 +607,9 @@ const TestDashboard = () => {
         </Header>
         <Content
           style={{
-            margin: "5px 5px",
+            margin: "10px 10px",
             padding: isMobile ? 8 : 24,
-            background: "white",
+            background: "#F6F8FB",
             borderRadius: "10px",
             overflow: "auto",
           }}
