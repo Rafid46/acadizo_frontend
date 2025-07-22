@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Card, Dropdown, Menu, MenuProps } from "antd";
-import { FaEdit, FaPlus, FaTrashAlt } from "react-icons/fa";
+import { Button, Dropdown, Menu, MenuProps, Popconfirm } from "antd";
+import { FaPlus } from "react-icons/fa";
 import { PiStudent } from "react-icons/pi";
 import Loader from "../../common/Loader";
 import moment from "moment";
@@ -8,11 +9,20 @@ import { useState } from "react";
 import useCurrentUser from "../../hooks/useCurrentUser";
 import { SlOptionsVertical } from "react-icons/sl";
 
-import NoticeModal from "./NoticeModal";
-import { ArrowDownUp, BookOpen, GraduationCap, Users } from "lucide-react";
+import {
+  ArrowDownUp,
+  BookOpen,
+  GraduationCap,
+  LogOut,
+  User,
+  Users,
+} from "lucide-react";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { CiSearch } from "react-icons/ci";
 import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import useAxios from "../../hooks/useAxios";
+import Toast from "../../common/Toast";
 
 const InstitutionTable = ({
   setAcademyModal,
@@ -23,7 +33,13 @@ const InstitutionTable = ({
   const [noticeModal, setNoticeModal] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [filteredMembers, setFilteredMembers] = useState<any[]>([]);
+  const [filteredRoleMembers, setFilteredRoleMembers] = useState<any[] | null>(
+    null
+  );
+
   const { data: currentUser }: any = useCurrentUser();
+  const queryClient = useQueryClient();
+  const axiosPublic = useAxios();
   // useEffect(() => {
   //   if (allUsers) {
   //     const memberDetail = allUsers?.find(
@@ -51,25 +67,24 @@ const InstitutionTable = ({
       icon: <IoMdNotificationsOutline className="!text-xl" />,
       onClick: () => setNoticeModal(true),
     },
+    {
+      key: "2",
+      label: "Leave academy",
+      icon: <LogOut size={14} />,
+      onClick: () => setNoticeModal(true),
+    },
   ];
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
-  const handleMenuClick = ({ key }: { key: string }) => {
-    setSortOrder(key as "asc" | "desc");
-    // Your sort logic here
-    console.log("Sort order:", key);
+  const handleMenuClick = (e: any) => {
+    if (e.key === "student") {
+      showStudent();
+    } else if (e.key === "teacher") {
+      showTeacher();
+    } else if (e.key === "all") {
+      setFilteredRoleMembers(null);
+    }
   };
-
-  const menu = (
-    <Menu onClick={handleMenuClick}>
-      <Menu.Item key="asc" icon={<ArrowUpOutlined />}>
-        Ascending
-      </Menu.Item>
-      <Menu.Item key="desc" icon={<ArrowDownOutlined />}>
-        Descending
-      </Menu.Item>
-    </Menu>
-  );
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -91,6 +106,46 @@ const InstitutionTable = ({
 
     setFilteredMembers(filtered);
   };
+
+  const showStudent = () => {
+    const filteredData = members[0]?.academyMembers?.filter(
+      (user: any) => user?.role === "student"
+    );
+    setFilteredRoleMembers(filteredData);
+  };
+  const showTeacher = () => {
+    const filteredData = members[0]?.academyMembers?.filter(
+      (user: any) => user?.role === "teacher"
+    );
+    setFilteredRoleMembers(filteredData);
+  };
+
+  // const currentUserId = currentUser?.id;
+  const { mutate: handleLeaveAcademy } = useMutation({
+    mutationKey: ["leaveAcademy"],
+    mutationFn: async ({
+      academyName,
+      userId,
+    }: {
+      academyName: string;
+      userId: string;
+    }) => {
+      return await axiosPublic.post("/api/v1/user/leave-academy", {
+        userId,
+        academyName,
+      });
+    },
+    onSuccess: async () => {
+      queryClient.invalidateQueries({ queryKey: ["allAcademies"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      setAcademyModal(false);
+      Toast({
+        type: "success",
+        message: "",
+        description: "You have left the academy",
+      })();
+    },
+  });
 
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-6 rounded-lg">
@@ -143,8 +198,47 @@ const InstitutionTable = ({
                 </Button>
               )}
 
-              {currentUser?.role === "teacher" && (
-                <Dropdown arrow={true} menu={{ items: dropItems }}>
+              {currentUser?.role === "teacher" ? (
+                <Dropdown
+                  arrow={true}
+                  menu={{
+                    items: [
+                      {
+                        key: "1",
+                        label: "Update notice",
+                        icon: <IoMdNotificationsOutline className="!text-xl" />,
+                        onClick: () => setNoticeModal(true),
+                      },
+                      {
+                        key: "2",
+                        label: (
+                          <Popconfirm
+                            title="Leave academy"
+                            description={
+                              <p className="text-sm">
+                                Are you sure you want to leave the academy?
+                              </p>
+                            }
+                            okText="Yes"
+                            cancelText="No"
+                            onConfirm={() =>
+                              handleLeaveAcademy({
+                                academyName: currentUser?.academyName,
+                                userId: currentUser?.id,
+                              })
+                            }
+                          >
+                            <span className="text-sm text-red-500 font-semibold cursor-pointer">
+                              Leave academy
+                            </span>
+                          </Popconfirm>
+                        ),
+                        icon: <LogOut size={14} />,
+                        onClick: () => setNoticeModal(true),
+                      },
+                    ],
+                  }}
+                >
                   <a onClick={(e) => e.preventDefault()}>
                     <Button
                       className="!px-[20px] py-[19px]"
@@ -156,79 +250,107 @@ const InstitutionTable = ({
                     ></Button>
                   </a>
                 </Dropdown>
+              ) : (
+                currentUser?.role === "student" && (
+                  <Dropdown
+                    arrow={true}
+                    menu={{
+                      items: [
+                        {
+                          key: "1",
+                          label: (
+                            <Popconfirm
+                              title="Leave academy"
+                              description={
+                                <p className="text-sm">
+                                  Are you sure you want to leave the academy?
+                                </p>
+                              }
+                              okText="Yes"
+                              cancelText="No"
+                              onConfirm={() =>
+                                handleLeaveAcademy({
+                                  academyName: currentUser?.academyName,
+                                  userId: currentUser?.id,
+                                })
+                              }
+                            >
+                              <span className="text-sm text-red-500 font-semibold cursor-pointer">
+                                Leave academy
+                              </span>
+                            </Popconfirm>
+                          ),
+                          icon: <LogOut size={14} />,
+                          onClick: () => setNoticeModal(true),
+                        },
+                      ],
+                    }}
+                  >
+                    <a onClick={(e) => e.preventDefault()}>
+                      <Button
+                        className="!px-[20px] py-[19px]"
+                        // onClick={() => setNoticeModal(true)}
+                        icon={<SlOptionsVertical className="text-base" />}
+                        // disabled={isButtonDisabled || loading}
+                        // loading={loading}
+                        // htmlType="submit"
+                      ></Button>
+                    </a>
+                  </Dropdown>
+                )
               )}
-              <NoticeModal
-                setNoticeModal={setNoticeModal}
-                noticeModal={noticeModal}
-              ></NoticeModal>
             </div>
 
             {/* academy input list */}
           </span>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-5">
-            <Card className="border-0 shadow-md bg-white/70 backdrop-blur-sm">
-              <div className="px-2 py-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600">
-                      Total Members
-                    </p>
-                    <p className="text-2xl font-bold text-slate-900">
-                      {members[0]?.academyMembers?.length}
-                    </p>
-                  </div>
-                  <div className="p-3 bg-blue-100 rounded-full">
-                    <Users className="h-6 w-6 text-blue-600" />
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-slate-200 rounded-lg p-4 flex items-center gap-3">
+              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
-            </Card>
-
-            <Card className="border-0 shadow-md bg-white/70 backdrop-blur-sm">
-              <div className="px-2 py-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600">
-                      Teachers
-                    </p>
-                    <p className="text-2xl font-bold text-slate-900">
-                      {" "}
-                      {
-                        members[0]?.academyMembers?.filter(
-                          (item: any) => item?.role === "teacher"
-                        ).length
-                      }
-                    </p>
-                  </div>
-                  <div className="p-3 bg-green-100 rounded-full">
-                    <GraduationCap className="h-6 w-6 text-green-600" />
-                  </div>
-                </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900">
+                  {members[0]?.academyMembers?.length}
+                </p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Total Members
+                </p>
               </div>
-            </Card>
-
-            <Card className="border-0 shadow-md bg-white/70 backdrop-blur-sm">
-              <div className="px-2 py-2">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-600">
-                      Students
-                    </p>
-                    <p className="text-2xl font-bold text-slate-900">
-                      {" "}
-                      {
-                        members[0]?.academyMembers?.filter(
-                          (item: any) => item?.role === "teacher"
-                        ).length
-                      }
-                    </p>
-                  </div>
-                  <div className="p-3 bg-purple-100 rounded-full">
-                    <BookOpen className="h-6 w-6 text-purple-600" />
-                  </div>
-                </div>
+            </div>
+            <div className="bg-slate-200 rounded-lg p-4 flex items-center gap-3">
+              <div className="p-2 bg-emerald-100 dark:bg-emerald-900 rounded-lg">
+                <GraduationCap className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
               </div>
-            </Card>
+              <div>
+                <p className="text-2xl font-bold text-slate-900">
+                  {
+                    members[0]?.academyMembers?.filter(
+                      (item: any) => item?.role === "teacher"
+                    ).length
+                  }
+                </p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Teachers
+                </p>
+              </div>
+            </div>
+            <div className="bg-slate-200 rounded-lg p-4 flex items-center gap-3">
+              <div className="p-2 bg-purple-100 dark:bg-purple-900 rounded-lg">
+                <BookOpen className="h-5 w-5 text-purple-600 dark:text-purple-400" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900">
+                  {
+                    members[0]?.academyMembers?.filter(
+                      (item: any) => item?.role === "student"
+                    ).length
+                  }
+                </p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  Students
+                </p>
+              </div>
+            </div>
           </div>
           <section className="">
             <div className="">
@@ -248,7 +370,27 @@ const InstitutionTable = ({
                 </div>
                 <div className=" cursor-pointer hover:bg-gray-100 hover:rounded-full p-2">
                   <Dropdown
-                    overlay={menu}
+                    overlay={
+                      <Menu onClick={handleMenuClick}>
+                        <Menu.Item
+                          onClick={showStudent}
+                          key="all"
+                          icon={<User size={15} />}
+                        >
+                          All
+                        </Menu.Item>
+                        <Menu.Item
+                          onClick={showStudent}
+                          key="student"
+                          icon={<ArrowUpOutlined />}
+                        >
+                          Student
+                        </Menu.Item>
+                        <Menu.Item key="teacher" icon={<ArrowDownOutlined />}>
+                          Teacher
+                        </Menu.Item>
+                      </Menu>
+                    }
                     placement="bottomLeft"
                     trigger={["click"]}
                   >
@@ -299,15 +441,15 @@ const InstitutionTable = ({
                             {/* <th className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-[#64748b] capitalize">
                         Status
                       </th> */}
-                            <th className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-[#64748b] capitalize">
+                            {/* <th className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-[#64748b] capitalize">
                               Actions
-                            </th>
+                            </th> */}
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-300">
                           {(searchItem?.trim()?.length > 0
                             ? filteredMembers
-                            : members[0]?.academyMembers
+                            : filteredRoleMembers ?? members[0]?.academyMembers
                           )?.map((user: any) => (
                             <tr
                               key={user?.id}
@@ -381,14 +523,14 @@ const InstitutionTable = ({
                                   </span>
                                 </div>
                               </td>
-                              <td className="flex p-5 items-center gap-0.5">
+                              {/* <td className="flex p-5 items-center gap-0.5">
                                 <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-indigo-600 flex items-center">
                                   <FaEdit className="text-gray-500 group-hover:text-white" />
                                 </button>
                                 <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-red-600 flex items-center">
                                   <FaTrashAlt className="text-gray-500 group-hover:text-white" />
                                 </button>
-                              </td>
+                              </td> */}
                             </tr>
                           ))}
                         </tbody>

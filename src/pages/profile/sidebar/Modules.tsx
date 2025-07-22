@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Button,
@@ -11,7 +12,7 @@ import {
   Space,
   Tooltip,
 } from "antd";
-import { useRef, useState } from "react";
+import { useEffect, useState } from "react";
 // import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { HiMiniSquaresPlus } from "react-icons/hi2";
@@ -25,26 +26,20 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../../../hooks/useAxios";
 import Toast from "../../../common/Toast";
 import ModuleCard from "../../ModuleCard";
-import EditButtons from "../../EditButtons";
-import { useEditor } from "@tiptap/react";
-import { EditorContent } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-
-import Underline from "@tiptap/extension-underline";
-import TextAlign from "@tiptap/extension-text-align";
-import Highlight from "@tiptap/extension-highlight";
-import TextStyle from "@tiptap/extension-text-style";
-import Color from "@tiptap/extension-color";
+import EditorWrapper from "../../../common/EditorWrapper";
+import { useTiptapEditor } from "../../../hooks/useTiptapEditor";
+import Loader from "../../../common/Loader";
 const Modules = () => {
   const [open, setOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [editorContent, setEditorContent] = useState("");
   // const [content, setContent] = useState<string>(value || "");
   const axiosPublic = useAxios();
-  const { data: currentUser } = useCurrentUser();
+  const { data: currentUser, isLoading: userLoading } = useCurrentUser();
   const { data: academyLists } = useAcademies();
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
-  const editorRef = useRef<any>(null);
+  // const editorRef = useRef<any>(null);
   const showDrawer = () => {
     setOpen(true);
   };
@@ -94,7 +89,7 @@ const Modules = () => {
     const academyId = joinedAcademyDetails?.academyId;
     const academyName = joinedAcademyDetails?.academyName;
     const moduleFormData = new FormData();
-    const description = editorRef.current.getHTML() || "";
+    const description = editor.getHTML() || "";
     moduleFormData.append("title", title);
     moduleFormData.append("heading", heading);
     moduleFormData.append("description", description);
@@ -128,40 +123,16 @@ const Modules = () => {
   //   "link",
   //   "image",
   // ];
-
-  const editor = useEditor({
-    extensions: [
-      Underline,
-      TextStyle,
-      Color,
-      StarterKit.configure({
-        heading: {
-          levels: [1, 2, 3],
-        },
-        bulletList: {
-          HTMLAttributes: {
-            class: "list-disc ml-3",
-          },
-        },
-        orderedList: {
-          HTMLAttributes: {
-            class: "list-decimal ml-3",
-          },
-        },
-      }),
-      TextAlign.configure({
-        types: ["heading", "paragraph"],
-      }),
-      Highlight.configure({ multicolor: true }),
-    ],
-    onCreate: ({ editor }) => {
-      editorRef.current = editor;
-    },
-    onUpdate: () => {
-      // No state updates here to prevent re-renders
-    },
+  const editor = useTiptapEditor({
+    content: form.getFieldValue("activityDescription") || "",
+    shouldOptimizeRendering: true,
   });
-
+  useEffect(() => {
+    const value = form.getFieldValue("activityDescription");
+    if (value) {
+      setEditorContent(value);
+    }
+  }, [form]);
   return (
     <div>
       {/* <style>
@@ -174,17 +145,24 @@ const Modules = () => {
       </style> */}
 
       <ModuleCard showDrawer={showDrawer} />
-      <FloatButton.Group
-        trigger="hover"
-        type="primary"
-        style={{ insetInlineEnd: 45 }}
-        icon={<FaPlus />}
-      >
-        {/* <FloatButton /> */}
-        <Tooltip title="Add new module">
-          <FloatButton onClick={showDrawer} icon={<HiMiniSquaresPlus />} />
-        </Tooltip>
-      </FloatButton.Group>
+      {userLoading ? (
+        <Loader />
+      ) : currentUser?.academyName?.trim() && currentUser?.academyId?.trim() ? (
+        currentUser?.role === "teacher" && (
+          <FloatButton.Group
+            trigger="hover"
+            type="primary"
+            style={{ insetInlineEnd: 45 }}
+            icon={<FaPlus />}
+          >
+            {/* <FloatButton /> */}
+            <Tooltip title="Add new module">
+              <FloatButton onClick={showDrawer} icon={<HiMiniSquaresPlus />} />
+            </Tooltip>
+          </FloatButton.Group>
+        )
+      ) : null}
+
       <Drawer
         title="Add a module"
         width={720}
@@ -274,13 +252,9 @@ const Modules = () => {
                   },
                 ]}
               >
-                {editor && <EditButtons editor={editor} />}
-                {editor && (
-                  <EditorContent
-                    editor={editor}
-                    className="bg-gray-200 rounded-xl p-4 w-full max-w-full overflow-x-auto"
-                  />
-                )}
+                <div className=" min-h-[120px] text-gray-700 rounded-xl border border-gray-200 px-3 py-2">
+                  {<EditorWrapper editor={editor} />}
+                </div>
                 {/* <ReactQuill
                   formats={formats}
                   modules={modules}

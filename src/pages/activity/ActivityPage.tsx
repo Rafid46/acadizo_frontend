@@ -125,20 +125,24 @@ const ActivityPage = () => {
 
   return (
     <div className="max-w-screen-xl mx-auto p-5 pt-0">
-      <FloatButton.Group
-        trigger="hover"
-        type="primary"
-        style={{ insetInlineEnd: 45 }}
-        icon={<FaPlus />}
-      >
-        {/* <FloatButton /> */}
-        <Tooltip title="Upload">
-          <FloatButton
-            onClick={showDrawer}
-            icon={<RiContactsBookUploadFill />}
-          />
-        </Tooltip>
-      </FloatButton.Group>
+      {currentUser?.academyName?.trim() && currentUser?.academyId?.trim()
+        ? currentUser?.role === "teacher" && (
+            <FloatButton.Group
+              trigger="hover"
+              type="primary"
+              style={{ insetInlineEnd: 45 }}
+              icon={<FaPlus />}
+            >
+              <Tooltip title="Upload">
+                <FloatButton
+                  onClick={showDrawer}
+                  icon={<RiContactsBookUploadFill />}
+                />
+              </Tooltip>
+            </FloatButton.Group>
+          )
+        : null}
+
       <Drawer
         title="Upload Activity"
         width={720}
@@ -217,7 +221,9 @@ const ActivityPage = () => {
                 ]}
               >
                 {/* <TextArea /> */}
-                <EditorWrapper editor={editor} />
+                <div className=" min-h-[120px] text-gray-700 rounded-xl border border-gray-200 px-3 py-2">
+                  {editor && <EditorWrapper editor={editor} />}
+                </div>
               </Form.Item>
               <Form.Item
                 label={
@@ -266,6 +272,7 @@ const ActivityPage = () => {
           </p>
         </div>
       </div>
+
       <div>
         <ActivityCard
           allActivities={allActivities}

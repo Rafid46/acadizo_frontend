@@ -27,7 +27,9 @@ export const useTiptapEditor = ({
     extensions: [
       Placeholder.configure({
         placeholder: "Write something...",
+        emptyEditorClass: "is-editor-empty",
       }),
+
       Underline,
       TextStyle,
       Color,

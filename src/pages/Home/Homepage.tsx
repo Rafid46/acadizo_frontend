@@ -1,120 +1,590 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+// /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type React from "react";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Button } from "antd";
-import { GraduationCap, Menu, X } from "lucide-react";
+import { ArrowRight, FileText, Grid2x2Check, Menu, X } from "lucide-react";
 import logo from "../../assets/icons/acadizo_logo.png";
-interface HeaderProps {
-  navigationItems: any;
-}
+import { motion } from "framer-motion";
+import { ReactNode, useRef } from "react";
+import { useScroll, useTransform } from "framer-motion";
+import { FiArrowUpRight } from "react-icons/fi";
+import { HiArrowLongRight } from "react-icons/hi2";
+import { Brain, Cloud, Shield, Zap } from "lucide-react";
+import MagicBento from "../../Components/ui/MagicBento/MagicBento";
+import { CountUpText } from "../../common/CountupText";
+import FloatingPaper from "./FloatingPaper";
+import RoboAnimation from "./Robo-Animation";
+import Sparkles from "./Sparkles";
+// interface HeaderProps {
+//   navigationItems: any;
+// }
 
-const Homepage: React.FC<HeaderProps> = () => {
+const Homepage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
-
   const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen);
   };
   const navigationItems = [
-    { label: "Features", href: "/features" },
-    { label: "About Us", href: "/about" },
-    { label: "Pricing", href: "/pricing" },
-    { label: "Blog", href: "/blog" },
+    { label: "Features", href: "#features" },
+    { label: "About Us", href: "#about" },
+    // { label: "Pricing", href: "#pricing" },
+    { label: "Blog", href: "#blog" },
     { label: "Contact", href: "/contact" },
   ];
 
-  return (
-    <header className="fixed top-0 left-0 right-0 z-50 w-full  border-b bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60 transition-all duration-300 shadow-sm">
-      <div className="container flex h-16 items-center justify-between px-4 md:px-6 mx-auto">
-        <NavLink to="/" className="flex items-center space-x-2 group">
-          <GraduationCap className="h-8 w-8 text-green-600 transition-transform duration-300 group-hover:rotate-12" />
-          <span className="text-xl font-bold text-gray-900 transition-colors duration-300 group-hover:text-green-600">
-            <img className="w-32" src={logo} alt="" />
-          </span>
-        </NavLink>
+  const IMG_PADDING = 12;
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          {navigationItems.map((item: any, index: any) => (
-            <NavLink
-              key={item.label}
-              to={item.href}
-              className="text-sm font-medium text-gray-600 hover:text-green-600 transition-all duration-300 relative group"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              {item.label}
-              <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full" />
-            </NavLink>
-          ))}
-        </nav>
-
-        <div className="hidden md:flex items-center space-x-4">
-          <Button
-            type="link"
-            className="!text-primary-color hover:text-green-600 transition-all duration-300 hover:scale-105 font-semibold"
-          >
-            Sign In
-          </Button>
-          <Button className="custom_button_style custom_hover">
-            Get Started
-          </Button>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="md:hidden transition-transform duration-300 hover:scale-110"
-          onClick={toggleMenu}
-          aria-label="Toggle menu"
-        >
-          <div
-            className={`transition-transform duration-300 ${
-              isMenuOpen ? "rotate-180" : ""
-            }`}
-          >
-            {isMenuOpen ? (
-              <X className="h-6 w-6" />
-            ) : (
-              <Menu className="h-6 w-6" />
-            )}
-          </div>
-        </button>
-      </div>
-
-      {/* Mobile Navigation */}
+  const TextParallaxContent = ({
+    imgUrl,
+    subheading,
+    heading,
+    children,
+  }: {
+    imgUrl: string;
+    subheading: string;
+    heading: string;
+    children: ReactNode;
+  }) => {
+    return (
       <div
-        className={`md:hidden border-t bg-white transition-all duration-300 ${
-          isMenuOpen
-            ? "max-h-96 opacity-100"
-            : "max-h-0 opacity-0 overflow-hidden"
-        }`}
+        className=""
+        style={{
+          paddingLeft: IMG_PADDING,
+          paddingRight: IMG_PADDING,
+          paddingTop: 70,
+        }}
       >
-        <nav className="flex flex-col space-y-4 p-4">
-          {navigationItems.map((item: any, index: any) => (
-            <NavLink
-              key={item.label}
-              to={item.href}
-              className="text-sm font-medium text-gray-600 transition-all duration-300 hover:text-green-600 hover:translate-x-2"
-              style={{ animationDelay: `${index * 100}ms` }}
-              onClick={() => setIsMenuOpen(false)}
-            >
-              {item.label}
-            </NavLink>
-          ))}
-          <div className="flex flex-col space-y-2 pt-4 border-t">
+        <div className="">
+          {/* <StickyImage imgUrl={imgUrl} /> */}
+          <main className="min-h-screen  antialiased bg-grid-white/[0.02] relative overflow-hidden">
+            {/* Ambient background with moving particles */}
+            <div className="h-full w-full absolute inset-0 z-0">
+              <Sparkles
+                id="tsparticlesfullpage"
+                background="transparent"
+                minSize={0.6}
+                maxSize={1.4}
+                particleDensity={100}
+                className="w-full h-full"
+                particleColor="#000000"
+              />
+            </div>
+
+            <div className="relative z-10">
+              <div className="relative min-h-[calc(100vh-76px)] flex items-center">
+                {/* Floating papers background */}
+                <div className="absolute inset-0 overflow-hidden">
+                  <FloatingPaper count={6} />
+                </div>
+
+                <div className="container mx-auto px-6 relative z-10">
+                  <div className="max-w-4xl mx-auto text-center">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold  mb-6">
+                        Transform Your Research with
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
+                          {" "}
+                          AI Power
+                        </span>
+                      </h1>
+                    </motion.div>
+
+                    <motion.p
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.2 }}
+                      className="text-gray-400 text-xl mb-8 max-w-2xl mx-auto"
+                    >
+                      Upload your research papers and let our AI transform them
+                      into engaging presentations, podcasts, and visual content.
+                    </motion.p>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.5, delay: 0.4 }}
+                      className="flex flex-col sm:flex-row items-center justify-center gap-4"
+                    >
+                      <Button
+                        type="primary"
+                        className="custom_button_style custom_hover !h-[42px] !px-[28px] mr-4"
+                      >
+                        Explore Solutions
+                        {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
+                      </Button>
+                      <div className="">
+                        <a href="#" className="batton type--C">
+                          <span className="batton__text  text-[12px]">
+                            Learn more <HiArrowLongRight className="!text-lg" />
+                          </span>
+                          <div className="batton__drow1"></div>
+                          <div className="batton__drow2"></div>
+                        </a>
+                      </div>
+                    </motion.div>
+                  </div>
+                </div>
+
+                {/* Animated robot */}
+                <div className="absolute bottom-0 right-0 w-96 h-96">
+                  <RoboAnimation />
+                </div>
+              </div>
+            </div>
+          </main>
+          {/* <OverlayCopy heading={heading} subheading={subheading} />
+          <OverlayButton /> */}
+        </div>
+        {children}
+      </div>
+    );
+  };
+
+  const StickyImage = ({ imgUrl }: { imgUrl: string }) => {
+    const targetRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+      target: targetRef,
+      offset: ["end end", "end start"],
+    });
+
+    const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
+    const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+
+    return (
+      <motion.div
+        style={{
+          backgroundImage: `url(${imgUrl})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          height: `calc(100vh - ${IMG_PADDING * 2}px)`,
+          top: IMG_PADDING,
+          scale,
+        }}
+        ref={targetRef}
+        className="sticky  overflow-hidden rounded-xl"
+      >
+        <motion.div
+          className="absolute inset-0 bg-neutral-950/70"
+          style={{
+            opacity,
+          }}
+        />
+      </motion.div>
+    );
+  };
+
+  const OverlayCopy = ({
+    subheading,
+    heading,
+  }: {
+    subheading: string;
+    heading: string;
+  }) => {
+    const targetRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+      target: targetRef,
+      offset: ["start end", "end start"],
+    });
+
+    const y = useTransform(scrollYProgress, [0, 1], [250, -250]);
+    const opacity = useTransform(scrollYProgress, [0.25, 0.5, 0.75], [0, 1, 0]);
+
+    return (
+      <motion.div
+        style={{
+          y,
+          opacity,
+        }}
+        ref={targetRef}
+        className="absolute left-0 top-0 flex h-screen w-full flex-col items-center justify-center text-white"
+      >
+        <p className="mb-2 text-center text-xl md:mb-4 md:text-3xl">
+          {subheading}
+        </p>
+        <p className="text-center text-4xl font-bold md:text-7xl">{heading}</p>
+      </motion.div>
+    );
+  };
+  const OverlayButton = () => {
+    const targetRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+      target: targetRef,
+      offset: ["start end", "end start"],
+    });
+
+    const y = useTransform(scrollYProgress, [0, 1], [250, -250]);
+    const opacity = useTransform(scrollYProgress, [0.25, 0.5, 0.75], [0, 1, 0]);
+
+    return (
+      <motion.div
+        // style={{
+        //   y,
+        //   opacity,
+        // }}
+        ref={targetRef}
+        className="absolute left-0 top-0 flex h-screen w-full flex-col items-center justify-center text-white mt-[150px]"
+      >
+        <div className="flex gap-4">
+          <Button
+            type="primary"
+            className="custom_button_style custom_hover !h-[42px] !px-[28px] mr-4"
+          >
+            Explore Solutions
+            {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
+          </Button>
+          <div className="container">
+            <a href="#" className="batton type--C">
+              <span className="batton__text !text-white text-[12px]">
+                Learn more <HiArrowLongRight className="!text-lg" />
+              </span>
+              <div className="batton__drow1"></div>
+              <div className="batton__drow2"></div>
+            </a>
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
+  const features = [
+    {
+      name: "Real-Time Notifications",
+      description:
+        "Instant alerts for assignments, feedback, and announcements keep students and teachers always in sync.",
+      icon: Brain,
+    },
+    {
+      name: "Seamless Class Management",
+      description:
+        "Organize classes, track attendance, and manage activities — all from one clean dashboard.",
+      icon: Cloud,
+    },
+    {
+      name: "Secure Data & User Roles",
+      description:
+        "Robust access controls and encryption protect sensitive student and teacher data. Every action is logged, every role respected.",
+      icon: Shield,
+    },
+    {
+      name: "High-Performance Systems",
+      description:
+        "Optimized for speed and efficiency, our solutions deliver unparalleled performance.",
+      icon: Zap,
+    },
+  ];
+
+  return (
+    <div className=" animated-background">
+      {/* header */}
+      <header className="fixed top-0 left-0 right-0 z-50 w-full  bg-white backdrop-blur  transition-all duration-300 shadow-sm">
+        <div className="container flex h-16 items-center justify-between px-4 md:px-6 mx-auto">
+          <NavLink to="" className="flex items-center space-x-2 group">
+            {/* <GraduationCap className="h-8 w-8 text-green-600 transition-transform duration-300 group-hover:rotate-12" /> */}
+
+            <span className="text-xl font-bold text-gray-900 transition-colors duration-300 group-hover:text-green-600">
+              <img className="w-32" src={logo} alt="" />
+            </span>
+          </NavLink>
+          {/* Desktop Navigation */}
+          <nav className="hidden md:flex items-center space-x-8">
+            {navigationItems.map((item: any, index: any) => (
+              <NavLink
+                to={item.href}
+                onClick={(e) => {
+                  if (item.href.startsWith("#")) {
+                    e.preventDefault();
+                    const target = document.querySelector(item.href);
+                    target?.scrollIntoView({ behavior: "smooth" });
+                  }
+                }}
+                key={item.label}
+                to={item.href}
+                className="text-sm font-medium text-gray-600 hover:text-green-600 transition-all duration-300 relative group"
+                style={{ animationDelay: `${index * 100}ms` }}
+              >
+                {item.label}
+                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-green-600 transition-all duration-300 group-hover:w-full" />
+              </NavLink>
+            ))}
+          </nav>
+          <div className="hidden md:flex items-center space-x-4">
             <Button
               type="link"
               className="!text-primary-color hover:text-green-600 transition-all duration-300 hover:scale-105 font-semibold"
             >
               Sign In
             </Button>
-            <Button className="custom_button_style custom_hover">
+            <Button className="custom_button_style_secondary !rounded-full custom_hover px-6 py-3">
               Get Started
             </Button>
           </div>
-        </nav>
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden transition-transform duration-300 hover:scale-110"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            <div
+              className={`transition-transform duration-300 ${
+                isMenuOpen ? "rotate-180" : ""
+              }`}
+            >
+              {isMenuOpen ? (
+                <X className="h-6 w-6" />
+              ) : (
+                <Menu className="h-6 w-6" />
+              )}
+            </div>
+          </button>
+        </div>
+        {/* Mobile Navigation */}
+        <div
+          className={`md:hidden border-t bg-white transition-all duration-300 ${
+            isMenuOpen
+              ? "max-h-96 opacity-100"
+              : "max-h-0 opacity-0 overflow-hidden"
+          }`}
+        >
+          <nav className="flex flex-col space-y-4 p-4">
+            {navigationItems.map((item: any, index: any) => (
+              <NavLink
+                key={item.label}
+                to={item.href}
+                className="text-sm font-medium text-gray-600 transition-all duration-300 hover:text-green-600 hover:translate-x-2"
+                style={{ animationDelay: `${index * 100}ms` }}
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {item.label}
+              </NavLink>
+            ))}
+            <div className="flex flex-col space-y-2 pt-4 border-t">
+              <Button
+                type="link"
+                className="!text-primary-color hover:text-green-600 transition-all duration-300 hover:scale-105 font-semibold"
+              >
+                Sign In
+              </Button>
+              <Button className="custom_button_style custom_hover">
+                Get Started
+              </Button>
+            </div>
+          </nav>
+        </div>
+      </header>
+      {/* hero */}
+      <div className="">
+        <TextParallaxContent
+          imgUrl="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2671&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          subheading="Collaborate"
+          heading={
+            <p className="gradient-animated-text leading-[70px] font-medium">
+              Empower learning, simplify <br /> teaching with Acadizo.
+            </p>
+          }
+        >
+          {/* feature */}
+          <section id="features" className="space-y-16 py-24 md:py-32">
+            <div className="mx-auto max-w-[58rem] text-center">
+              <h2 className="font-bold text-3xl leading-[1.1] sm:text-3xl md:text-5xl">
+                Cutting-Edge Solutions
+              </h2>
+              <p className="mt-4 text-muted-foreground sm:text-lg">
+                Empowering teachers and students through intuitive, seamless,
+                and smart learning technology.
+              </p>
+            </div>
+            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-2">
+              {features.map((feature) => (
+                <div
+                  key={feature.name}
+                  className="relative overflow-hidden rounded-lg border bg-background p-8"
+                >
+                  <div className="flex items-center gap-4">
+                    <feature.icon className="h-8 w-8" />
+                    <h3 className="font-bold">{feature.name}</h3>
+                  </div>
+                  <p className="mt-2 text-muted-foreground">
+                    {feature.description}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </section>
+        </TextParallaxContent>
+        {/* <TextParallaxContent
+          imgUrl="https://images.unsplash.com/photo-1530893609608-32a9af3aa95c?q=80&w=2564&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          subheading="Quality"
+          heading="Never compromise."
+        >
+          <ExampleContent />
+        </TextParallaxContent>
+        <TextParallaxContent
+          imgUrl="https://images.unsplash.com/photo-1504610926078-a1611febcad3?q=80&w=2416&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          subheading="Modern"
+          heading="Dress for the best."
+        >
+          <ExampleContent />
+        </TextParallaxContent> */}
       </div>
-    </header>
+      {/* bento */}
+      <div className="mb-6">
+        <h2 className="font-semibold text-3xl leading-[1.1] sm:text-3xl md:text-5xl flex-col flex items-center justify-center mb-2">
+          <div className="rounded-3xl bg-purple-500 w-fit p-5 shadow-md">
+            <Grid2x2Check className="text-md text-white" />
+          </div>
+          All in one place
+        </h2>
+
+        <MagicBento />
+        <p className="text-center font-medium text-gray-700">
+          and a lot of comforts.....
+        </p>
+      </div>
+      <div className="relative z-10 flex flex-col divide-y divide-[--border] pt-[35px] dark:divide-[--dark-border]">
+        {/* Avatar Section */}
+        <div className="flex flex-col items-center justify-end">
+          <div className="flex items-center gap-2 border border-b-0 border-[--border] px-4 py-2 dark:border-[--dark-border]">
+            <div className="flex -space-x-3 rtl:space-x-reverse">
+              {[
+                "https://assets.basehub.com/fa068a12/6sGiFfUGTaMBQFStD16V5/figma-image-500x500.png?height=100&quality=100&width=100",
+                "https://assets.basehub.com/fa068a12/XdbZC6Y1mPpNarRwWXWGs/103cd669723f80c168b5d84ec8bbe0a5.png?height=100&quality=100&width=100",
+                "https://assets.basehub.com/fa068a12/eXjW9QO3AKz15Ru0lRyaL/97a514e9e8c98d647f06c12400f1f0bd-(1).png?height=100&quality=100&width=100",
+              ].map((src, i) => (
+                <img
+                  key={i}
+                  alt={`Avatar ${i + 1}`}
+                  width="28"
+                  height="28"
+                  className="size-7 shrink-0 rounded-full border-2 border-[--surface-primary] object-cover dark:border-[--dark-surface-primary]"
+                  src={src}
+                />
+              ))}
+            </div>
+            <p className="text-sm tracking-tight text-[--text-tertiary] dark:text-[--dark-text-tertiary]">
+              1,254 happy customers
+            </p>
+          </div>
+        </div>
+
+        {/* Hero Section */}
+        <div>
+          <div className="mx-auto flex min-h-[288px] max-w-[80vw] flex-col items-center justify-center gap-2 px-2 py-4 sm:px-16 lg:px-24">
+            <h1 className="max-w-screen-lg text-pretty text-center text-[clamp(32px,7vw,64px)] font-medium leading-none tracking-[-1.44px] text-[--text-primary] dark:text-[--dark-text-primary] md:tracking-[-2.16px]">
+              Streamlined Communication for Iterating Fast
+            </h1>
+            <h2 className="text-md max-w-2xl text-center text-[--text-tertiary] dark:text-[--dark-text-tertiary] md:text-lg">
+              Acme is an installable, self-hosted team chat system. You can have
+              several paragraphs in here and the thing will wrap gracefully.
+            </h2>
+          </div>
+        </div>
+      </div>
+      {/* about us */}
+      <section id="about" className="py-24 relative xl:mr-0 lg:mr-5 mr-0">
+        <div className="w-full max-w-7xl px-4 md:px-5 lg:px-5 mx-auto">
+          <div className="w-full justify-start items-center xl:gap-12 gap-10 grid lg:grid-cols-2 grid-cols-1">
+            <div className="w-full flex-col justify-center lg:items-start items-center gap-10 inline-flex">
+              <div className="w-full flex-col justify-center items-start gap-8 flex">
+                <div className="flex-col justify-start lg:items-start items-center gap-4 flex">
+                  <h6 className="text-gray-400 text-base font-normal leading-relaxed">
+                    About Us
+                  </h6>
+                  <div className="w-full flex-col justify-start lg:items-start items-center gap-3 flex">
+                    <h2 className="text-indigo-700 text-4xl font-bold font-manrope leading-normal lg:text-start text-center">
+                      The Tale of Our Achievement Story
+                    </h2>
+                    <p className="text-gray-500 text-base font-normal leading-relaxed lg:text-start text-center">
+                      Our achievement story is a testament to teamwork and
+                      perseverance. Together, we've overcome challenges,
+                      celebrated victories, and created a narrative of progress
+                      and success.
+                    </p>
+                  </div>
+                </div>
+                <div className="w-full flex-col justify-center items-start gap-6 flex">
+                  <div className="w-full justify-start items-center gap-8 grid md:grid-cols-2 grid-cols-1">
+                    <div className="w-full h-full p-3.5 rounded-xl border border-gray-200 hover:border-gray-400 transition-all duration-700 ease-in-out flex-col justify-start items-start gap-2.5 inline-flex">
+                      <CountUpText
+                        value="33+ Years"
+                        className="text-gray-900 text-2xl font-bold font-manrope leading-9"
+                      />
+                      <p className="text-gray-500 text-base font-normal leading-relaxed">
+                        Influencing Digital Landscapes Together
+                      </p>
+                    </div>
+                    <div className="w-full h-full p-3.5 rounded-xl border border-gray-200 hover:border-gray-400 transition-all duration-700 ease-in-out flex-col justify-start items-start gap-2.5 inline-flex">
+                      <CountUpText
+                        value="125+ Projects"
+                        className="text-gray-900 text-2xl font-bold font-manrope leading-9"
+                      />
+                      <p className="text-gray-500 text-base font-normal leading-relaxed">
+                        Excellence Achieved Through Success
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-full h-full justify-start items-center gap-8 grid md:grid-cols-2 grid-cols-1">
+                    <div className="w-full p-3.5 rounded-xl border border-gray-200 hover:border-gray-400 transition-all duration-700 ease-in-out flex-col justify-start items-start gap-2.5 inline-flex">
+                      <CountUpText
+                        value="26+ Awards"
+                        className="text-gray-900 text-2xl font-bold font-manrope leading-9"
+                      />
+                      <p className="text-gray-500 text-base font-normal leading-relaxed">
+                        Our Dedication to Innovation Wins Understanding
+                      </p>
+                    </div>
+                    <div className="w-full h-full p-3.5 rounded-xl border border-gray-200 hover:border-gray-400 transition-all duration-700 ease-in-out flex-col justify-start items-start gap-2.5 inline-flex">
+                      <CountUpText
+                        value="99% Happy Clients"
+                        className="text-gray-900 text-2xl font-bold font-manrope leading-9"
+                      />
+                      <p className="text-gray-500 text-base font-normal leading-relaxed">
+                        Mirrors our Focus on Client Satisfaction.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button className="sm:w-fit w-full group px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 rounded-lg shadow-[0px_1px_2px_0px_rgba(16,_24,_40,_0.05)] transition-all duration-700 ease-in-out justify-center items-center flex">
+                <span className="px-1.5 text-indigo-600 text-sm font-medium leading-6 group-hover:-translate-x-0.5 transition-all duration-700 ease-in-out">
+                  Read More
+                </span>
+                <svg
+                  className="group-hover:translate-x-0.5 transition-all duration-700 ease-in-out"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                >
+                  <path
+                    d="M6.75265 4.49658L11.2528 8.99677L6.75 13.4996"
+                    stroke="#4F46E5"
+                    strokeWidth="1.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="w-full lg:justify-start justify-center items-start flex">
+              <div className="sm:w-[564px] w-full sm:h-[646px] h-full sm:bg-gray-100 rounded-3xl sm:border border-gray-200 relative">
+                <img
+                  className="sm:mt-5 sm:ml-5 w-full h-full rounded-3xl object-cover"
+                  src="https://pagedone.io/asset/uploads/1717742431.png"
+                  alt="about Us image"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 };
 

@@ -1,15 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import {
-  Badge,
-  Button,
-  Checkbox,
-  Collapse,
-  Dropdown,
-  Popover,
-  Space,
-  theme,
-  Tooltip,
-} from "antd";
+import { Badge, Button, Checkbox, Collapse, Tooltip } from "antd";
 
 import useModules from "../hooks/useModules";
 import { FaPlus, FaRegFileAlt } from "react-icons/fa";
@@ -24,15 +14,17 @@ import useCurrentUser from "../hooks/useCurrentUser";
 import useAcademies from "../hooks/useAcademies";
 import { MdDeleteOutline } from "react-icons/md";
 import Loader from "../common/Loader";
-import { IoMdEye, IoMdMenu } from "react-icons/io";
+// import { IoMdEye, IoMdMenu } from "react-icons/io";
 import EditModuleDrawer from "./EditModuleDrawer";
-import type { PopconfirmProps } from "antd";
+// import type { PopconfirmProps } from "antd";
 import { Popconfirm } from "antd";
 import moment from "moment";
 import { LiaExpandArrowsAltSolid } from "react-icons/lia";
 import { Grid3X3, List } from "lucide-react";
 import { RiSoundModuleFill } from "react-icons/ri";
 import { FcOvertime } from "react-icons/fc";
+import { AnimatePresence, motion } from "framer-motion";
+import { Link } from "react-router-dom";
 
 const ModuleCard = ({ showDrawer }: any) => {
   const { allModules, refetch }: any = useModules();
@@ -45,10 +37,11 @@ const ModuleCard = ({ showDrawer }: any) => {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [viewMode, setViewMode] = useState("grid");
+  const [showContent, setShowContent] = useState(false);
   const axiosPublic = useAxios();
   const { data: currentUser } = useCurrentUser();
   const { data: academyLists } = useAcademies();
-  const { token } = theme.useToken();
+  // const { token } = theme.useToken();
 
   const { matchedModules: academyModules, isLoading }: any =
     useCurrentModules();
@@ -216,9 +209,9 @@ const ModuleCard = ({ showDrawer }: any) => {
   //   message.success("Click on Yes");
   // };
 
-  const cancel: PopconfirmProps["onCancel"] = (e: any) => {
-    console.log(e);
-  };
+  // const cancel: PopconfirmProps["onCancel"] = (e: any) => {
+  //   console.log(e);
+  // };
 
   // search modules
   const search = query?.trim()?.toLowerCase();
@@ -233,6 +226,39 @@ const ModuleCard = ({ showDrawer }: any) => {
     setViewMode(mode);
   };
 
+  useEffect(() => {
+    if (!isLoading) {
+      const timeout = setTimeout(() => setShowContent(true), 50);
+      return () => clearTimeout(timeout);
+    }
+  }, [isLoading]);
+
+  if (!showContent) return <Loader />;
+
+  if (!academyModules?.length && allModules?.length > 0) {
+    return typeof currentUser?.academyName === "string" ||
+      currentUser?.academyName === null ||
+      "" ||
+      currentUser?.academyName?.trim() ? (
+      <Link to="/dashboard/institution/overview">
+        <Button type="primary" className="custom_button_style !h-[42px]">
+          Join an academy to see modules
+        </Button>
+      </Link>
+    ) : (
+      <div className="flex items-center justify-center flex-col gap-4">
+        <img src={empty} width={600} alt="empty" />
+        <Button
+          onClick={showDrawer}
+          type="primary"
+          icon={<FaPlus />}
+          className="custom_button_style !h-[42px]"
+        >
+          Upload modules
+        </Button>
+      </div>
+    );
+  }
   return (
     <div className="max-w-screen-xl mx-auto p-5 pt-0">
       <div className="flex items-center justify-between">
@@ -254,17 +280,18 @@ const ModuleCard = ({ showDrawer }: any) => {
         <div className="flex items-center gap-2">
           {academyModules?.length !== 0 && (
             <>
-              <div className="flex items-center gap-2 border border-gray-400 rounded-lg py-1 text-sm px-2">
-                <Checkbox
-                  onChange={handleSelectAll}
-                  checked={
-                    selectall?.length === academyModules?.length &&
-                    academyModules?.length > 0
-                  }
-                />
-
-                <p>Select all</p>
-              </div>
+              <Button
+                onClick={handleSelectAll}
+                type="default"
+                className="custom_button_style !bg-white !text-gray-600 flex items-center gap-2 !border-none rounded-lg py-1 text-sm px-2"
+              >
+                <span>
+                  {selectall?.length === academyModules?.length &&
+                  academyModules?.length > 0
+                    ? "Deselect All"
+                    : "Select All"}
+                </span>
+              </Button>
 
               <Button
                 danger
@@ -310,331 +337,280 @@ const ModuleCard = ({ showDrawer }: any) => {
           </Button>
         </div>
 
-        <div className="flex items-center bg-white rounded-lg border border-gray-200 p-1 shadow-sm gap-2">
-          <Button
-            type={viewMode === "grid" ? "primary" : "default"}
-            onClick={() => toggleView("grid")}
-            className={`
-                h-8 px-3 rounded-md transition-all duration-200
+        <div className="flex items-center bg-white rounded-lg border border-gray-200 p-2 shadow-sm gap-2">
+          <Tooltip title="Grid">
+            <Button
+              type={viewMode === "grid" ? "primary" : "default"}
+              onClick={() => toggleView("grid")}
+              className={`
+                h-8 px-3 rounded-md transition-all duration-200 !border-none
                 ${
                   viewMode === "grid"
-                    ? "!bg-gray-400 !text-white shadow-sm !hover:bg-blue-600"
+                    ? "!bg-gray-100 !text-gray-500 shadow-sm !hover:bg-blue-600"
                     : "!text-gray-600 !hover:text-gray-900 !hover:bg-gray-50"
                 }
               `}
-          >
-            <Grid3X3 className="w-4 h-4 mr-1" />
-            Grid
-          </Button>
-          <Button
-            type={viewMode === "list" ? "primary" : "default"}
-            onClick={() => toggleView("list")}
-            className={`
-                h-8 px-3 rounded-md transition-all duration-200
+            >
+              <Grid3X3 className="w-4 h-4 mr-1" />
+            </Button>
+          </Tooltip>
+          <Tooltip title="List">
+            <Button
+              type={viewMode === "list" ? "primary" : "default"}
+              onClick={() => toggleView("list")}
+              className={`
+                h-8 px-3 rounded-md transition-all duration-200  !border-none
                 ${
                   viewMode === "list"
-                    ? "!bg-gray-400 !text-white shadow-sm !hover:bg-blue-600"
+                    ? "!bg-gray-100 !text-gray-500 shadow-sm !hover:bg-blue-600"
                     : "!text-gray-600 !hover:text-gray-900 !hover:bg-gray-50"
                 }
               `}
-          >
-            <List className="w-4 h-4 mr-1" />
-            List
-          </Button>
+            >
+              <List className="w-4 h-4 mr-1" />
+            </Button>
+          </Tooltip>
         </div>
       </div>
       <div>
-        {isLoading ? (
-          <Loader />
-        ) : academyModules?.length > 0 ? (
-          <div className="bg-gray-50 rounded-2xl p-5 h-full">
-            <div
-              className={`grid grid-cols-1 gap-4 lg:gap-2 sm:grid-cols-2 ${
-                viewMode === "grid" ? "lg:grid-cols-3" : "lg:grid-cols-1"
-              }`}
-            >
-              {filteredData?.map((module: any, index: number) => (
-                <div key={module?.moduleId} className="flex items-start gap-2">
-                  <Checkbox
-                    onChange={() => handleSelectChange(module?.moduleId)}
-                    checked={selectall?.includes(module?.moduleId)}
-                  />
-                  <Collapse
-                    bordered={false}
-                    style={{
-                      background: token.colorBgContainer,
-                      backgroundColor: module?.color,
-                    }}
+        <div className="rounded-2xl p-5 h-full">
+          <div
+            className={`grid grid-cols-1 gap-4 lg:gap-2 sm:grid-cols-2 ${
+              viewMode === "grid" ? "lg:grid-cols-3" : "lg:grid-cols-1"
+            }`}
+          >
+            {filteredData?.map((module: any, index: number) => (
+              <AnimatePresence>
+                <motion.div
+                  key={module?.moduleId}
+                  initial={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9, y: -20 }}
+                  transition={{ duration: 0.3 }}
+                  className=""
+                >
+                  {" "}
+                  <div
                     key={module?.moduleId}
-                    // expandIcon={() => (
-                    //   <Dropdown
-                    //     // trigger={["click"]}
-                    //     menu={{
-                    //       items: [
-                    //         {
-                    //           key: "1",
-                    //           label: (
-                    //             <span
-                    //               onClick={(e) => {
-                    //                 e.stopPropagation();
-                    //                 handleDeleteModule(module?.moduleId);
-                    //               }}
-                    //             >
-                    //               Delete
-                    //             </span>
-                    //           ),
-                    //           icon: <MdDeleteOutline className="!text-xl" />,
-                    //         },
-                    //         {
-                    //           key: "2",
-                    //           label: (
-                    //             <span
-                    //               onClick={(e) => {
-                    //                 showEditDrawer(module);
-                    //                 e.stopPropagation();
-                    //               }}
-                    //             >
-                    //               Edit
-                    //             </span>
-                    //           ),
-                    //           icon: <BiEdit className="!text-xl" />,
-                    //         },
-                    //       ],
-                    //     }}
-                    //     arrow={{ pointAtCenter: true }}
-                    //   >
-                    //     <Button
-                    //       onClick={(e) => e.stopPropagation()}
-                    //       className="custom_button_style_icon"
-                    //     >
-                    //       <IoMdMenu className="!text-xl" />
-                    //     </Button>
-                    //   </Dropdown>
-                    // )}
-                    activeKey={activeKeys}
-                    onChange={handleCollapseChange}
-                    defaultActiveKey={"1"}
-                    className={`w-full ${
-                      viewMode === "grid" ? "lg:w-[500px]" : "lg:w-full"
-                    } mb-4`}
-                    items={[
-                      {
-                        key: String(index),
-                        label: (
-                          <p className="!font-semibold">
-                            <Badge
-                              style={{ boxShadow: "none" }}
-                              count={index + 1}
-                              className="mr-2 !shadow-none"
-                              color="#C7D9DD"
-                            />
-                            {module?.heading}: {module?.title}
-                          </p>
-                        ),
-                        children: (
-                          <div className="flex items-start justify-between gap-2">
-                            <div className="flex flex-col">
-                              {/* <p className="text-[10px] text-gray-400">
+                    className="flex items-start gap-2"
+                  >
+                    <Checkbox
+                      onChange={() => handleSelectChange(module?.moduleId)}
+                      checked={selectall?.includes(module?.moduleId)}
+                    />
+                    <Collapse
+                      // bordered={false}
+                      style={{
+                        // background: token.colorBgContainer,
+                        backgroundColor: module?.color,
+                      }}
+                      key={module?.moduleId}
+                      // expandIcon={() => (
+                      //   <Dropdown
+                      //     // trigger={["click"]}
+                      //     menu={{
+                      //       items: [
+                      //         {
+                      //           key: "1",
+                      //           label: (
+                      //             <span
+                      //               onClick={(e) => {
+                      //                 e.stopPropagation();
+                      //                 handleDeleteModule(module?.moduleId);
+                      //               }}
+                      //             >
+                      //               Delete
+                      //             </span>
+                      //           ),
+                      //           icon: <MdDeleteOutline className="!text-xl" />,
+                      //         },
+                      //         {
+                      //           key: "2",
+                      //           label: (
+                      //             <span
+                      //               onClick={(e) => {
+                      //                 showEditDrawer(module);
+                      //                 e.stopPropagation();
+                      //               }}
+                      //             >
+                      //               Edit
+                      //             </span>
+                      //           ),
+                      //           icon: <BiEdit className="!text-xl" />,
+                      //         },
+                      //       ],
+                      //     }}
+                      //     arrow={{ pointAtCenter: true }}
+                      //   >
+                      //     <Button
+                      //       onClick={(e) => e.stopPropagation()}
+                      //       className="custom_button_style_icon"
+                      //     >
+                      //       <IoMdMenu className="!text-xl" />
+                      //     </Button>
+                      //   </Dropdown>
+                      // )}
+                      activeKey={activeKeys}
+                      onChange={handleCollapseChange}
+                      defaultActiveKey={"1"}
+                      className={`w-full !border-none !shadow-none ${
+                        viewMode === "grid" ? "lg:w-[500px]" : "lg:w-full"
+                      } mb-4`}
+                      items={[
+                        {
+                          key: String(index),
+                          label: (
+                            <div className="flex items-center justify-between w-full">
+                              {/* Left side: badge + title */}
+                              <div className="flex items-center gap-2">
+                                <Badge
+                                  style={{ boxShadow: "none" }}
+                                  count={index + 1}
+                                  className="mr-2 h-7 w-7 text-white border border-white/20 bg-white/40 backdrop-blur-md  shadow-lg rounded-full"
+                                  color="transparent"
+                                />
+                                <div className="text-[10.5px] font-semibold bg-white rounded-full px-[10px] py-[2px] max-w-[200px] truncate">
+                                  {module?.heading}: {module?.title}
+                                </div>
+                              </div>
+
+                              {/* Right side: Edit + Delete buttons */}
+                              <div
+                                className="flex items-center gap-2"
+                                onClick={(e) => e.stopPropagation()} // prevent collapse toggle
+                              >
+                                <Tooltip title="Edit">
+                                  <Button
+                                    className="h-7 w-7 !bg-white/20 hover:bg-white/30 text-white border-white/30 rounded-lg"
+                                    size="small"
+                                    icon={
+                                      <BiEdit className="transition-transform" />
+                                    }
+                                    onClick={() => showEditDrawer(module)}
+                                  />
+                                </Tooltip>
+                                <Popconfirm
+                                  title="Delete this module"
+                                  description={
+                                    <p className="text-[12px] text-gray-500 mt-1">
+                                      Are you sure you want to delete this
+                                      module?
+                                    </p>
+                                  }
+                                  onConfirm={() =>
+                                    handleDeleteModule(module?.moduleId)
+                                  }
+                                  okText="Yes"
+                                  cancelText="No"
+                                >
+                                  <Tooltip title="Delete">
+                                    <Button
+                                      className="h-7 w-7 !bg-white/20 hover:bg-white/30 text-white border-white/30 rounded-lg"
+                                      size="small"
+                                      icon={<MdDeleteOutline />}
+                                    />
+                                  </Tooltip>
+                                </Popconfirm>
+                              </div>
+                            </div>
+                          ),
+
+                          children: (
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex flex-col">
+                                {/* <p className="text-[10px] text-gray-400">
                                 {module?.createdAt &&
                                   moment(module?.createdAt).format(
                                     "DD-MM-YYYY"
                                   )}
                               </p> */}
-                              <div
-                                className={`text-sm text-gray-500 flex flex-col bg-white rounded-lg p-3 ${
-                                  viewMode === "list" && "!w-[1100px]"
-                                }`}
-                              >
                                 <div
-                                  className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full"
-                                  dangerouslySetInnerHTML={{
-                                    __html: module?.description || "",
-                                  }}
-                                ></div>
+                                  className={`text-sm text-gray-500 flex flex-col bg-white rounded-lg${
+                                    viewMode === "list" && "!w-[1100px]"
+                                  }`}
+                                >
+                                  <div
+                                    className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full"
+                                    dangerouslySetInnerHTML={{
+                                      __html: module?.description || "",
+                                    }}
+                                  ></div>
 
-                                <div>
-                                  {module?.file && (
-                                    <a
-                                      href={`http://localhost:3000/file/${module?.file}`}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      download
-                                    >
-                                      <div className="flex flex-col gap-2 w-60 sm:w-72 text-[10px] sm:text-xs z-50 mt-3">
-                                        <div className="error-alert cursor-default flex items-center justify-between w-full h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]">
-                                          <div className="flex gap-2">
-                                            <div className="text-primary-color text-3xl">
-                                              <FaRegFileAlt />
-                                            </div>
+                                  <div>
+                                    {module?.file && (
+                                      <a
+                                        href={`http://localhost:3000/file/${module?.file}`}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        download
+                                      >
+                                        <div className="flex flex-col gap-2 w-full sm:w-72 text-[10px] sm:text-xs z-50 mt-3">
+                                          <div className="error-alert cursor-default flex items-center justify-between w-[342px] h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]">
+                                            <div className="flex gap-2">
+                                              <div className="text-primary-color text-3xl">
+                                                <FaRegFileAlt />
+                                              </div>
 
-                                            <div>
-                                              <p className="text-white">
-                                                {module?.file?.length >= 15
-                                                  ? `${module?.file?.substring(
-                                                      0,
-                                                      15
-                                                    )}...`
-                                                  : module?.file}
-                                              </p>
-                                              <p className="text-gray-500">
-                                                Attachment
-                                              </p>
+                                              <div>
+                                                <p className="text-white">
+                                                  {module?.file?.length >= 15
+                                                    ? `${module?.file?.substring(
+                                                        0,
+                                                        15
+                                                      )}...`
+                                                    : module?.file}
+                                                </p>
+                                                <p className="text-gray-500">
+                                                  Attachment
+                                                </p>
+                                              </div>
                                             </div>
+                                            <button
+                                              onClick={() =>
+                                                handleDownload(module?.file)
+                                              }
+                                              className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
+                                            >
+                                              <BiDownload />
+                                            </button>
                                           </div>
-                                          <button
-                                            onClick={() =>
-                                              handleDownload(module?.file)
-                                            }
-                                            className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
-                                          >
-                                            <BiDownload />
-                                          </button>
                                         </div>
-                                      </div>
-                                    </a>
-                                  )}
+                                      </a>
+                                    )}
+                                  </div>
+                                </div>
+                                <div className="flex items-center gap-2 mt-2">
+                                  <FcOvertime />
+                                  <p className="text-[10px] text-gray-700 mt-1">
+                                    <span className="font-semibold">
+                                      Submitted at
+                                    </span>
+                                    :{" "}
+                                    <span className="text-gray-600">
+                                      {" "}
+                                      {moment(module?.createdAt)
+                                        .tz("Asia/Dhaka")
+                                        .format("D MMM YYYY, h:mm A")}
+                                    </span>
+                                  </p>
                                 </div>
                               </div>
-                              <div className="flex items-center gap-2 mt-2">
-                                <FcOvertime />
-                                <p className="text-[10px] text-gray-800 mt-1">
-                                  Submitted at:{" "}
-                                  {moment(module?.createdAt)
-                                    .tz("Asia/Dhaka")
-                                    .format("D MMM YYYY, h:mm A")}
-                                </p>
-                              </div>
                             </div>
-                            <div className="flex ">
-                              <Popover
-                                content={
-                                  <div className="w-[500px]">
-                                    <p className="text-[10px] text-gray-400">
-                                      {module?.createdAt &&
-                                        moment(module?.createdAt).format(
-                                          "DD-MM-YYYY"
-                                        )}
-                                    </p>
-                                    <p className="text-[12px] text-gray-400">
-                                      {module?.title}
-                                    </p>
-                                    {/* <Divider className="my-2" /> */}
-                                    <div
-                                      className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full border border-gray-200 rounded-lg p-3 mt-2"
-                                      dangerouslySetInnerHTML={{
-                                        __html: module?.description || "",
-                                      }}
-                                    ></div>
-                                  </div>
-                                }
-                                title={
-                                  <p className="font-bold">{module?.heading}</p>
-                                }
-                              >
-                                <Button
-                                  className="custom_button_style_icon"
-                                  icon={<IoMdEye />}
-                                ></Button>
-                              </Popover>
-                              <Dropdown
-                                className="p-0"
-                                destroyPopupOnHide={false}
-                                trigger={["click", "hover"]}
-                                menu={{
-                                  items: [
-                                    {
-                                      key: "1",
-                                      label: (
-                                        <Popconfirm
-                                          title="Delete the module"
-                                          description="Are you sure to delete this module?"
-                                          onConfirm={() =>
-                                            handleDeleteModule(module?.moduleId)
-                                          }
-                                          onCancel={cancel}
-                                          okText="Yes"
-                                          cancelText="No"
-                                        >
-                                          <span>Delete</span>
-                                        </Popconfirm>
-                                      ),
-                                      icon: (
-                                        <MdDeleteOutline className="!text-xl" />
-                                      ),
-                                    },
-                                    {
-                                      key: "2",
-                                      label: "Edit",
-                                      icon: <BiEdit className="!text-xl" />,
-                                      onClick: (e) => {
-                                        e.domEvent.stopPropagation();
-                                        setTimeout(
-                                          () => showEditDrawer(module),
-                                          0
-                                        );
-                                      },
-                                    },
-                                    // {
-                                    //   key: "2",
-                                    //   label: (
-                                    //     <p
-                                    //       className="!border-none bg-transparent hover:bg-transparent"
-                                    //       // icon={<BiEdit className="!text-xl" />}
-                                    //       onClick={(e) => {
-                                    //         e.stopPropagation();
-                                    //         requestAnimationFrame(() => {
-                                    //           console.log("Edit clicked");
-                                    //           showEditDrawer(module);
-                                    //         });
-                                    //       }}
-                                    //     >
-                                    //       Edit
-                                    //     </p>
-                                    //   ),
-                                    //   icon: <BiEdit className="!text-xl" />,
-                                    // },
-                                  ],
-                                }}
-                                arrow={{ pointAtCenter: true }}
-                              >
-                                <Button
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="custom_button_style_icon"
-                                >
-                                  <Space>
-                                    <IoMdMenu className="!text-xl" />
-                                  </Space>
-                                </Button>
-                              </Dropdown>
-                            </div>
-                          </div>
-                        ),
-                      },
-                    ]}
-                  />
-                </div>
-              ))}
-              <EditModuleDrawer
-                setOpen={setOpen}
-                open={open}
-                isLoading={isLoading}
-                module={selectedModule}
-              />
-            </div>
+                          ),
+                        },
+                      ]}
+                    />
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            ))}
+            <EditModuleDrawer
+              setOpen={setOpen}
+              open={open}
+              isLoading={isLoading}
+              module={selectedModule}
+            />
           </div>
-        ) : (
-          <div className="flex items-center justify-center flex-col gap-4">
-            <img src={empty} width={600} alt="" />
-            <Button
-              onClick={showDrawer}
-              type="primary"
-              icon={<FaPlus />}
-              className="custom_button_style !h-[42px]"
-            >
-              Upload modules
-            </Button>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

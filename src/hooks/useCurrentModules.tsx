@@ -8,7 +8,8 @@ const useCurrentModules = () => {
   const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
 
   const { allModules, loading: isModulesLoading } = useModules();
-  const isLoading = isModulesLoading || isUserLoading;
+  const isLoading =
+    isModulesLoading || isUserLoading || !currentUser || !allModules;
   useEffect(() => {
     if (isLoading || !allModules || !currentUser) {
       setMatchedModules([]);
@@ -28,6 +29,6 @@ const useCurrentModules = () => {
     );
   }, [allModules, currentUser, isLoading]);
 
-  return { matchedModules, isLoading };
+  return { matchedModules, isLoading, isModulesLoading, isUserLoading };
 };
 export default useCurrentModules;

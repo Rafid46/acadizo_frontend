@@ -1,15 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Divider, Form, Input, notification } from "antd";
+import { Button, Divider, Form, Input, notification, Select } from "antd";
 import banner from "../../assets/images/pattern.jpg";
 import icon from "../../assets/icons/acadizo_logo.png";
 import useAxios from "../../hooks/useAxios";
 import { useContext, useState } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
-import useUser from "../../hooks/useUser";
+// import useUser from "../../hooks/useUser";
+import useAllUser from "../../hooks/useAllUser";
+import { useNavigate } from "react-router-dom";
 const Register = () => {
   const axiosPublic = useAxios();
+  const navigate = useNavigate();
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
-  const { users }: any = useUser();
+  const { users }: any = useAllUser();
   const {
     createUser,
     updateUserProfile,
@@ -78,8 +81,7 @@ const Register = () => {
   //   //     console.log(error);
   //   //   });
   // };
-  const handleRegister = async (values: any, e: any) => {
-    e.preventDefault();
+  const handleRegister = async (values: any) => {
     setLoading(true);
     const { email, password } = values;
     console.log("Registering with values:", values);
@@ -114,7 +116,7 @@ const Register = () => {
           console.log("Logged in user:", loggedInUser);
           const userData = {
             ...values,
-            role: "teacher",
+            role: values?.role,
             firstName: values?.first_name,
             lastName: values?.last_name,
           };
@@ -124,6 +126,7 @@ const Register = () => {
           return axiosPublic
             .post("/api/v1/user/create-user", userData)
             .then((res) => {
+              navigate("/dashboard");
               notification.success({
                 message: "Registration success",
                 description: "Account registered successfully",
@@ -148,28 +151,36 @@ const Register = () => {
   };
 
   const handleGoogleSignIn = () => {
-    googleSignIn().then((result: any) => {
-      console.log(result.user);
-
-      const [firstName, ...rest] = result.user.displayName.split(" ");
-      const lastName = rest.join(" ");
-
-      const userInfo = {
-        email: result.user?.email,
-        firstName: firstName || "Unknown", // Default to avoid empty fields
-        lastName: lastName || " ",
-        role: "teacher",
-      };
-
-      axiosPublic
-        .post("http://localhost:3000/api/v1/user/create-user", userInfo)
-        .then((res: any) => {
-          console.log(res.data);
-        })
-        .catch((error) => {
-          console.error("Error saving user data:", error);
+    googleSignIn()
+      .then((result: any) => {
+        navigate("/dashboard");
+        setLoading(false);
+        notification.success({
+          message: "Registration success",
+          description: "Account registered successfully",
+          duration: 3,
+          placement: "topRight",
         });
-    });
+        if (!result?.user) {
+          console.error("No user returned from Google sign-in");
+          notification.error({
+            message: "Google Sign-In Failed",
+            description: "No user information received",
+            duration: 3,
+          });
+          return;
+        }
+
+        // Save user in database
+      })
+      .catch((error: any) => {
+        console.error("❌ Google Sign-In Failed:", error.message);
+        notification.error({
+          message: "Google Sign-In Error",
+          description: error.message || "Try again later",
+          duration: 3,
+        });
+      });
   };
 
   const onFieldsChange = (_: any, allFields: any) => {
@@ -177,6 +188,13 @@ const Register = () => {
       (field: any) => field.errors.length === 0 && field.value
     );
     setIsButtonDisabled(!isValid);
+  };
+  const onChange = (value: string) => {
+    console.log(`selected ${value}`);
+  };
+
+  const onSearch = (value: string) => {
+    console.log("search:", value);
   };
   return (
     <section className="bg-white rounded-xl">
@@ -192,7 +210,7 @@ const Register = () => {
           style={{ maxHeight: "100vh", maxWidth: "100%" }}
           className="flex items-center justify-center px-8 py-8 sm:px-12 lg:col-span-7 lg:px-16 lg:py-12 xl:col-span-6 bg-[#FAF9F6] rounded-l-xl rounded-r-xl lg:rounded-r-xl lg:rounded-l-none overflow-hidden"
         >
-          <div className="max-w-xl lg:max-w-3xl">
+          <div className="max-w-xl lg:max-w-xl">
             <img className="w-32" src={icon} alt="" />
 
             <h1 className="mt-4 text-2xl font-bold text-gray-900 sm:text-3xl md:text-3xl">
@@ -297,6 +315,42 @@ const Register = () => {
                   <Input
                     type="email"
                     className="h-[36px] w-full rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color"
+                  />
+                </Form.Item>
+              </div>
+              <div className="col-span-6">
+                <Form.Item
+                  name="role"
+                  className="mb-2"
+                  label={
+                    <p className="block text-sm font-medium text-gray-700">
+                      Your role
+                    </p>
+                  }
+                  rules={[
+                    {
+                      required: true,
+
+                      message: "please set your role",
+                    },
+                  ]}
+                >
+                  <Select
+                    showSearch
+                    placeholder="Select a role"
+                    optionFilterProp="label"
+                    onChange={onChange}
+                    onSearch={onSearch}
+                    options={[
+                      {
+                        value: "teacher",
+                        label: "Teacher",
+                      },
+                      {
+                        value: "student",
+                        label: "Student",
+                      },
+                    ]}
                   />
                 </Form.Item>
               </div>
