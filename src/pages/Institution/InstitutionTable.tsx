@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Dropdown, Menu, MenuProps, Popconfirm } from "antd";
-import { FaPlus } from "react-icons/fa";
+import { Button, Dropdown, Menu, MenuProps, Popconfirm, Tooltip } from "antd";
+import { FaPlus, FaTrashAlt } from "react-icons/fa";
 import { PiStudent } from "react-icons/pi";
 import Loader from "../../common/Loader";
 import moment from "moment";
@@ -23,6 +23,8 @@ import { ArrowUpOutlined, ArrowDownOutlined } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../../hooks/useAxios";
 import Toast from "../../common/Toast";
+import NoticeModal from "./NoticeModal";
+import useAllUser from "../../hooks/useAllUser";
 
 const InstitutionTable = ({
   setAcademyModal,
@@ -40,6 +42,7 @@ const InstitutionTable = ({
   const { data: currentUser }: any = useCurrentUser();
   const queryClient = useQueryClient();
   const axiosPublic = useAxios();
+  const { allUsers } = useAllUser();
   // useEffect(() => {
   //   if (allUsers) {
   //     const memberDetail = allUsers?.find(
@@ -60,20 +63,6 @@ const InstitutionTable = ({
 
   memberDetail();
 
-  const dropItems: MenuProps["items"] = [
-    {
-      key: "1",
-      label: "Update notice",
-      icon: <IoMdNotificationsOutline className="!text-xl" />,
-      onClick: () => setNoticeModal(true),
-    },
-    {
-      key: "2",
-      label: "Leave academy",
-      icon: <LogOut size={14} />,
-      onClick: () => setNoticeModal(true),
-    },
-  ];
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const handleMenuClick = (e: any) => {
@@ -147,6 +136,49 @@ const InstitutionTable = ({
     },
   });
 
+  // const academyId = currentUser?.academyId;
+  // const userId = currentUser?.id;
+  // const academyId = allUsers
+  //   ?.filter(
+  //     (user: any) =>
+  //       user?.role === "student" &&
+  //       members[0]?.academyMembers?.some(
+  //         (member: any) => member?.id === user?.id
+  //       ) // Default to false if undefined
+  //   )
+  //   .map((user: any) => user?.academyId);
+  const { mutate: handleRemoveMember } = useMutation({
+    mutationKey: ["removeMember"],
+    mutationFn: async ({
+      academyId,
+      userId,
+    }: {
+      academyId: string;
+      userId: string;
+    }) => {
+      return await axiosPublic.delete(
+        `/academy/remove-member/${academyId}/${userId}`
+      );
+    },
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["allAcademies"] });
+      // queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+
+      const showNotification = Toast({
+        type: "success",
+        message: "User removed",
+        description: "",
+      });
+      showNotification();
+    },
+  });
+
+  const academyId = allUsers?.find(
+    (user: any) =>
+      user?.role === "student" &&
+      members[0]?.academyMembers?.some((member: any) => member?.id === user?.id)
+  )?.academyId;
+
   return (
     <div className="bg-gradient-to-br from-slate-50 to-slate-100 p-6 rounded-lg">
       {/* table */}
@@ -209,33 +241,33 @@ const InstitutionTable = ({
                         icon: <IoMdNotificationsOutline className="!text-xl" />,
                         onClick: () => setNoticeModal(true),
                       },
-                      {
-                        key: "2",
-                        label: (
-                          <Popconfirm
-                            title="Leave academy"
-                            description={
-                              <p className="text-sm">
-                                Are you sure you want to leave the academy?
-                              </p>
-                            }
-                            okText="Yes"
-                            cancelText="No"
-                            onConfirm={() =>
-                              handleLeaveAcademy({
-                                academyName: currentUser?.academyName,
-                                userId: currentUser?.id,
-                              })
-                            }
-                          >
-                            <span className="text-sm text-red-500 font-semibold cursor-pointer">
-                              Leave academy
-                            </span>
-                          </Popconfirm>
-                        ),
-                        icon: <LogOut size={14} />,
-                        onClick: () => setNoticeModal(true),
-                      },
+                      // {
+                      //   key: "2",
+                      //   label: (
+                      //     <Popconfirm
+                      //       title="Leave academy"
+                      //       description={
+                      //         <p className="text-sm">
+                      //           Are you sure you want to leave the academy?
+                      //         </p>
+                      //       }
+                      //       okText="Yes"
+                      //       cancelText="No"
+                      //       onConfirm={() =>
+                      //         handleLeaveAcademy({
+                      //           academyName: currentUser?.academyName,
+                      //           userId: currentUser?.id,
+                      //         })
+                      //       }
+                      //     >
+                      //       <span className="text-sm text-red-500 font-semibold cursor-pointer">
+                      //         Leave academy
+                      //       </span>
+                      //     </Popconfirm>
+                      //   ),
+                      //   icon: <LogOut size={14} />,
+                      //   onClick: () => setNoticeModal(true),
+                      // },
                     ],
                   }}
                 >
@@ -281,7 +313,6 @@ const InstitutionTable = ({
                             </Popconfirm>
                           ),
                           icon: <LogOut size={14} />,
-                          onClick: () => setNoticeModal(true),
                         },
                       ],
                     }}
@@ -441,9 +472,11 @@ const InstitutionTable = ({
                             {/* <th className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-[#64748b] capitalize">
                         Status
                       </th> */}
-                            {/* <th className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-[#64748b] capitalize">
-                              Actions
-                            </th> */}
+                            {currentUser?.role === "teacher" && (
+                              <th className="p-5 text-left whitespace-nowrap text-sm leading-6 font-semibold text-[#64748b] capitalize">
+                                Actions
+                              </th>
+                            )}
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-300">
@@ -523,14 +556,41 @@ const InstitutionTable = ({
                                   </span>
                                 </div>
                               </td>
-                              {/* <td className="flex p-5 items-center gap-0.5">
-                                <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-indigo-600 flex items-center">
+                              {currentUser?.role === "teacher" && (
+                                <td className="flex p-5 items-center gap-0.5">
+                                  {/* <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-indigo-600 flex items-center">
                                   <FaEdit className="text-gray-500 group-hover:text-white" />
-                                </button>
-                                <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-red-600 flex items-center">
-                                  <FaTrashAlt className="text-gray-500 group-hover:text-white" />
-                                </button>
-                              </td> */}
+                                </button> */}
+                                  <Popconfirm
+                                    title="Remove user"
+                                    description={
+                                      <p className="text-sm">
+                                        Are you sure you want to remove this?
+                                      </p>
+                                    }
+                                    okText={
+                                      <div
+                                        className="p-5"
+                                        onClick={() =>
+                                          handleRemoveMember({
+                                            academyId,
+                                            userId: user?.id,
+                                          })
+                                        }
+                                      >
+                                        Yes
+                                      </div>
+                                    }
+                                    cancelText="No"
+                                  >
+                                    <Tooltip title="Remove user">
+                                      <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-red-600 flex items-center">
+                                        <FaTrashAlt className="text-gray-500 group-hover:text-white" />
+                                      </button>
+                                    </Tooltip>
+                                  </Popconfirm>
+                                </td>
+                              )}
                             </tr>
                           ))}
                         </tbody>
@@ -542,46 +602,10 @@ const InstitutionTable = ({
             </div>
           </section>
         </div>
-        {/* <div>
-          <Form
-            requiredMark={false}
-            layout="vertical"
-            // onFinish={handleJoin}
-          >
-            <Form.Item
-              name="first_name"
-              className="mb-2"
-              label={
-                <p className="block text-sm font-medium text-gray-700">
-                  Academy name
-                </p>
-              }
-              rules={[
-                {
-                  required: true,
-                  message: "please input the academy name",
-                },
-              ]}
-            >
-              <Input
-                type="text"
-                className="h-[36px] w-[350px] rounded-md border-gray-200 bg-white text-sm text-gray-700 focus:border-primary-color mt-0"
-              />
-            </Form.Item>
-            <Button
-              // disabled={isButtonDisabled || loading}
-              htmlType="submit"
-              style={{
-                transition: "background-color 0.3s ease",
-              }}
-              type="primary"
-              className={`text-sm font-semibold h-[40px] px-8 border-none shadow-none text-white bg-secondary-color custom_hover 
-`}
-            >
-              Join
-            </Button>
-          </Form>
-        </div> */}
+        <NoticeModal
+          noticeModal={noticeModal}
+          setNoticeModal={setNoticeModal}
+        />
       </section>
     </div>
   );

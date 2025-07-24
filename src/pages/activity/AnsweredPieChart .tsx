@@ -2,14 +2,7 @@
 
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { Card } from "antd";
-import {
-  Users,
-  UserCheck,
-  UserX,
-  CheckCircle,
-  XCircle,
-  TrendingUp,
-} from "lucide-react";
+import { Users, CheckCircle, XCircle, TrendingUp } from "lucide-react";
 
 interface ActivityPieChartProps {
   activity: any;
@@ -45,12 +38,12 @@ const ActivityPieChart = ({
     {
       name: "Not Answered",
       value: notAnsweredCount,
-      color: "#ff4d4f",
+      color: "#EA5B6F",
       icon: "✗",
     },
   ];
 
-  const COLORS = ["#7ABA78", "#ff4d4f"];
+  const COLORS = ["#7ABA78", "#EA5B6F"];
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -68,35 +61,35 @@ const ActivityPieChart = ({
     return null;
   };
 
-  const CustomLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-  }: any) => {
-    if (percent < 0.05) return null; // Don't show label if slice is too small
+  // const CustomLabel = ({
+  //   cx,
+  //   cy,
+  //   midAngle,
+  //   innerRadius,
+  //   outerRadius,
+  //   percent,
+  // }: any) => {
+  //   if (percent < 0.05) return null; // Don't show label if slice is too small
 
-    const RADIAN = Math.PI / 180;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+  //   const RADIAN = Math.PI / 180;
+  //   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+  //   const x = cx + radius * Math.cos(-midAngle * RADIAN);
+  //   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="black"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-        fontSize="10"
-        fontWeight="medium"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
+  //   return (
+  //     <text
+  //       x={x}
+  //       y={y}
+  //       fill="black"
+  //       textAnchor={x > cx ? "start" : "end"}
+  //       dominantBaseline="central"
+  //       fontSize="10"
+  //       fontWeight="medium"
+  //     >
+  //       {`${(percent * 100).toFixed(0)}%`}
+  //     </text>
+  //   );
+  // };
 
   return (
     <Card size="small" className="mb-3 bg-[#F6F8FB]">

@@ -36,7 +36,6 @@ import useAcademies from "./useAcademies";
 const useCurrentAcademy = () => {
   const [matchedAcademy, setMatchedAcademy] = useState<any[]>([]);
   const { data: currentUser, isLoading: isUserLoading } = useCurrentUser();
-
   const { data: allAcademies, loading: isAcademyLoading } = useAcademies();
   const isLoading = isAcademyLoading || isUserLoading;
   useEffect(() => {

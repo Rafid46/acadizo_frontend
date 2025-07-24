@@ -98,7 +98,7 @@ const NoticeModal = ({ noticeModal, setNoticeModal }: any) => {
   //   setSelectedFile(file.originFileObj);
   // };
 
-  console.log(selectedFile);
+  // console.log(selectedFile);
   return (
     <div>
       <Modal
@@ -191,6 +191,7 @@ const NoticeModal = ({ noticeModal, setNoticeModal }: any) => {
               type="primary"
               htmlType="submit"
               loading={isLoading}
+              disabled={isLoading}
             >
               {isLoading ? "Posting..." : "Post Notice"}
             </Button>

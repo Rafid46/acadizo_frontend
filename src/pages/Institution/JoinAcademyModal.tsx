@@ -91,8 +91,8 @@ const JoinAcademyModal = ({
               }
               className={
                 isUserEmailIncluded
-                  ? "text-sm font-semibold shadow-none text-secondary-color bg-transparent border"
-                  : "text-sm font-semibold shadow-none text-secondary-color bg-transparent border"
+                  ? "custom_button_style"
+                  : "custom_button_style"
               }
               onClick={() =>
                 handleJoinAcademy(academy?.academyName, academy?.academyId)
@@ -312,10 +312,7 @@ const JoinAcademyModal = ({
                           <div className="">
                             <Avatar
                               size={70}
-                              src={
-                                item?.[0]?.academyLogoUrl || // Your image URL
-                                undefined
-                              }
+                              src={item?.[0]?.academyLogoUrl || undefined}
                               className="flex items-center justify-center"
                               style={{
                                 backgroundImage: `url("https://vercel.com/api/www/avatar/eb3qpvJHzzjxaYdU9mUIuAO9")`,

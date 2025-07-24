@@ -4,6 +4,7 @@ import moment from "moment";
 import { CiCalendar, CiStar } from "react-icons/ci";
 import useCurrentModules from "../../hooks/useCurrentModules";
 import useCurrentActivities from "../../hooks/useCurrentAcitivies";
+import { Link } from "react-router-dom";
 
 const BannerPart = ({ joinedAcademyDetails }: any) => {
   const { matchedModules }: any = useCurrentModules();
@@ -46,7 +47,7 @@ const BannerPart = ({ joinedAcademyDetails }: any) => {
                 <div className="flex lg:flex-row flex-col items-center justify-between">
                   {/* Profile info */}
                   <div>
-                    <h1 className="text-2xl font-bold mb-1">
+                    <h1 className="text-3xl font-bold mb-1">
                       {joinedAcademyDetails[0]?.academyName}
                     </h1>
                     <p className="text-gray-600 mb-2">
@@ -66,21 +67,26 @@ const BannerPart = ({ joinedAcademyDetails }: any) => {
                       </Button>
                     </div> */}
                     <div className="flex gap-4 mt-6">
-                      <div className="bg-[#EEF2FE] rounded-2xl p-6">
+                      <div className="bg-[#EEF2FE] rounded-2xl p-6 cursor-pointer">
                         <div className="text-2xl font-bold text-purple-600">
                           {matchedModules?.length}
                         </div>
-                        <div className="text-gray-600 text-sm mt-5 font-semibold">
-                          Modules
-                        </div>
+
+                        <Link to="/dashboard/modules">
+                          <div className="text-gray-600 text-sm mt-5 font-semibold">
+                            Modules
+                          </div>
+                        </Link>
                       </div>
-                      <div className="bg-[#F0F9FF] rounded-2xl p-6 ">
+                      <div className="bg-[#F0F9FF] rounded-2xl p-6 cursor-pointer">
                         <div className="text-2xl font-bold text-purple-600">
                           {matchedActivity?.length}
                         </div>
-                        <div className="text-gray-600 text-sm mt-5 font-semibold">
-                          Activities
-                        </div>
+                        <Link to="/dashboard/activity/posts">
+                          <div className="text-gray-600 text-sm mt-5 font-semibold">
+                            Activities
+                          </div>
+                        </Link>
                       </div>
                     </div>
                   </div>

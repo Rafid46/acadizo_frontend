@@ -84,19 +84,32 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     setLoading(true);
     return signInWithPopup(auth, googleProvider);
   };
+  // useEffect(() => {
+  //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+  //     setUser(currentUser);
+  //     setLoading(false);
+  //     console.log(
+  //       "current user ---->",
+  //       currentUser?.displayName || currentUser?.email
+  //     );
+  //     console.log("current user data ---->", currentUser);
+  //   });
+
+  //   return () => unsubscribe();
+  // }, []);
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-      console.log(
-        "current user ---->",
-        currentUser?.displayName || currentUser?.email
-      );
-      console.log("current user data ---->", currentUser);
+      if (currentUser) {
+        setUser(currentUser);
+      } else {
+        setUser(null);
+      }
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
+
   const authInfo: AuthContextType = {
     user,
     loading,
