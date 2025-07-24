@@ -17,6 +17,7 @@ import {
   Divider,
   Dropdown,
   Form,
+  Menu,
   Modal,
   Progress,
   Row,
@@ -38,10 +39,13 @@ import { EditorContent } from "@tiptap/react";
 import { GrFormAttachment } from "react-icons/gr";
 import { FcOvertime } from "react-icons/fc";
 import {
-  Activity,
+  ArrowDownUp,
   ArrowRight,
   Calendar,
+  Calendar1,
+  LetterText,
   LucideUsersRound,
+  TextIcon,
   Users,
 } from "lucide-react";
 
@@ -66,6 +70,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
   const [openEditActivity, setOpenEditActivity] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [filteredMember, setFilteredMember] = useState<any[]>([]);
+  const [filteredSortMember, setFilteredSortMembers] = useState<any[]>([]);
   const { token } = theme.useToken();
 
   const editor = useTiptapEditor({
@@ -81,6 +86,8 @@ const ActivityCard = ({ allActivities, loading }: any) => {
   const axiosPublic = useAxios();
   const { data: currentUser } = useCurrentUser();
   const { data: academyLists } = useAcademies();
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
   const queryClient = useQueryClient();
   // const editorRef = useRef<any>(null);
   const { mutate: postAnswer, isLoading: isSubmitting }: any = useMutation({
@@ -359,6 +366,53 @@ const ActivityCard = ({ allActivities, loading }: any) => {
 
   const totalStudentsInAcademy = getTotalStudentsInAcademy();
 
+  const showName = () => {
+    const filteredData = [...allActivities].sort((a, b) => {
+      const nameA = a?.activityTitle || "";
+      const nameB = b?.activityTitle || "";
+
+      if (sortOrder === "asc") {
+        return nameA.localeCompare(nameB);
+      } else {
+        return nameB.localeCompare(nameA);
+      }
+    });
+
+    setFilteredSortMembers(filteredData);
+    // Toggle sort order for next click
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
+  const showDate = () => {
+    const filteredData = [...allActivities].sort((a, b) => {
+      // Assuming you have a date field in your activity object
+      // Replace 'createdAt' or 'date' with your actual date field name
+      const dateA = new Date(a?.createdAt || a?.date || 0);
+      const dateB = new Date(b?.createdAt || b?.date || 0);
+
+      if (sortOrder === "asc") {
+        return dateA.getTime() - dateB.getTime(); // Oldest first
+      } else {
+        return dateB.getTime() - dateA.getTime(); // Newest first
+      }
+    });
+
+    setFilteredSortMembers(filteredData);
+    // Toggle sort order for next click
+    setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+  };
+
+  const handleMenuClick = (e: any) => {
+    if (e.key === "name") {
+      showName();
+    } else if (e.key === "date") {
+      showDate();
+    } else if (e.key === "all") {
+      setFilteredSortMembers([]);
+      setSortOrder("asc");
+    }
+  };
+
   return (
     <div className="">
       <style>
@@ -369,6 +423,12 @@ const ActivityCard = ({ allActivities, loading }: any) => {
           .ant-collapse {
               background: #F9FAFB !important;
         }
+              .ant-collapse-item {
+  background-color: #f0f5ff !important;
+  border-radius: 8px !important;
+  margin-bottom: 8px !important;
+}
+
         `}
       </style>
       <>
@@ -376,15 +436,15 @@ const ActivityCard = ({ allActivities, loading }: any) => {
           <Loader />
         ) : allActivities?.length > 0 ? (
           <>
-            <div className="flex items-center justify-between mt-5">
-              <div className="relative mt-2 mx-auto w-full">
+            <div className="flex items-center justify-between mt-5 gap-2">
+              <div className="relative mx-auto w-full">
                 <CiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-6 w-6" />
                 <input
                   value={searchItem}
                   onChange={handleSearch}
                   type="text"
                   placeholder="Search activities...."
-                  className="block w-full rounded-xl bg-white border border-neutral-300 bg-transparent py-[11px] pl-10 pr-20 text-base/6 text-neutral-950 ring-4 ring-transparent transition placeholder:text-neutral-500 focus:border-[#7ABA78] focus:outline-none focus:ring-neutral-950/5"
+                  className="block w-full rounded-md bg-white border border-neutral-300 bg-transparent py-[8px] pl-10 pr-20 text-base/6 text-neutral-950 ring-4 ring-transparent transition placeholder:text-neutral-500 focus:border-[#7ABA78] focus:outline-none focus:ring-neutral-950/5"
                 />
                 <div className="absolute inset-y-1 right-1 flex justify-end p-1">
                   <button
@@ -396,6 +456,35 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                   </button>
                 </div>
               </div>
+              <Dropdown
+                overlay={
+                  <Menu onClick={handleMenuClick}>
+                    <Menu.Item key="all" icon={<TextIcon size={15} />}>
+                      All
+                    </Menu.Item>
+                    <Menu.Item key="name" icon={<Calendar1 size={15} />}>
+                      Name (a-z)
+                    </Menu.Item>
+                    <Menu.Item key="date" icon={<LetterText size={15} />}>
+                      Date
+                    </Menu.Item>
+                  </Menu>
+                }
+                placement="bottomLeft"
+                trigger={["click"]}
+              >
+                <Button
+                  className="text-sm font-semibold h-[39px] px-8"
+                  icon={
+                    <ArrowDownUp
+                      size={16}
+                      rotate={sortOrder === "desc" ? 180 : 0}
+                    />
+                  }
+                >
+                  Sort by
+                </Button>
+              </Dropdown>
               {/* <div className=" cursor-pointer hover:bg-gray-100 hover:rounded-full p-2 ml-5">
                 <CgMenuGridO className="text-[30px] text-gray-500" />
               </div> */}
@@ -406,6 +495,8 @@ const ActivityCard = ({ allActivities, loading }: any) => {
               <AnimatePresence>
                 {(searchItem?.trim().length > 0
                   ? filteredMember
+                  : filteredSortMember?.length > 0
+                  ? filteredSortMember
                   : allActivities
                 )?.map((activity: any, index: number) => (
                   // main card
@@ -737,7 +828,10 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                           // expandIcon={({ isActive }) => (
                           //   <CaretRightOutlined rotate={isActive ? 90 : 0} />
                           // )}
-                          style={{ background: token.colorBgContainer }}
+                          style={{
+                            background: token.colorBgContainer,
+                            backgroundColor: "red",
+                          }}
                           defaultActiveKey={["1"]}
                           items={[
                             {
@@ -783,9 +877,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                       </span>
                                     </p>
                                   </div>
-                                  <p className="text-[14px] font-semibold  text-purple-600">
-                                    {activity?.answers?.length} answers
-                                  </p>
+
                                   <Divider className="mt-2 border-blue-100 mb-0" />
                                 </div>
                               ),

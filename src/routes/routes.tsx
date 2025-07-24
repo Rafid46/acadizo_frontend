@@ -1,7 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 // import MainLayout from "../layout/MainLayout";
 import About from "../pages/About";
-import Home from "../pages/Home";
 import Register from "../pages/auth/Register";
 import Login from "../pages/auth/Login";
 
@@ -12,27 +11,28 @@ import Users from "../pages/profile/Users";
 import Overview from "../pages/Institution/Overview";
 import TestDashboard from "../pages/TestDashboard";
 import PrivateRoute from "./PrivateRoute";
-import Unauthorized from "../pages/error/Unauthorized";
+import Errorpage from "../pages/error/Errorpage";
 import Notice from "../pages/Institution/Notice";
 import ActivityPage from "../pages/activity/ActivityPage";
 import Homepage from "../pages/Home/Homepage";
 
 const router = createBrowserRouter([
+  // {
+  //   path: "/",
+  //   element: (
+  //     <PrivateRoute>
+  //       <TestDashboard />
+  //     </PrivateRoute>
+  //   ),
+  // },
   {
     path: "/",
-    element: (
-      <PrivateRoute>
-        <TestDashboard />
-      </PrivateRoute>
-    ),
-  },
-  {
-    path: "/home",
     element: <Homepage />,
   },
 
   {
     path: "/dashboard",
+    errorElement: <Errorpage />,
     element: (
       <PrivateRoute>
         <TestDashboard />
@@ -102,10 +102,10 @@ const router = createBrowserRouter([
   //     },
   //   ],
   // },
-  {
-    path: "/home",
-    element: <Home />,
-  },
+  // {
+  //   path: "/home",
+  //   element: <Home />,
+  // },
   {
     path: "/register",
     element: <Register />,
@@ -113,10 +113,6 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
-  },
-  {
-    path: "/unauthorized",
-    element: <Unauthorized />,
   },
 ]);
 export default router;

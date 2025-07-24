@@ -9,19 +9,28 @@ import InstitutionTable from "./Institution/InstitutionTable";
 import BannerPart from "./Institution/BannerPart";
 import JoinAcademyModal from "./Institution/JoinAcademyModal";
 import CreateAcademyModal from "./Institution/CreateAcademyModal";
-import { BookOpen, CheckCircle, GraduationCap, Users } from "lucide-react";
+import {
+  ArrowBigRightDash,
+  BookOpen,
+  CheckCircle,
+  GraduationCap,
+  Users,
+} from "lucide-react";
 import { Avatar, Badge, Button, Image, Modal, Popconfirm, Tooltip } from "antd";
 import { PiStudent } from "react-icons/pi";
 import Loader from "../common/Loader";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../hooks/useAxios";
 import Toast from "../common/Toast";
+import useAllUser from "../hooks/useAllUser";
+import { IoIosLogOut } from "react-icons/io";
 const InstitutionSection = () => {
   const [createUserModal, setCreateUserModal] = useState(false);
   const [academyModal, setAcademyModal] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [joinedAcademyDetails, setJoinedAcademyDetails] = useState<any[]>([]);
   const axiosPublic = useAxios();
+  const { allUsers } = useAllUser();
   // const [isListLoading, setIsListLoading] = useState(true);
   // const queryClient = useQueryClient();
 
@@ -267,7 +276,8 @@ const InstitutionSection = () => {
             cancelText="No"
           >
             <Button
-              className={`text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color`}
+              icon={<IoIosLogOut className="h-4 w-4" />}
+              className={`text-sm font-semibold h-[30px] px-6 shadow-none !text-red-400 !bg-transparent border !border-red-400`}
             >
               Leave
             </Button>
@@ -283,6 +293,7 @@ const InstitutionSection = () => {
             }
           >
             <Button
+              icon={<ArrowBigRightDash className="h-4 w-4" />}
               loading={
                 isListLoading === academy?.academyId ||
                 isPending === academy?.academyId
@@ -294,8 +305,8 @@ const InstitutionSection = () => {
               }
               className={
                 isUserEmailIncluded
-                  ? "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
-                  : "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
+                  ? "text-sm font-semibold shadow-none text-secondary-color bg-transparent borders"
+                  : "custom_button_style custom_hover"
               }
               onClick={() =>
                 handleJoinAcademy(academy?.academyName, academy?.academyId)
@@ -309,8 +320,52 @@ const InstitutionSection = () => {
           </Tooltip>
         )}
       </>
+
+      // <>
+      //   {isListLoading || isPending ? (
+      //     <>
+      //       <Button
+      //         disabled={isListLoading || isPending || isUserEmailIncluded}
+      //         className={
+      //           isUserEmailIncluded
+      //             ? "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border"
+      //             : "text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color"
+      //         }
+      //       >
+      //         joining..
+      //       </Button>
+      //     </>
+      //   ) : isUserEmailIncluded ? (
+      //     <>
+      //       <Button
+      //         disabled
+      //         className={`text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border`}
+      //       >
+      //         Joined
+      //       </Button>
+      //     </>
+      //   ) : (
+      //     <>
+      //       <Button
+      //         className={`text-sm font-semibold h-[30px] px-6 shadow-none text-secondary-color bg-transparent border custom_hover_second  !border-primary-color`}
+      //         onClick={() =>
+      //           !isUserEmailIncluded && handleJoinAcademy(academy?.academyName)
+      //         }
+      //       >
+      //         Join
+      //       </Button>
+      //     </>
+      //   )}
+      // </>
     );
   };
+  const matchedUser = joinedAcademyDetails[0]?.academyMembers?.find(
+    (user: any) => user?.role === "student"
+  );
+  const matchedAllUser = allUsers?.find(
+    (user: any) => user?.role === "student"
+  );
+
   return (
     <section className="max-w-screen-xl mx-auto p-5 pt-0">
       {userLoading ? (
@@ -429,11 +484,19 @@ const InstitutionSection = () => {
                         <div className="p-6">
                           <div className="flex items-start gap-4">
                             <div className="relative">
-                              <Avatar className="h-16 w-16 ring-2 ring-white shadow-lg">
-                                <Image
-                                  src={item?.avatar || "/placeholder.svg"}
-                                  alt={item?.academyName}
-                                />
+                              <Avatar
+                                size={70}
+                                src={item?.[0]?.academyLogoUrl || undefined}
+                                className="flex items-center justify-center"
+                                style={{
+                                  backgroundImage: `url("https://vercel.com/api/www/avatar/eb3qpvJHzzjxaYdU9mUIuAO9")`,
+                                }}
+                              >
+                                {item?.academyName && (
+                                  <p className="text-gray-600 font-bold text-[20px]">
+                                    {item.academyName.charAt(0).toUpperCase()}
+                                  </p>
+                                )}
                               </Avatar>
                               {item?.isJoined === true && (
                                 <div className="absolute -top-1 -right-1 bg-green-500 rounded-full p-1">
@@ -508,6 +571,32 @@ const InstitutionSection = () => {
         currentUserPhotoURL={currentUserPhotoURL}
         refetch={refetch}
       />
+      <div>
+        {allUsers
+          ?.filter(
+            (user: any) =>
+              user?.role === "student" &&
+              joinedAcademyDetails[0]?.academyMembers?.some(
+                (member: any) => member?.id === user?.id
+              )
+          )
+          .map((user: any) => (
+            <p key={user?.id || user?.email}>
+              {user?.firstName} {user?.contactNo} {user?.gender}
+            </p>
+          ))}
+
+        {/* {allUsers?.map((member: any) => {
+          if (member?.role === "student" && matchedUser?.role === "student") {
+            return (
+              <p key={member?.id || member?.email}>
+                {member?.firstName} {member?.contact}
+              </p>
+            );
+          }
+          return null;
+        })} */}
+      </div>
     </section>
   );
 };

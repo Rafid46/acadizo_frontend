@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState } from "react";
-import { NavLink } from "react-router-dom";
-import { Button } from "antd";
-import { ArrowRight, FileText, Grid2x2Check, Menu, X } from "lucide-react";
+import { useContext, useState } from "react";
+import { UserOutlined } from "@ant-design/icons";
+import { Link, NavLink } from "react-router-dom";
+import { Avatar, Button, Dropdown, MenuProps } from "antd";
+import { Github, Grid2x2Check, Menu, X } from "lucide-react";
 import logo from "../../assets/icons/acadizo_logo.png";
 import { motion } from "framer-motion";
-import { ReactNode, useRef } from "react";
-import { useScroll, useTransform } from "framer-motion";
-import { FiArrowUpRight } from "react-icons/fi";
+import { ReactNode } from "react";
+// import { useScroll, useTransform } from "framer-motion";
 import { HiArrowLongRight } from "react-icons/hi2";
 import { Brain, Cloud, Shield, Zap } from "lucide-react";
 import MagicBento from "../../Components/ui/MagicBento/MagicBento";
@@ -17,12 +17,20 @@ import { CountUpText } from "../../common/CountupText";
 import FloatingPaper from "./FloatingPaper";
 import RoboAnimation from "./Robo-Animation";
 import Sparkles from "./Sparkles";
+import TextType from "../../common/TextType";
+import { BsTwitter } from "react-icons/bs";
+import { LiaLinkedinIn } from "react-icons/lia";
+import { LuHome, LuLogOut } from "react-icons/lu";
+import { AuthContext } from "../../providers/AuthProvider";
+import { FaAngleDown } from "react-icons/fa";
 // interface HeaderProps {
 //   navigationItems: any;
 // }
 
 const Homepage = () => {
   const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
+  const { logOut, loading, user }: any = useContext(AuthContext);
+  console.log(user, "user from home");
   const toggleMenu = (): void => {
     setIsMenuOpen(!isMenuOpen);
   };
@@ -30,16 +38,16 @@ const Homepage = () => {
     { label: "Features", href: "#features" },
     { label: "About Us", href: "#about" },
     // { label: "Pricing", href: "#pricing" },
-    { label: "Blog", href: "#blog" },
-    { label: "Contact", href: "/contact" },
+    // { label: "Blog", href: "#blog" },
+    { label: "Contact", href: "#contact" },
   ];
 
   const IMG_PADDING = 12;
 
   const TextParallaxContent = ({
-    imgUrl,
-    subheading,
-    heading,
+    // imgUrl,
+    // subheading,
+    // heading,
     children,
   }: {
     imgUrl: string;
@@ -80,17 +88,24 @@ const Homepage = () => {
                 </div>
 
                 <div className="container mx-auto px-6 relative z-10">
-                  <div className="max-w-4xl mx-auto text-center">
+                  <div className="mx-auto text-center">
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.5 }}
                     >
                       <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold  mb-6">
-                        Transform Your Research with
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-                          {" "}
-                          AI Power
+                        Empowering Education Through <br /> Seamless Connection{" "}
+                        <br />
+                        <span className="">
+                          <TextType
+                            text={["by Acadizo"]}
+                            typingSpeed={75}
+                            pauseDuration={1500}
+                            showCursor={true}
+                            cursorCharacter="_"
+                            textColors="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600"
+                          />
                         </span>
                       </h1>
                     </motion.div>
@@ -111,13 +126,15 @@ const Homepage = () => {
                       transition={{ duration: 0.5, delay: 0.4 }}
                       className="flex flex-col sm:flex-row items-center justify-center gap-4"
                     >
-                      <Button
-                        type="primary"
-                        className="custom_button_style custom_hover !h-[42px] !px-[28px] mr-4"
-                      >
-                        Explore Solutions
-                        {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
-                      </Button>
+                      <Link to="/dashboard">
+                        <Button
+                          type="primary"
+                          className="custom_button_style custom_hover !h-[42px] !px-[28px] mr-4"
+                        >
+                          Explore Solutions
+                          {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
+                        </Button>
+                      </Link>
                       <div className="">
                         <a href="#" className="batton type--C">
                           <span className="batton__text  text-[12px]">
@@ -146,111 +163,111 @@ const Homepage = () => {
     );
   };
 
-  const StickyImage = ({ imgUrl }: { imgUrl: string }) => {
-    const targetRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-      target: targetRef,
-      offset: ["end end", "end start"],
-    });
+  // const StickyImage = ({ imgUrl }: { imgUrl: string }) => {
+  //   const targetRef = useRef(null);
+  //   const { scrollYProgress } = useScroll({
+  //     target: targetRef,
+  //     offset: ["end end", "end start"],
+  //   });
 
-    const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
-    const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
+  //   const scale = useTransform(scrollYProgress, [0, 1], [1, 0.85]);
+  //   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
-    return (
-      <motion.div
-        style={{
-          backgroundImage: `url(${imgUrl})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          height: `calc(100vh - ${IMG_PADDING * 2}px)`,
-          top: IMG_PADDING,
-          scale,
-        }}
-        ref={targetRef}
-        className="sticky  overflow-hidden rounded-xl"
-      >
-        <motion.div
-          className="absolute inset-0 bg-neutral-950/70"
-          style={{
-            opacity,
-          }}
-        />
-      </motion.div>
-    );
-  };
+  //   return (
+  //     <motion.div
+  //       style={{
+  //         backgroundImage: `url(${imgUrl})`,
+  //         backgroundSize: "cover",
+  //         backgroundPosition: "center",
+  //         height: `calc(100vh - ${IMG_PADDING * 2}px)`,
+  //         top: IMG_PADDING,
+  //         scale,
+  //       }}
+  //       ref={targetRef}
+  //       className="sticky  overflow-hidden rounded-xl"
+  //     >
+  //       <motion.div
+  //         className="absolute inset-0 bg-neutral-950/70"
+  //         style={{
+  //           opacity,
+  //         }}
+  //       />
+  //     </motion.div>
+  //   );
+  // };
 
-  const OverlayCopy = ({
-    subheading,
-    heading,
-  }: {
-    subheading: string;
-    heading: string;
-  }) => {
-    const targetRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-      target: targetRef,
-      offset: ["start end", "end start"],
-    });
+  // const OverlayCopy = ({
+  //   subheading,
+  //   heading,
+  // }: {
+  //   subheading: string;
+  //   heading: string;
+  // }) => {
+  //   const targetRef = useRef(null);
+  //   const { scrollYProgress } = useScroll({
+  //     target: targetRef,
+  //     offset: ["start end", "end start"],
+  //   });
 
-    const y = useTransform(scrollYProgress, [0, 1], [250, -250]);
-    const opacity = useTransform(scrollYProgress, [0.25, 0.5, 0.75], [0, 1, 0]);
+  //   const y = useTransform(scrollYProgress, [0, 1], [250, -250]);
+  //   const opacity = useTransform(scrollYProgress, [0.25, 0.5, 0.75], [0, 1, 0]);
 
-    return (
-      <motion.div
-        style={{
-          y,
-          opacity,
-        }}
-        ref={targetRef}
-        className="absolute left-0 top-0 flex h-screen w-full flex-col items-center justify-center text-white"
-      >
-        <p className="mb-2 text-center text-xl md:mb-4 md:text-3xl">
-          {subheading}
-        </p>
-        <p className="text-center text-4xl font-bold md:text-7xl">{heading}</p>
-      </motion.div>
-    );
-  };
-  const OverlayButton = () => {
-    const targetRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-      target: targetRef,
-      offset: ["start end", "end start"],
-    });
+  //   return (
+  //     <motion.div
+  //       style={{
+  //         y,
+  //         opacity,
+  //       }}
+  //       ref={targetRef}
+  //       className="absolute left-0 top-0 flex h-screen w-full flex-col items-center justify-center text-white"
+  //     >
+  //       <p className="mb-2 text-center text-xl md:mb-4 md:text-3xl">
+  //         {subheading}
+  //       </p>
+  //       <p className="text-center text-4xl font-bold md:text-7xl">{heading}</p>
+  //     </motion.div>
+  //   );
+  // };
+  // const OverlayButton = () => {
+  //   const targetRef = useRef(null);
+  //   const { scrollYProgress } = useScroll({
+  //     target: targetRef,
+  //     offset: ["start end", "end start"],
+  //   });
 
-    const y = useTransform(scrollYProgress, [0, 1], [250, -250]);
-    const opacity = useTransform(scrollYProgress, [0.25, 0.5, 0.75], [0, 1, 0]);
+  //   const y = useTransform(scrollYProgress, [0, 1], [250, -250]);
+  //   const opacity = useTransform(scrollYProgress, [0.25, 0.5, 0.75], [0, 1, 0]);
 
-    return (
-      <motion.div
-        // style={{
-        //   y,
-        //   opacity,
-        // }}
-        ref={targetRef}
-        className="absolute left-0 top-0 flex h-screen w-full flex-col items-center justify-center text-white mt-[150px]"
-      >
-        <div className="flex gap-4">
-          <Button
-            type="primary"
-            className="custom_button_style custom_hover !h-[42px] !px-[28px] mr-4"
-          >
-            Explore Solutions
-            {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
-          </Button>
-          <div className="container">
-            <a href="#" className="batton type--C">
-              <span className="batton__text !text-white text-[12px]">
-                Learn more <HiArrowLongRight className="!text-lg" />
-              </span>
-              <div className="batton__drow1"></div>
-              <div className="batton__drow2"></div>
-            </a>
-          </div>
-        </div>
-      </motion.div>
-    );
-  };
+  //   return (
+  //     <motion.div
+  //       // style={{
+  //       //   y,
+  //       //   opacity,
+  //       // }}
+  //       ref={targetRef}
+  //       className="absolute left-0 top-0 flex h-screen w-full flex-col items-center justify-center text-white mt-[150px]"
+  //     >
+  //       <div className="flex gap-4">
+  //         <Button
+  //           type="primary"
+  //           className="custom_button_style custom_hover !h-[42px] !px-[28px] mr-4"
+  //         >
+  //           Explore Solutions
+  //           {/* <ArrowRight className="ml-2 h-4 w-4" /> */}
+  //         </Button>
+  //         <div className="container">
+  //           <a href="#" className="batton type--C">
+  //             <span className="batton__text !text-white text-[12px]">
+  //               Learn more <HiArrowLongRight className="!text-lg" />
+  //             </span>
+  //             <div className="batton__drow1"></div>
+  //             <div className="batton__drow2"></div>
+  //           </a>
+  //         </div>
+  //       </div>
+  //     </motion.div>
+  //   );
+  // };
 
   const features = [
     {
@@ -278,9 +295,63 @@ const Homepage = () => {
       icon: Zap,
     },
   ];
+  const handleLogout = () => {
+    logOut()
+      .then(() => {
+        // console.log(res.data);
+        console.log("logged out");
+      })
+      .catch((error: any) => {
+        console.log(error);
+      });
+  };
+  const items: MenuProps["items"] = [
+    {
+      key: "1",
+      label: <Link to="/dashboard/update-profile">My Account</Link>,
+    },
+    {
+      type: "divider",
+    },
+    {
+      key: "2",
+      label: <Link to="/dashboard/">Dashboard</Link>,
+      icon: <LuHome />,
+    },
+    {
+      type: "divider",
+    },
 
+    {
+      key: "4",
+      label: "Logout",
+      icon: <LuLogOut />,
+      onClick: handleLogout,
+    },
+  ];
   return (
     <div className=" animated-background">
+      <style>
+        {` 
+        .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {
+         padding: 10px 24px;
+
+    }
+        .ant-dropdown-menu-title-content {
+         color: #64748b !important;
+         font-size: 12px;
+         font-weight: 600 !important;
+    }
+
+        .hover-button {
+         transition: background-color 0.3s ease, opacity 0.3s ease;
+    }
+
+        .hover-button:hover {
+         opacity: 0.9;
+    }
+    `}
+      </style>
       {/* header */}
       <header className="fixed top-0 left-0 right-0 z-50 w-full  bg-white backdrop-blur  transition-all duration-300 shadow-sm">
         <div className="container flex h-16 items-center justify-between px-4 md:px-6 mx-auto">
@@ -295,7 +366,6 @@ const Homepage = () => {
           <nav className="hidden md:flex items-center space-x-8">
             {navigationItems.map((item: any, index: any) => (
               <NavLink
-                to={item.href}
                 onClick={(e) => {
                   if (item.href.startsWith("#")) {
                     e.preventDefault();
@@ -314,15 +384,60 @@ const Homepage = () => {
             ))}
           </nav>
           <div className="hidden md:flex items-center space-x-4">
-            <Button
-              type="link"
-              className="!text-primary-color hover:text-green-600 transition-all duration-300 hover:scale-105 font-semibold"
-            >
-              Sign In
-            </Button>
-            <Button className="custom_button_style_secondary !rounded-full custom_hover px-6 py-3">
-              Get Started
-            </Button>
+            {user ? (
+              <Dropdown
+                className="cursor-pointer"
+                trigger={["click", "hover"]}
+                menu={{ items }}
+              >
+                <a className="px-6">
+                  {loading ? (
+                    <div className="flex items-center gap-x-2">
+                      <Avatar src="" size={40} className="bg-gray-200" />
+                      <div className="flex flex-col gap-y-2">
+                        <p className="bg-gray-200 w-[100px] h-[10px] rounded-[10px]"></p>
+                        <p className="bg-gray-200 w-[80px] h-[10px] rounded-[10px]"></p>
+                      </div>
+                      <FaAngleDown className="ml-2 text-text-secondary-color" />
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-x-2">
+                      <Avatar
+                        src={user?.photoURL}
+                        size={40}
+                        icon={<UserOutlined />}
+                      />
+                      <div className="flex flex-col">
+                        <p className="text-sm font-medium text-text-color">
+                          {user?.displayName}
+                        </p>
+                        <p className="text-text-small font-normal text-text-secondary-color">
+                          {user?.email}
+                        </p>
+                      </div>
+                      <FaAngleDown className="ml-2 text-text-secondary-color" />
+                    </div>
+                  )}
+                </a>
+              </Dropdown>
+            ) : (
+              <Link to="/login">
+                <Button
+                  type="link"
+                  className="!text-primary-color hover:text-green-600 transition-all duration-300 hover:scale-105 font-semibold"
+                >
+                  Sign In
+                </Button>
+              </Link>
+            )}
+
+            {!user && (
+              <Link to="/login">
+                <Button className="custom_button_style_secondary !rounded-full custom_hover px-6 py-3">
+                  Get Started
+                </Button>
+              </Link>
+            )}
           </div>
           {/* Mobile Menu Button */}
           <button
@@ -584,6 +699,92 @@ const Homepage = () => {
           </div>
         </div>
       </section>
+      {/* footer */}
+      <footer id="contact" className="border-t">
+        <div className="flex flex-col gap-8 px-10 py-8 md:flex-row md:py-12 ">
+          <div className="flex-1 space-y-4">
+            <img src={logo} className="w-32" alt="" />
+            <p className="text-sm text-muted-foreground">
+              Empowering Education Through Seamless Connection by Acadizo
+            </p>
+          </div>
+          <div className="grid flex-1 grid-cols-2 gap-12 sm:grid-cols-3">
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Solutions</h3>
+              <ul className="space-y-3 text-sm">
+                <li>
+                  <Link
+                    to="/ai-analytics"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    AI Analytics
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/cloud-services"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Cloud Services
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Company</h3>
+              <ul className="space-y-3 text-sm">
+                <li>
+                  <Link
+                    to="/about"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    About Us
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/careers"
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    Careers
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div className="space-y-4">
+              <h3 className="text-sm font-medium">Connect</h3>
+              <div className="flex space-x-4">
+                <Link
+                  to="https://github.com/amanesoft"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <Github className="h-5 w-5" />
+                  <span className="sr-only">GitHub</span>
+                </Link>
+                <Link
+                  to="https://twitter.com/amanesoft"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <BsTwitter className="h-5 w-5" />
+                  <span className="sr-only">Twitter</span>
+                </Link>
+                <Link
+                  to="https://linkedin.com/company/amanesoft"
+                  className="text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <LiaLinkedinIn className="h-5 w-5" />
+                  <span className="sr-only">LinkedIn</span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="border-t py-6">
+          <p className="text-center text-sm text-muted-foreground">
+            © {new Date().getFullYear()} Acadizo, Inc. All rights reserved.
+          </p>
+        </div>
+      </footer>
     </div>
   );
 };

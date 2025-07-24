@@ -20,9 +20,24 @@
   /* font-family: "poppins", sans-serif !important; */
   font-family: "inter", sans-serif !important;
 }
+
+.text-type {
+  display: inline-block;
+  white-space: pre-wrap;
+}
+
+.text-type__cursor {
+  margin-left: 0.25rem;
+  display: inline-block;
+  opacity: 1;
+}
+
+.text-type__cursor--hidden {
+  display: none;
+}
 .is-editor-empty::before {
   content: attr(data-placeholder);
-  color: #a0aec0; /* Tailwind gray-400 */
+  /* Tailwind gray-400 */
   float: left;
   pointer-events: none;
   height: 0;
