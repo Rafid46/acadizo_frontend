@@ -336,7 +336,7 @@ const ActivityEditModule = ({
               <div className="mb-5">
                 {activity?.file ? (
                   <a
-                    href={`http://localhost:3000/file/${activity?.file}`}
+                    href={`https://acadizo-backend.onrender.com//file/${activity?.file}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     download

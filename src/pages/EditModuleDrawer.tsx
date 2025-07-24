@@ -299,7 +299,7 @@ const EditModuleDrawer = ({ value, open, setOpen, module }: any) => {
               <div className="mb-5">
                 {module?.file && (
                   <a
-                    href={`http://localhost:3000/file/${module?.file}`}
+                    href={`https://acadizo-backend.onrender.com//file/${module?.file}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     download

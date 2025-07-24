@@ -538,7 +538,7 @@ const ModuleCard = ({ showDrawer }: any) => {
                                   <div>
                                     {module?.file && (
                                       <a
-                                        href={`http://localhost:3000/file/${module?.file}`}
+                                        href={`https://acadizo-backend.onrender.com//file/${module?.file}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         download

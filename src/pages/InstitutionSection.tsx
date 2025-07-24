@@ -16,7 +16,7 @@ import {
   GraduationCap,
   Users,
 } from "lucide-react";
-import { Avatar, Badge, Button, Image, Modal, Popconfirm, Tooltip } from "antd";
+import { Avatar, Badge, Button, Modal, Popconfirm, Tooltip } from "antd";
 import { PiStudent } from "react-icons/pi";
 import Loader from "../common/Loader";
 import { useMutation, useQueryClient } from "@tanstack/react-query";

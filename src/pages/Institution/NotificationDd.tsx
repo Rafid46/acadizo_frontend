@@ -56,7 +56,7 @@ const NotificationDd = () => {
 
                   {item?.file && (
                     <a
-                      href={`http://localhost:3000/file/${item?.file}`}
+                      href={`https://acadizo-backend.onrender.com//file/${item?.file}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       download
