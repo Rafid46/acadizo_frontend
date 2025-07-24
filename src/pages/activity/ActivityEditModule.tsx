@@ -25,7 +25,7 @@ const ActivityEditModule = ({
   activity,
 }: any) => {
   const { RangePicker } = DatePicker;
-  const [editorContent, setEditorContent] = useState("");
+  const [, setEditorContent] = useState("");
   const [form] = Form.useForm();
 
   const editor = useTiptapEditor({
@@ -64,22 +64,22 @@ const ActivityEditModule = ({
     document.body.removeChild(link);
   };
 
-  const startDate = (date?: string) => {
-    if (!date) return "";
-    const parts = date.split(",");
-    if (parts.length < 2) return "";
-    const datePart = parts[1]?.trim()?.split(" ");
-    if (!datePart || datePart.length < 3) return "";
-    return `${parts[0]?.trim()}, ${datePart[0]} ${datePart[1]} ${datePart[2]}`;
-  };
-  const endDate = (date?: string) => {
-    if (!date) return "";
-    const parts = date.split(",");
-    if (parts.length < 4) return "";
-    const datePart = parts[3]?.trim()?.split(" ");
-    if (!datePart || datePart.length < 3) return "";
-    return `${parts[2]?.trim()}, ${datePart[0]} ${datePart[1]} ${datePart[2]}`;
-  };
+  // const startDate = (date?: string) => {
+  //   if (!date) return "";
+  //   const parts = date.split(",");
+  //   if (parts.length < 2) return "";
+  //   const datePart = parts[1]?.trim()?.split(" ");
+  //   if (!datePart || datePart.length < 3) return "";
+  //   return `${parts[0]?.trim()}, ${datePart[0]} ${datePart[1]} ${datePart[2]}`;
+  // };
+  // const endDate = (date?: string) => {
+  //   if (!date) return "";
+  //   const parts = date.split(",");
+  //   if (parts.length < 4) return "";
+  //   const datePart = parts[3]?.trim()?.split(" ");
+  //   if (!datePart || datePart.length < 3) return "";
+  //   return `${parts[2]?.trim()}, ${datePart[0]} ${datePart[1]} ${datePart[2]}`;
+  // };
 
   const { mutate: updateActivity, isLoading: isUpdateLoading }: any =
     useMutation({
@@ -336,7 +336,7 @@ const ActivityEditModule = ({
               <div className="mb-5">
                 {activity?.file ? (
                   <a
-                    href={`https://acadizo-backend.onrender.com//file/${activity?.file}`}
+                    href={`https://acadizo-backend.onrender.com/file/${activity?.file}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     download

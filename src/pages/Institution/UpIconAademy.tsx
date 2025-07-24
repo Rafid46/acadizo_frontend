@@ -1,23 +1,25 @@
 import React, { useState, useRef } from "react";
+interface AcademyDetail {
+  academyName: string;
+  // other properties if needed
+}
 
 interface AvatarUploadProps {
   initialAvatarUrl?: string;
   onAvatarChange?: (file: File) => Promise<string>;
-  joinedAcademyDetails: string;
-  academyName: string;
+  joinedAcademyDetails: AcademyDetail[];
 }
 
 const UpIconAcademy = ({
   initialAvatarUrl,
-  onAvatarChange,
   joinedAcademyDetails,
 }: AvatarUploadProps) => {
   const [avatarUrl, setAvatarUrl] = useState<string | undefined>(
     initialAvatarUrl
   );
-  const [isUploading, setIsUploading] = useState(false);
+  // const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [, setSelectedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = async (
@@ -31,37 +33,37 @@ const UpIconAcademy = ({
     setError(null);
   };
 
-  const handleUpload = async () => {
-    if (!selectedFile) return;
+  // const handleUpload = async () => {
+  //   if (!selectedFile) return;
 
-    setIsUploading(true);
-    setError(null);
+  //   setIsUploading(true);
+  //   setError(null);
 
-    try {
-      if (onAvatarChange) {
-        const newAvatarUrl = await onAvatarChange(selectedFile);
-        setAvatarUrl(newAvatarUrl);
-      }
-    } catch (err) {
-      setError("Failed to upload avatar. Please try again.");
-      console.error("Avatar upload error:", err);
-    } finally {
-      setIsUploading(false);
-    }
-  };
+  //   try {
+  //     if (onAvatarChange) {
+  //       const newAvatarUrl = await onAvatarChange(selectedFile);
+  //       setAvatarUrl(newAvatarUrl);
+  //     }
+  //   } catch (err) {
+  //     setError("Failed to upload avatar. Please try again.");
+  //     console.error("Avatar upload error:", err);
+  //   } finally {
+  //     setIsUploading(false);
+  //   }
+  // };
 
-  const handleCancel = () => {
-    setSelectedFile(null);
-    setAvatarUrl(initialAvatarUrl);
-    setError(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
+  // const handleCancel = () => {
+  //   setSelectedFile(null);
+  //   setAvatarUrl(initialAvatarUrl);
+  //   setError(null);
+  //   if (fileInputRef.current) {
+  //     fileInputRef.current.value = "";
+  //   }
+  // };
 
-  const handleUploadClick = () => {
-    fileInputRef.current?.click();
-  };
+  // const handleUploadClick = () => {
+  //   fileInputRef.current?.click();
+  // };
 
   return (
     <div className="flex flex-col gap-4">

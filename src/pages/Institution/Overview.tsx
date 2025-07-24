@@ -1,19 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Avatar, Badge, Button, Image, Modal, Popconfirm, Tooltip } from "antd";
-import useCurrentUser from "../../hooks/useCurrentUser";
 import InstitutionSection from "../InstitutionSection";
-import Loader from "../../common/Loader";
-import { useState } from "react";
-import Toast from "../../common/Toast";
-import useAxios from "../../hooks/useAxios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import useAcademies from "../../hooks/useAcademies";
-import { PiStudent } from "react-icons/pi";
-import { BookOpen, CheckCircle, GraduationCap, Users } from "lucide-react";
 
 const Overview = () => {
   // const { data: currentUser }: any = useCurrentUser();
-  // console.log(currentUser, "hi");
+  // // console.log(currentUser, "hi");
   // const [academyModal, setAcademyModal] = useState(false);
   // const [searchItem, setSearchItem] = useState("");
   // const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

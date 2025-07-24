@@ -32,8 +32,8 @@ const Dashboard = () => {
   const handleLogout = () => {
     logOut()
       .then(() => {
-        // console.log(res.data);
-        console.log("logged out");
+        // // console.log(res.data);
+        // console.log("logged out");
       })
       .catch((error: any) => {
         console.log(error);

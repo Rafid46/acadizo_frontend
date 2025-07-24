@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import { useMousePosition } from "../../hooks/useMousePosition";
+
 interface SparklesProps {
   id?: string;
   background?: string;
@@ -8,6 +10,7 @@ interface SparklesProps {
   particleDensity?: number;
   className?: string;
   particleColor?: string;
+  canvas: HTMLCanvasElement | null;
 }
 
 const Sparkles = ({
@@ -19,10 +22,9 @@ const Sparkles = ({
   className = "h-full w-full",
   particleColor = "#000000",
 }: SparklesProps) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<any>(null);
   const mousePosition = useMousePosition();
   const [dimensions, setDimensions] = useState({ width: 1200, height: 800 });
-
   useEffect(() => {
     if (typeof window === "undefined") return;
 

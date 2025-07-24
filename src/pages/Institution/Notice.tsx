@@ -74,7 +74,7 @@ const Notice = () => {
 
                   {item?.file && (
                     <a
-                      href={`https://acadizo-backend.onrender.com//file/${item?.file}`}
+                      href={`https://acadizo-backend.onrender.com/file/${item?.file}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       download

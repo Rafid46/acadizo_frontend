@@ -203,12 +203,12 @@ const JoinAcademyModal = ({
       showNotification();
     },
   });
-  const data = academyLists?.filter(
-    (academy: any) =>
-      academy?.academyName &&
-      academy?.academyName?.toLowerCase().includes(searchItem?.toLowerCase())
-  );
-  console.log(data);
+  // const data = academyLists?.filter(
+  //   (academy: any) =>
+  //     academy?.academyName &&
+  //     academy?.academyName?.toLowerCase().includes(searchItem?.toLowerCase())
+  // );
+  // console.log(data);
   return (
     <div>
       <Modal

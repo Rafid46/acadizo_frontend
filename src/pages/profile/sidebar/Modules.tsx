@@ -32,7 +32,7 @@ import Loader from "../../../common/Loader";
 const Modules = () => {
   const [open, setOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [editorContent, setEditorContent] = useState("");
+  const [, setEditorContent] = useState("");
   // const [content, setContent] = useState<string>(value || "");
   const axiosPublic = useAxios();
   const { data: currentUser, isLoading: userLoading } = useCurrentUser();
@@ -79,7 +79,7 @@ const Modules = () => {
 
   const onFinish = (values: any) => {
     const { title, heading, color } = values;
-    console.log(values);
+    // console.log(values);
     const currentUserEmail = currentUser?.email;
     const joinedAcademyDetails = academyLists?.find((item: any) =>
       item?.academyMembers?.some(

@@ -11,11 +11,11 @@ const useActivities = () => {
     queryKey: ["allActivities"],
     queryFn: async () => {
       const res = await axiosPublic.get("/activity/activityList");
-      // console.log(res.data.data);
+      // // console.log(res.data.data);
       return res.data.data;
     },
   });
-  console.log("all activities", allActivities);
+  // console.log("all activities", allActivities);
   return { allActivities, loading, refetch };
 };
 export default useActivities;

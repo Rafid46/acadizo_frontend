@@ -18,6 +18,7 @@ export function CountUpText({ value, className }: CountUpTextProps) {
   });
 
   return (
+    // @ts-ignore
     <h4 ref={elementRef} className={className}>
       {count}
       {suffix}

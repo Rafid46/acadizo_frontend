@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState, useContext, useRef, useEffect } from "react";
 import { Form, Input, Select, Button, notification, Image } from "antd";
@@ -20,8 +21,8 @@ interface UserData {
 }
 
 const UpdateProfile: React.FC = () => {
-  const [fileList, setFileList] = useState<any[]>([]);
-  const [imageUrl, setImageUrl] = useState(null);
+  const [, setFileList] = useState<any[]>([]);
+  const [, setImageUrl] = useState(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [imageSelected, setImageSelected] = useState(false);
   const [buttonLoading, setButtonLoading] = useState(false);
@@ -67,7 +68,7 @@ const UpdateProfile: React.FC = () => {
 
     try {
       // Update user in MongoDB
-      const res = await axiosPublic.put(
+      await axiosPublic.put(
         `/api/v1/user/update-user/${user?.email}`,
         updateProfileValues
       );
@@ -100,7 +101,7 @@ const UpdateProfile: React.FC = () => {
         await updateUserProfile(fullName);
       }
 
-      console.log(res.data);
+      // console.log(res.data);
     } catch (error) {
       console.error("Error updating profile:", error);
       notification.error({
@@ -122,7 +123,7 @@ const UpdateProfile: React.FC = () => {
   //     },
   //     onChange(info) {
   //       if (info.file.status !== "uploading") {
-  //         console.log(info.file, info.fileList);
+  //         // console.log(info.file, info.fileList);
   //       }
   //       if (info.file.status === "done") {
   //         message.success(`${info.file.name} file uploaded successfully`);
@@ -133,14 +134,14 @@ const UpdateProfile: React.FC = () => {
   //   };
 
   //   const onSubmit = async (data: any) => {
-  //     console.log(data);
+  //     // console.log(data);
   //     const imageFile = { image: data.image[0] };
   //     const res = await axiosPublic.post(image_hosting_api, imageFile, {
   //       headers: {
   //         "Content-Type": "multipart/form-data",
   //       },
   //     });
-  //     console.log(res.data);
+  //     // console.log(res.data);
   //   };
   // const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
   //   setImageFile(e.target.files?.[0] || null);
@@ -166,7 +167,7 @@ const UpdateProfile: React.FC = () => {
             );
 
             const imageUrl = response.data.secure_url; // Correct URL
-            console.log("Image URL from Cloudinary:", imageUrl);
+            // console.log("Image URL from Cloudinary:", imageUrl);
             await updateUserAvatar(imageUrl);
 
             // Handle your backend updates here
@@ -177,7 +178,7 @@ const UpdateProfile: React.FC = () => {
             setImageSelected(false);
             setFileList([]);
           } else {
-            console.log("file size is too large");
+            // console.log("file size is too large");
           }
         }
       }

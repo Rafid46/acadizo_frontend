@@ -85,7 +85,7 @@ const Login = () => {
             return;
           }
         } catch (err: any) {
-          console.log("User not found, proceeding to create...");
+          // console.log("User not found, proceeding to create...");
         }
 
         // Create new user
@@ -98,10 +98,7 @@ const Login = () => {
         };
 
         try {
-          const createRes = await axiosPublic.post(
-            "/api/v1/user/create-user",
-            userData
-          );
+          await axiosPublic.post("/api/v1/user/create-user", userData);
 
           notification.success({
             message: "Welcome!",

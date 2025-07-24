@@ -1,5 +1,5 @@
-import { Popover, Button } from "antd";
-import { FaAccessibleIcon, FaRegBell } from "react-icons/fa";
+import { Popover } from "antd";
+import { FaRegBell } from "react-icons/fa";
 import NotificationDd from "./Institution/NotificationDd";
 
 const NotificationPopUp = () => {

@@ -6,7 +6,7 @@ const useUser = () => {
   const users = AllUserInfo?.map((user: any) => {
     return user;
   });
-  // console.log(users);
+  // // console.log(users);
   return { users };
 };
 

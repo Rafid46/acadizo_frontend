@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button, Dropdown, Menu, MenuProps, Popconfirm, Tooltip } from "antd";
+import { Button, Dropdown, Menu, Popconfirm, Tooltip } from "antd";
 import { FaPlus, FaTrashAlt } from "react-icons/fa";
 import { PiStudent } from "react-icons/pi";
 import Loader from "../../common/Loader";
@@ -53,17 +53,17 @@ const InstitutionTable = ({
   //     }
   //   }
   // }, [allUsers]);
-  // console.log(memberDetails, "member details");
+  // // console.log(memberDetails, "member details");
 
   const memberDetail = () => {
     const emails = members[0]?.academyMembers?.map((item: any) => item?.email);
-    console.log(emails, "member details");
+    // console.log(emails, "member details");
     return emails;
   };
 
   memberDetail();
 
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [sortOrder] = useState<"asc" | "desc">("asc");
 
   const handleMenuClick = (e: any) => {
     if (e.key === "student") {

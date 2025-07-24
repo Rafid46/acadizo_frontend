@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BiDownload, BiEdit } from "react-icons/bi";
-import { CgMenuGridO } from "react-icons/cg";
 import { FaRegFileAlt } from "react-icons/fa";
 import { IoIosSearch, IoMdTime } from "react-icons/io";
 import { IoBookSharp } from "react-icons/io5";
@@ -62,7 +61,7 @@ import { useTiptapEditor } from "../../hooks/useTiptapEditor";
 import AnsweredPieChart from "./AnsweredPieChart ";
 const ActivityCard = ({ allActivities, loading }: any) => {
   const [open, setOpen] = useState(false);
-  const [editorContent, setEditorContent] = useState("");
+  const [, setEditorContent] = useState("");
   const [openAnswer, setOpenAnswer] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [form] = Form.useForm();
@@ -182,8 +181,8 @@ const ActivityCard = ({ allActivities, loading }: any) => {
   //     answerFormData.append("file", selectedFile);
   //   }
 
-  //   console.log("Submitting answer for activity:", selectedItem);
-  //   console.log("Activity ID:", activityId);
+  //   // console.log("Submitting answer for activity:", selectedItem);
+  //   // console.log("Activity ID:", activityId);
 
   //   postAnswer({ answerData: answerFormData, activityId });
   // };
@@ -766,7 +765,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                               {activity?.file && (
                                 <a
                                   onClick={(e) => e.stopPropagation()}
-                                  href={`https://acadizo-backend.onrender.com//file/${activity?.file}`}
+                                  href={`https://acadizo-backend.onrender.com/file/${activity?.file}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   download
@@ -984,7 +983,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                                         onClick={(e) =>
                                                           e.stopPropagation()
                                                         }
-                                                        href={`https://acadizo-backend.onrender.com//file/${answer?.file}`}
+                                                        href={`https://acadizo-backend.onrender.com/file/${answer?.file}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         download
@@ -1125,7 +1124,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                                       onClick={(e) =>
                                                         e.stopPropagation()
                                                       }
-                                                      href={`https://acadizo-backend.onrender.com//file/${answer?.file}`}
+                                                      href={`https://acadizo-backend.onrender.com/file/${answer?.file}`}
                                                       target="_blank"
                                                       rel="noopener noreferrer"
                                                       download
@@ -1334,7 +1333,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                   <div className="!w-full">
                     <a
                       onClick={(e) => e.stopPropagation()}
-                      href={`https://acadizo-backend.onrender.com//file/${selectedItem?.file}`}
+                      href={`https://acadizo-backend.onrender.com/file/${selectedItem?.file}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       download
