@@ -22,7 +22,7 @@ import Loader from "../common/Loader";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../hooks/useAxios";
 import Toast from "../common/Toast";
-import useAllUser from "../hooks/useAllUser";
+// import useAllUser from "../hooks/useAllUser";
 import { IoIosLogOut } from "react-icons/io";
 const InstitutionSection = () => {
   const [createUserModal, setCreateUserModal] = useState(false);
@@ -30,7 +30,7 @@ const InstitutionSection = () => {
   const [searchItem, setSearchItem] = useState("");
   const [joinedAcademyDetails, setJoinedAcademyDetails] = useState<any[]>([]);
   const axiosPublic = useAxios();
-  const { allUsers } = useAllUser();
+  // const { allUsers } = useAllUser();
   // const [isListLoading, setIsListLoading] = useState(true);
   // const queryClient = useQueryClient();
 
@@ -571,7 +571,7 @@ const InstitutionSection = () => {
         currentUserPhotoURL={currentUserPhotoURL}
         refetch={refetch}
       />
-      <div>
+      {/* <div>
         {allUsers
           ?.filter(
             (user: any) =>
@@ -586,7 +586,7 @@ const InstitutionSection = () => {
             </p>
           ))}
 
-        {/* {allUsers?.map((member: any) => {
+        {allUsers?.map((member: any) => {
           if (member?.role === "student" && matchedUser?.role === "student") {
             return (
               <p key={member?.id || member?.email}>
@@ -595,8 +595,8 @@ const InstitutionSection = () => {
             );
           }
           return null;
-        })} */}
-      </div>
+        })}
+      </div> */}
     </section>
   );
 };

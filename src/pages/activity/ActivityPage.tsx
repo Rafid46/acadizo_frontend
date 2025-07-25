@@ -124,13 +124,13 @@ const ActivityPage = () => {
   };
 
   return (
-    <div className="max-w-screen-xl mx-auto p-5 pt-0">
+    <div className="max-w-screen-2xl lg:max-w-screen-xl mx-auto p-5 pt-0">
       {currentUser?.academyName?.trim() && currentUser?.academyId?.trim()
         ? currentUser?.role === "teacher" && (
             <FloatButton.Group
               trigger="hover"
               type="primary"
-              style={{ insetInlineEnd: 45 }}
+              // style={{ insetInlineEnd: 45 }}
               icon={<FaPlus />}
             >
               <Tooltip title="Upload">

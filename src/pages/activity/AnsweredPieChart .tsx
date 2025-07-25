@@ -26,7 +26,7 @@ const ActivityPieChart = ({
       : [];
 
   const answeredStudentCount = uniqueStudentsWhoAnswered.length;
-  const notAnsweredCount = totalStudents - answeredStudentCount;
+  const notAnsweredCount = Math.max(totalStudents - answeredStudentCount, 0);
 
   const data = [
     {
@@ -93,8 +93,8 @@ const ActivityPieChart = ({
 
   return (
     <Card size="small" className="mb-3 bg-[#F6F8FB]">
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
+      <div className="">
+        <div className="">
           <div className="pb-4">
             <div className="flex items-center gap-3 text-slate-700 font-semibold">
               <div className="p-2 bg-blue-100 rounded-lg">
@@ -103,8 +103,9 @@ const ActivityPieChart = ({
               Response Status
             </div>
           </div>
-          <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
-            <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl border border-green-100">
+          <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-4 gap-4">
+            {/* student answered */}
+            <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl border border-green-100 w-full">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-green-100 rounded-lg">
                   <CheckCircle className="w-5 h-5 text-green-600" />
@@ -120,9 +121,8 @@ const ActivityPieChart = ({
                 {answeredStudentCount}
               </div>
             </div>
-
             {/* Students Not Answered */}
-            <div className="flex items-center justify-between p-4 bg-red-50 rounded-xl border border-red-100">
+            <div className="flex items-center justify-between p-4 bg-red-50 rounded-xl border border-red-100 w-full">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-red-100 rounded-lg">
                   <XCircle className="w-5 h-5 text-red-600" />
@@ -139,7 +139,7 @@ const ActivityPieChart = ({
               </div>
             </div>
             {/* Total Students */}
-            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-100">
+            <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border border-blue-100 w-full">
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-blue-100 rounded-lg">
                   <Users className="w-5 h-5 text-blue-600" />
@@ -156,33 +156,32 @@ const ActivityPieChart = ({
               </div>
             </div>
           </div>
-        </div>
-
-        <div className="w-20 h-20 ml-3">
-          <ResponsiveContainer>
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                // label={CustomLabel}
-                outerRadius={35}
-                fill="#8884d8"
-                dataKey="value"
-                strokeWidth={2}
-                stroke="#fff"
-              >
-                {data.map((index: any) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
-                ))}
-              </Pie>
-              <Tooltip content={<CustomTooltip />} />
-            </PieChart>
-          </ResponsiveContainer>
+          <div className="w-20 h-20 ml-3 mt-2 lg:mt-0">
+            <ResponsiveContainer>
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  // label={CustomLabel}
+                  outerRadius={35}
+                  fill="#8884d8"
+                  dataKey="value"
+                  strokeWidth={2}
+                  stroke="#fff"
+                >
+                  {data.map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 
