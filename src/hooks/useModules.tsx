@@ -11,7 +11,7 @@ const useModules = () => {
     queryKey: ["allModules"],
     queryFn: async () => {
       const res = await axiosPublic.get("/modules/allModules");
-      // console.log(res.data.data);
+      // // console.log(res.data.data);
       return res.data.data;
     },
   });

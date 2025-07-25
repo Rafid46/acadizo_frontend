@@ -18,7 +18,7 @@ const NoticeModal = ({ noticeModal, setNoticeModal }: any) => {
   // const { data: currentAcademy }: any = useCurrentAcademy();
   const { data: academyLists }: any = useAcademies();
   const { data: currentUser }: any = useCurrentUser();
-  // console.log(currentAcademy, "currentacademy");
+  // // console.log(currentAcademy, "currentacademy");
   const queryClient = useQueryClient();
   const axiosPublic = useAxios();
   const { refetch }: any = useNotice();
@@ -55,7 +55,7 @@ const NoticeModal = ({ noticeModal, setNoticeModal }: any) => {
   //   );
   //   const academyId = joinedAcademyDetails?.academyId;
   //   const academyName = joinedAcademyDetails?.academyName;
-  //   console.log(academyId, academyName, "academy info");
+  //   // console.log(academyId, academyName, "academy info");
   //   // Include academyId and academyName in the request body
   //   const noticeData = {
   //     title,
@@ -77,7 +77,7 @@ const NoticeModal = ({ noticeModal, setNoticeModal }: any) => {
     );
     const academyId = joinedAcademyDetails?.academyId;
     const academyName = joinedAcademyDetails?.academyName;
-    console.log(academyId, academyName, "academy info");
+    // console.log(academyId, academyName, "academy info");
     // Include academyId and academyName in the request body
 
     const noticeFormData = new FormData();
@@ -98,7 +98,7 @@ const NoticeModal = ({ noticeModal, setNoticeModal }: any) => {
   //   setSelectedFile(file.originFileObj);
   // };
 
-  // console.log(selectedFile);
+  // // console.log(selectedFile);
   return (
     <div>
       <Modal
@@ -172,7 +172,18 @@ const NoticeModal = ({ noticeModal, setNoticeModal }: any) => {
                 const singleFile = fileList[0]?.originFileObj;
                 setSelectedFile(singleFile || null);
               }}
-              fileList={selectedFile ? [{ name: selectedFile?.name }] : null}
+              fileList={
+                selectedFile
+                  ? [
+                      {
+                        uid: "-1",
+                        name: selectedFile.name,
+                        status: "done",
+                        url: "",
+                      },
+                    ]
+                  : []
+              }
               onRemove={() => setSelectedFile(null)}
             >
               <p className="flex items-center justify-center text-3xl">

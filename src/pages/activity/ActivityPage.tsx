@@ -36,7 +36,7 @@ const ActivityPage = () => {
   const [form] = Form.useForm();
   // const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { setSelectedFile, selectedFile } = useActivityStore();
-  const [editorContent, setEditorContent] = useState("");
+  const [, setEditorContent] = useState("");
   const axiosPublic = useAxios();
   const { data: currentUser } = useCurrentUser();
   const { data: academyLists } = useAcademies();
@@ -87,7 +87,7 @@ const ActivityPage = () => {
 
   const onFinish = (values: any) => {
     const { activityTitle, activityDate } = values;
-    console.log(values);
+    // console.log(values);
     const currentUserEmail = currentUser?.email;
     const joinedAcademyDetails = academyLists?.find((item: any) =>
       item?.academyMembers?.some(
@@ -124,13 +124,13 @@ const ActivityPage = () => {
   };
 
   return (
-    <div className="max-w-screen-xl mx-auto p-5 pt-0">
+    <div className="max-w-screen-2xl lg:max-w-screen-xl mx-auto p-5 pt-0">
       {currentUser?.academyName?.trim() && currentUser?.academyId?.trim()
         ? currentUser?.role === "teacher" && (
             <FloatButton.Group
               trigger="hover"
               type="primary"
-              style={{ insetInlineEnd: 45 }}
+              // style={{ insetInlineEnd: 45 }}
               icon={<FaPlus />}
             >
               <Tooltip title="Upload">

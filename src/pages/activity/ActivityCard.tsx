@@ -766,7 +766,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                               {activity?.file && (
                                 <a
                                   onClick={(e) => e.stopPropagation()}
-                                  href={`http://localhost:3000/file/${activity?.file}`}
+                                  href={`https://acadizo-backend.onrender.com//file/${activity?.file}`}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   download
@@ -984,7 +984,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                                         onClick={(e) =>
                                                           e.stopPropagation()
                                                         }
-                                                        href={`http://localhost:3000/file/${answer?.file}`}
+                                                        href={`https://acadizo-backend.onrender.com//file/${answer?.file}`}
                                                         target="_blank"
                                                         rel="noopener noreferrer"
                                                         download
@@ -1125,7 +1125,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                                       onClick={(e) =>
                                                         e.stopPropagation()
                                                       }
-                                                      href={`http://localhost:3000/file/${answer?.file}`}
+                                                      href={`https://acadizo-backend.onrender.com//file/${answer?.file}`}
                                                       target="_blank"
                                                       rel="noopener noreferrer"
                                                       download
@@ -1334,7 +1334,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                   <div className="!w-full">
                     <a
                       onClick={(e) => e.stopPropagation()}
-                      href={`http://localhost:3000/file/${selectedItem?.file}`}
+                      href={`https://acadizo-backend.onrender.com//file/${selectedItem?.file}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       download

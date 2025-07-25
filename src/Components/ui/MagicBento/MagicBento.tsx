@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import { gsap } from "gsap";
 import { ChartColumnBig, PanelsTopLeft } from "lucide-react";
@@ -12,9 +13,11 @@ export interface BentoCardProps {
   textAutoHide?: boolean;
   disableAnimations?: boolean;
   backgroundImage: string;
+  icon?: JSX.Element;
 }
 
 export interface BentoProps {
+  color?: string;
   textAutoHide?: boolean;
   enableStars?: boolean;
   enableSpotlight?: boolean;
@@ -26,6 +29,8 @@ export interface BentoProps {
   glowColor?: string;
   clickEffect?: boolean;
   enableMagnetism?: boolean;
+  icon?: JSX.Element;
+  backgroundImage: any;
 }
 
 const DEFAULT_PARTICLE_COUNT = 12;
@@ -40,6 +45,7 @@ const cardData: BentoCardProps[] = [
     description: "Track user behavior",
     label: "Insights",
     icon: <ChartColumnBig className="!text-2xl" />,
+    backgroundImage: "",
   },
   {
     color: "#060010",
@@ -47,6 +53,7 @@ const cardData: BentoCardProps[] = [
     description: "Centralized data view",
     label: "Overview",
     icon: <PanelsTopLeft />,
+    backgroundImage: "",
   },
   {
     color: "#060010",
@@ -67,6 +74,7 @@ const cardData: BentoCardProps[] = [
     title: "Integration",
     description: "Connect favorite tools",
     label: "Connectivity",
+    backgroundImage: "",
     icon: (
       <div className="three-body">
         <div className="three-body__dot"></div>
@@ -81,6 +89,7 @@ const cardData: BentoCardProps[] = [
     description: "Enterprise-grade protection",
     label: "Activity",
     icon: <div className="loaderAni"></div>,
+    backgroundImage: "",
   },
 ];
 
@@ -541,10 +550,9 @@ const GlobalSpotlight: React.FC<{
 
   return null;
 };
-
 const BentoCardGrid: React.FC<{
   children: React.ReactNode;
-  gridRef?: React.RefObject<HTMLDivElement | null>;
+  gridRef?: React.RefObject<HTMLDivElement>;
 }> = ({ children, gridRef }) => (
   <div
     className="bento-section grid gap-2 p-3 max-w-[1000px] mx-auto select-none relative"

@@ -28,7 +28,7 @@ const useCurrentActivities = () => {
     );
   }, [allActivities, currentUser, isLoading]);
 
-  console.log("matchedActivities", matchedActivity);
+  // console.log("matchedActivities", matchedActivity);
   return { matchedActivity, isLoading };
 };
 export default useCurrentActivities;

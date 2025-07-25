@@ -18,7 +18,7 @@
 //     queryFn: async () => {
 //       if (!user?.email) return null;
 //       const res = await axiosPublic.get(`/academy/academyList/${user?.email}`);
-//       console.log(currentAcademy);
+//       // console.log(currentAcademy);
 //       return res.data.data;
 //     },
 //     enabled: !!user?.email,
@@ -57,7 +57,7 @@ const useCurrentAcademy = () => {
     );
   }, [allAcademies, currentUser, isLoading]);
 
-  console.log("matchedAcademies", matchedAcademy);
+  // console.log("matchedAcademies", matchedAcademy);
   return { matchedAcademy, isLoading };
 };
 export default useCurrentAcademy;

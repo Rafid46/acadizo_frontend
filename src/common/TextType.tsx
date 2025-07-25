@@ -7,7 +7,7 @@ interface TextTypeProps {
   hideCursorWhileTyping?: boolean;
   cursorCharacter?: string | React.ReactNode;
   cursorBlinkDuration?: number;
-  cursorClassName?: string;
+  cursorClassName: string;
   text: string | string[];
   as?: ElementType;
   typingSpeed?: number;
@@ -15,7 +15,7 @@ interface TextTypeProps {
   pauseDuration?: number;
   deletingSpeed?: number;
   loop?: boolean;
-  textColors?: string[];
+  textColors?: string;
   variableSpeed?: { min: number; max: number };
   onSentenceComplete?: (sentence: string, index: number) => void;
   startOnVisible?: boolean;
@@ -32,9 +32,10 @@ const TextType = ({
   loop = true,
   className = "",
   showCursor = true,
-  hideCursorWhileTyping = false,
+
   cursorCharacter = "_",
-  cursorClassName = "",
+
+  // cursorClassName = "",
   cursorBlinkDuration = 0.5,
   textColors = "",
   variableSpeed,
@@ -168,9 +169,9 @@ const TextType = ({
     onSentenceComplete,
   ]);
 
-  const shouldHideCursor =
-    hideCursorWhileTyping &&
-    (currentCharIndex < textArray[currentTextIndex].length || isDeleting);
+  // const shouldHideCursor =
+  //   hideCursorWhileTyping &&
+  //   (currentCharIndex < textArray[currentTextIndex].length || isDeleting);
 
   return createElement(
     Component,

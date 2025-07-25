@@ -29,15 +29,15 @@ const Register = () => {
   // const handleRegister = async (values: any) => {
   //   const { email, password, first_name, last_name } = values;
   //   await updateUserProfile(`${first_name} ${last_name}`);
-  //   console.log("Registering with values:", values);
+  //   // console.log("Registering with values:", values);
 
   //   createUser(email, password)
   //     .then((res: any) => {
-  //       console.log("User created in Firebase:", res.data);
+  //       // console.log("User created in Firebase:", res.data);
 
   //       const loggedInUser = res.user; // Firebase user data
 
-  //       console.log("Logged in user:", loggedInUser);
+  //       // console.log("Logged in user:", loggedInUser);
   //       const userData = {
   //         ...values,
   //         role: "teacher",
@@ -45,7 +45,7 @@ const Register = () => {
   //         lastName: values.last_name,
   //       };
 
-  //       console.log("User data being sent to the backend:", userData);
+  //       // console.log("User data being sent to the backend:", userData);
   //       return axiosPublic.post("/api/v1/user/create-user", userData);
   //     })
   //     .then((response: any) => {
@@ -55,7 +55,7 @@ const Register = () => {
   //         duration: 3,
   //         placement: "topRight",
   //       });
-  //       console.log("User data saved to MongoDB:", response.data);
+  //       // console.log("User data saved to MongoDB:", response.data);
   //     })
   //     .catch((error: any) => {
   //       notification.error({
@@ -64,7 +64,7 @@ const Register = () => {
   //         duration: 3,
   //         placement: "topRight",
   //       });
-  //       console.log("Error during registration:", error);
+  //       // console.log("Error during registration:", error);
   //     });
   //   // const userdata = {
   //   //   ...values,
@@ -75,16 +75,16 @@ const Register = () => {
   //   // axiosPublic
   //   //   .post("api/v1/user/create-user", userdata)
   //   //   .then((res) => {
-  //   //     console.log(res.data);
+  //   //     // console.log(res.data);
   //   //   })
   //   //   .catch((error) => {
-  //   //     console.log(error);
+  //   //     // console.log(error);
   //   //   });
   // };
   const handleRegister = async (values: any) => {
     setLoading(true);
     const { email, password } = values;
-    console.log("Registering with values:", values);
+    // console.log("Registering with values:", values);
     const name = `${values.first_name} ${values.last_name}`;
     const matchUser = users?.find((user: any) => user?.email === values?.email);
     if (matchUser) {
@@ -103,17 +103,17 @@ const Register = () => {
       });
 
       setLoading(false);
-      console.log("email already exist");
+      // console.log("email already exist");
       return;
     }
     createUser(email, password)
-      .then((res: any) => {
+      .then(() => {
         updateUserProfile(name).then(() => {
-          console.log("User created in Firebase:", res.data);
+          // console.log("User created in Firebase:", res.data);
 
-          const loggedInUser = res.user; // Firebase user data
+          // const loggedInUser = res.user; // Firebase user data
 
-          console.log("Logged in user:", loggedInUser);
+          // console.log("Logged in user:", loggedInUser);
           const userData = {
             ...values,
             role: values?.role,
@@ -121,11 +121,11 @@ const Register = () => {
             lastName: values?.last_name,
           };
 
-          console.log("User data being sent to the backend:", userData);
+          // console.log("User data being sent to the backend:", userData);
 
           return axiosPublic
             .post("/api/v1/user/create-user", userData)
-            .then((res) => {
+            .then(() => {
               navigate("/dashboard");
               notification.success({
                 message: "Registration success",
@@ -133,7 +133,7 @@ const Register = () => {
                 duration: 3,
                 placement: "topRight",
               });
-              console.log("User data saved to MongoDB:", res.data);
+              // console.log("User data saved to MongoDB:", res.data);
             });
         });
         setLoading(false);
@@ -189,13 +189,13 @@ const Register = () => {
     );
     setIsButtonDisabled(!isValid);
   };
-  const onChange = (value: string) => {
-    console.log(`selected ${value}`);
-  };
+  // const onChange = (value: string) => {
+  //   // console.log(`selected ${value}`);
+  // };
 
-  const onSearch = (value: string) => {
-    console.log("search:", value);
-  };
+  // const onSearch = (value: string) => {
+  //   // console.log("search:", value);
+  // };
   return (
     <section className="bg-white rounded-xl">
       <div className="lg:grid lg:min-h-screen lg:grid-cols-12 rounded-xl p-2 ">
@@ -339,8 +339,6 @@ const Register = () => {
                     showSearch
                     placeholder="Select a role"
                     optionFilterProp="label"
-                    onChange={onChange}
-                    onSearch={onSearch}
                     options={[
                       {
                         value: "teacher",

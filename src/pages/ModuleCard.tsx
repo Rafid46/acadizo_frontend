@@ -78,7 +78,7 @@ const ModuleCard = ({ showDrawer }: any) => {
   const handleCollapseChange = (keys: string | string[]) => {
     setActiveKeys(Array.isArray(keys) ? keys : [keys]);
   };
-  // console.log(allModules, "all modulesss");
+  // // console.log(allModules, "all modulesss");
 
   const handleDownload = (fileUrl: any) => {
     const link = document.createElement("a");
@@ -210,7 +210,7 @@ const ModuleCard = ({ showDrawer }: any) => {
   // };
 
   // const cancel: PopconfirmProps["onCancel"] = (e: any) => {
-  //   console.log(e);
+  //   // console.log(e);
   // };
 
   // search modules
@@ -538,7 +538,7 @@ const ModuleCard = ({ showDrawer }: any) => {
                                   <div>
                                     {module?.file && (
                                       <a
-                                        href={`http://localhost:3000/file/${module?.file}`}
+                                        href={`https://acadizo-backend.onrender.com/file/${module?.file}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         download

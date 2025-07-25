@@ -8,7 +8,7 @@
 //     queryKey: ["academyLists"],
 //     queryFn: async () => {
 //       const res = await axiosPublic.get("/academy/academyList");
-//       // console.log(res.data.data);
+//       // // console.log(res.data.data);
 //       return res.data.data;
 //     },
 //   });
@@ -29,13 +29,13 @@ const useAcademies = () => {
     queryKey: ["allAcademies"],
     queryFn: async () => {
       const res = await axiosPublic.get("/academy/academyList");
-      // console.log(res.data.data);
+      // // console.log(res.data.data);
       return res.data.data;
     },
     staleTime: 0,
     refetchOnWindowFocus: true,
   });
-  console.log("all academies", allAcademies);
+  // console.log("all academies", allAcademies);
   return { data: allAcademies, loading, refetch };
 };
 export default useAcademies;

@@ -4,24 +4,23 @@ import useAllUser from "../../hooks/useAllUser";
 import moment from "moment";
 import { useState } from "react";
 import { Modal } from "antd";
-import useUser from "../../hooks/useUser";
 import Loader from "../../common/Loader";
 const Users = () => {
   const { allUsers, loading } = useAllUser();
-  console.log(allUsers, "this is all users");
+  // console.log(allUsers, "this is all users");
   const [selectedUser, setSelectedUser] = useState<any>(null);
   const [modal1Open, setModal1Open] = useState(false);
   // const { users }: any = useUser();
-  // console.log(users, "new users");
+  // // console.log(users, "new users");
   const handleUserDetails = (id: string) => {
-    console.log(id);
+    // console.log(id);
     // Search for the user in AllUserInfo directly
     const userDetails = allUsers?.find((user: any) => user?.id === id);
     setSelectedUser(userDetails);
-    console.log(userDetails);
+    // console.log(userDetails);
   };
 
-  console.log(selectedUser);
+  // console.log(selectedUser);
 
   //   const items: DescriptionsProps["items"] = [
   //     {

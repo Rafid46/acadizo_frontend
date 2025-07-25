@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../providers/AuthProvider";
 import useCurrentUser from "../hooks/useCurrentUser";
 import useAcademies from "../hooks/useAcademies";
-import useCurrentAcademy from "../hooks/useCurrentAcademy";
+// import useCurrentAcademy from "../hooks/useCurrentAcademy";
 import InstitutionTable from "./Institution/InstitutionTable";
 import BannerPart from "./Institution/BannerPart";
 import JoinAcademyModal from "./Institution/JoinAcademyModal";
@@ -16,13 +16,13 @@ import {
   GraduationCap,
   Users,
 } from "lucide-react";
-import { Avatar, Badge, Button, Image, Modal, Popconfirm, Tooltip } from "antd";
+import { Avatar, Badge, Button, Modal, Popconfirm, Tooltip } from "antd";
 import { PiStudent } from "react-icons/pi";
 import Loader from "../common/Loader";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxios from "../hooks/useAxios";
 import Toast from "../common/Toast";
-import useAllUser from "../hooks/useAllUser";
+// import useAllUser from "../hooks/useAllUser";
 import { IoIosLogOut } from "react-icons/io";
 const InstitutionSection = () => {
   const [createUserModal, setCreateUserModal] = useState(false);
@@ -30,7 +30,7 @@ const InstitutionSection = () => {
   const [searchItem, setSearchItem] = useState("");
   const [joinedAcademyDetails, setJoinedAcademyDetails] = useState<any[]>([]);
   const axiosPublic = useAxios();
-  const { allUsers } = useAllUser();
+  // const { allUsers } = useAllUser();
   // const [isListLoading, setIsListLoading] = useState(true);
   // const queryClient = useQueryClient();
 
@@ -38,19 +38,19 @@ const InstitutionSection = () => {
   // const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   // const { users }: any = useUser();
   const { data: currentUser, isLoading: userLoading }: any = useCurrentUser();
-  console.log(currentUser, "current userrrr");
+  // console.log(currentUser, "current userrrr");
   const {
     data: academyLists,
     isPending: isListLoading,
     refetch,
   }: any = useAcademies();
-  const { currentAcademy }: any = useCurrentAcademy();
+  // const { currentAcademy }: any = useCurrentAcademy();
   const queryClient = useQueryClient();
 
-  console.log(JSON.stringify(currentUser, null, 2), "testing current user");
-  console.log(academyLists, "academy list");
-  console.log(currentAcademy, "current academy");
-  // console.log(currentUser, "current userrrr");
+  // console.log(JSON.stringify(currentUser, null, 2), "testing current user");
+  // console.log(academyLists, "academy list");
+  // console.log(currentAcademy, "current academy");
+  // // console.log(currentUser, "current userrrr");
   // const { Option } = Select;
   // const { Option } = Select;
   const {
@@ -72,7 +72,7 @@ const InstitutionSection = () => {
   // const currentUserLastName = currentUser?.find(
   //   (item: { email: string; id: string }) => item?.email === user?.email
   // )?.lastName;
-  // // console.log("current user -->", currentUser);
+  // // // console.log("current user -->", currentUser);
   // const currentUserId = currentUser?.find(
   //   (item: { email: string; id: string }) => item?.email === user?.email
   // )?.id;
@@ -86,7 +86,7 @@ const InstitutionSection = () => {
   const currentUserRole = currentUser?.role;
   const currentUserPhotoURL = currentUser?.photoURL;
   const userId = currentUserId;
-  console.log("current user -->", currentUser?.email);
+  // console.log("current user -->", currentUser?.email);
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchItem(e.target.value);
@@ -97,10 +97,10 @@ const InstitutionSection = () => {
   //   const getAcademyList = async () => {
   //     try {
   //       const res = await axiosPublic.get("/academy/academyList");
-  //       console.log("academy list", res.data.data);
+  //       // console.log("academy list", res.data.data);
   //       setAcademyList(res.data.data);
   //     } catch (error) {
-  //       console.log(error);
+  //       // console.log(error);
   //     }
   //     setIsListLoading(false);
   //   };
@@ -119,7 +119,7 @@ const InstitutionSection = () => {
   //       email,
   //       role,
   //     });
-  //     console.log(res.data);
+  //     // console.log(res.data);
   //     notification.success({
   //       message: <p className="font-semibold text-[14px]">Joined</p>,
   //       description: (
@@ -142,7 +142,7 @@ const InstitutionSection = () => {
   //       showProgress: true,
   //     });
 
-  //     console.log(error);
+  //     // console.log(error);
   //   }
   // };
 
@@ -162,12 +162,12 @@ const InstitutionSection = () => {
   // const getEmail = academyLists?.flatMap((academy: any) =>
   //   academy?.academyMembers?.map((member: any) => member?.email)
   // );
-  // console.log(getEmail);
+  // // console.log(getEmail);
   // const joinedAcademyDetails = getEmail?.map((item: any) => {
   //   return item?.email === currentUser?.email;
   // });
 
-  // console.log(joinedAcademyDetails);
+  // // console.log(joinedAcademyDetails);
   // const joinedAcademyDetails = currentAcademy?.academyMembers?.find(
   //   (item: any) => item?.email === currentUser?.academyName
   // );
@@ -182,12 +182,12 @@ const InstitutionSection = () => {
       });
     }
   }, [academyLists, currentUser?.email]);
-  console.log(joinedAcademyDetails, "joined academy");
+  // console.log(joinedAcademyDetails, "joined academy");
 
   // const members = academyMembers();
   // useEffect(() => {
   //   if (academyList?.academyMembers) {
-  //     console.log(academyMembers());
+  //     // console.log(academyMembers());
   //   }
   // }, [academyList]);
 
@@ -359,12 +359,12 @@ const InstitutionSection = () => {
       // </>
     );
   };
-  const matchedUser = joinedAcademyDetails[0]?.academyMembers?.find(
-    (user: any) => user?.role === "student"
-  );
-  const matchedAllUser = allUsers?.find(
-    (user: any) => user?.role === "student"
-  );
+  // const matchedUser = joinedAcademyDetails[0]?.academyMembers?.find(
+  //   (user: any) => user?.role === "student"
+  // );
+  // const matchedAllUser = allUsers?.find(
+  //   (user: any) => user?.role === "student"
+  // );
 
   return (
     <section className="max-w-screen-xl mx-auto p-5 pt-0">
@@ -571,7 +571,7 @@ const InstitutionSection = () => {
         currentUserPhotoURL={currentUserPhotoURL}
         refetch={refetch}
       />
-      <div>
+      {/* <div>
         {allUsers
           ?.filter(
             (user: any) =>
@@ -586,7 +586,7 @@ const InstitutionSection = () => {
             </p>
           ))}
 
-        {/* {allUsers?.map((member: any) => {
+        {allUsers?.map((member: any) => {
           if (member?.role === "student" && matchedUser?.role === "student") {
             return (
               <p key={member?.id || member?.email}>
@@ -595,8 +595,8 @@ const InstitutionSection = () => {
             );
           }
           return null;
-        })} */}
-      </div>
+        })}
+      </div> */}
     </section>
   );
 };

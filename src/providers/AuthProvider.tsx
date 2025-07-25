@@ -88,11 +88,11 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   //   const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
   //     setUser(currentUser);
   //     setLoading(false);
-  //     console.log(
+  //     // console.log(
   //       "current user ---->",
   //       currentUser?.displayName || currentUser?.email
   //     );
-  //     console.log("current user data ---->", currentUser);
+  //     // console.log("current user data ---->", currentUser);
   //   });
 
   //   return () => unsubscribe();
