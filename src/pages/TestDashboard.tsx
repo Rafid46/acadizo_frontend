@@ -562,13 +562,13 @@ const TestDashboard = () => {
             <div className="flex items-center">
               <Badge
                 color="#7aba78"
-                className="cursor-pointer mr-5"
+                className="cursor-pointer"
                 count={matchedNotices?.length}
               >
                 <NotificationPopUp />
               </Badge>
               <Dropdown
-                className="custom_dropdown"
+                className="custom_dropdown !mx-0"
                 trigger={["click", "hover"]}
                 menu={{ items }}
               >

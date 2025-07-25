@@ -25,6 +25,8 @@ import { LiaLinkedinIn } from "react-icons/lia";
 import { LuHome, LuLogOut } from "react-icons/lu";
 import { AuthContext } from "../../providers/AuthProvider";
 import { FaAngleDown } from "react-icons/fa";
+import { Marquee } from "../../Components/magicui/Marquee";
+import { cn } from "../../lib/utils";
 // interface HeaderProps {
 //   navigationItems: any;
 // }
@@ -331,6 +333,84 @@ const Homepage = () => {
       onClick: handleLogout,
     },
   ];
+
+  const reviews = [
+    {
+      name: "Jack",
+      username: "@jack",
+      body: "I've never seen anything like this before. It's amazing. I love it.",
+      img: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+    },
+    {
+      name: "Jill",
+      username: "@jill",
+      body: "I don't know what to say. I'm speechless. This is amazing.",
+      img: "https://avatar.vercel.sh/jill",
+    },
+    {
+      name: "John",
+      username: "@john",
+      body: "I'm at a loss for words. This is amazing. I love it.",
+      img: "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png",
+    },
+    {
+      name: "Jane",
+      username: "@jane",
+      body: "I'm at a loss for words. This is amazing. I love it.",
+      img: "https://avatar.vercel.sh/jane",
+    },
+    {
+      name: "Jenny",
+      username: "@jenny",
+      body: "I'm at a loss for words. This is amazing. I love it.",
+      img: "https://avatar.vercel.sh/jenny",
+    },
+    {
+      name: "James",
+      username: "@james",
+      body: "I'm at a loss for words. This is amazing. I love it.",
+      img: "https://avatar.vercel.sh/james",
+    },
+  ];
+
+  const firstRow = reviews.slice(0, reviews.length / 2);
+  const secondRow = reviews.slice(reviews.length / 2);
+
+  const ReviewCard = ({
+    img,
+    name,
+    username,
+    body,
+    className,
+  }: ReviewCardProps) => {
+    return (
+      <figure
+        className={cn(
+          "relative h-full w-64 cursor-pointer overflow-hidden rounded-xl border p-4",
+          "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
+          "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]",
+          className // allow parent to override or extend
+        )}
+      >
+        <div className="flex flex-row items-center gap-2">
+          <img
+            className="rounded-full"
+            width="32"
+            height="32"
+            alt=""
+            src={img}
+          />
+          <div className="flex flex-col">
+            <figcaption className="text-sm font-medium dark:text-white">
+              {name}
+            </figcaption>
+            <p className="text-xs font-medium dark:text-white/40">{username}</p>
+          </div>
+        </div>
+        <blockquote className="mt-2 text-sm">{body}</blockquote>
+      </figure>
+    );
+  };
   return (
     <div className=" animated-background">
       <style>
@@ -559,6 +639,7 @@ const Homepage = () => {
           and a lot of comforts.....
         </p>
       </div>
+
       <div className="relative z-10 flex flex-col divide-y divide-[--border] pt-[35px] dark:divide-[--dark-border]">
         {/* Avatar Section */}
         <div className="flex flex-col items-center justify-end">
@@ -597,6 +678,29 @@ const Homepage = () => {
             </h2>
           </div>
         </div>
+      </div>
+      <div className="relative max-w-screen-lg mx-auto overflow-hidden bg-white">
+        {/* gradient overlays */}
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-white via-white/80 to-transparent z-10" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-white via-white/80 to-transparent z-10" />
+
+        {/* marquee content */}
+        <Marquee pauseOnHover className="[--duration:20s] ">
+          {firstRow.map((review) => (
+            <ReviewCard
+              className="!border !border-gray-200 bg-gray-100"
+              {...review}
+            />
+          ))}
+        </Marquee>
+        <Marquee reverse pauseOnHover className="[--duration:20s]">
+          {secondRow.map((review) => (
+            <ReviewCard
+              className="!border !border-gray-200 bg-gray-100"
+              {...review}
+            />
+          ))}
+        </Marquee>
       </div>
       {/* about us */}
       <section id="about" className="py-24 relative xl:mr-0 lg:mr-5 mr-0">

@@ -260,11 +260,9 @@ const ActivityPage = () => {
       <div className="flex items-start gap-2">
         <div className="space-y-1">
           <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
-            <Tooltip title="Submit your answer">
-              <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
-                <BookOpen className="h-6 w-6 text-white" />
-              </div>
-            </Tooltip>
+            <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+              <BookOpen className="h-6 w-6 text-white" />
+            </div>
             Activities
           </h1>
           <p className="text-slate-600">

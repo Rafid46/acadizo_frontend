@@ -1,8 +1,23 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Popover } from "antd";
 import { FaRegBell } from "react-icons/fa";
 import NotificationDd from "./Institution/NotificationDd";
-
+import useNotice from "../hooks/useNotice";
+import { useEffect, useState } from "react";
+import useCurrentUser from "../hooks/useCurrentUser";
 const NotificationPopUp = () => {
+  const { data: allNotices }: any = useNotice();
+  const { data: currentUser }: any = useCurrentUser();
+  const [matchedNotices, setMatchedNotices] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (allNotices && currentUser) {
+      const filteredNotices = allNotices?.filter(
+        (item: any) => item?.academyName === currentUser?.academyName
+      );
+      setMatchedNotices(filteredNotices);
+    }
+  }, [allNotices, currentUser]);
   // Notification content inside the popover
   const content = (
     <div className="">
@@ -13,9 +28,9 @@ const NotificationPopUp = () => {
           <h2 className="text-2xl font-semibold text-gray-800">
             Notifications
           </h2>
-          <button className="text-blue-600 text-sm font-medium">
+          {/* <button className="text-blue-600 text-sm font-medium">
             Mark all as read
-          </button>
+          </button> */}
         </div>
 
         <div className="">
@@ -23,13 +38,13 @@ const NotificationPopUp = () => {
             <button className="text-blue-600 font-medium pb-3 border-b-2 border-blue-600 mr-6 flex items-center">
               All{" "}
               <span className="ml-2 bg-blue-100 text-blue-600 text-xs font-medium px-2 py-0.5 rounded-full">
-                2
+                {matchedNotices?.length}
               </span>
             </button>
-            <button className="text-gray-500 font-medium pb-3 mr-6">
+            {/* <button className="text-gray-500 font-medium pb-3 mr-6">
               Following
             </button>
-            <button className="text-gray-500 font-medium pb-3">Archive</button>
+            <button className="text-gray-500 font-medium pb-3">Archive</button> */}
           </div>
         </div>
 

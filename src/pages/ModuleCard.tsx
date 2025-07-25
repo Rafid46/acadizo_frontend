@@ -24,7 +24,6 @@ import { Grid3X3, List } from "lucide-react";
 import { RiSoundModuleFill } from "react-icons/ri";
 import { FcOvertime } from "react-icons/fc";
 import { AnimatePresence, motion } from "framer-motion";
-import { Link } from "react-router-dom";
 
 const ModuleCard = ({ showDrawer }: any) => {
   const { allModules, refetch }: any = useModules();
@@ -235,114 +234,114 @@ const ModuleCard = ({ showDrawer }: any) => {
 
   if (!showContent) return <Loader />;
 
-  if (!academyModules?.length && allModules?.length > 0) {
-    return typeof currentUser?.academyName === "string" ||
-      currentUser?.academyName === null ||
-      "" ||
-      currentUser?.academyName?.trim() ? (
-      <Link to="/dashboard/institution/overview">
-        <Button type="primary" className="custom_button_style !h-[42px]">
-          Join an academy to see modules
-        </Button>
-      </Link>
-    ) : (
-      <div className="flex items-center justify-center flex-col gap-4">
-        <img src={empty} width={600} alt="empty" />
-        <Button
-          onClick={showDrawer}
-          type="primary"
-          icon={<FaPlus />}
-          className="custom_button_style !h-[42px]"
-        >
-          Upload modules
-        </Button>
-      </div>
-    );
-  }
+  // if (!academyModules?.length && allModules?.length > 0) {
+  //   return typeof currentUser?.academyName === "string" ||
+  //     currentUser?.academyName === null ||
+  //     "" ||
+  //     currentUser?.academyName?.trim() ? (
+  //     <Link to="/dashboard/institution/overview">
+  //       <Button type="primary" className="custom_button_style !h-[42px]">
+  //         Join an academy to see modules
+  //       </Button>
+  //     </Link>
+  //   ) : (
+  //     <div className="flex items-center justify-center flex-col gap-4">
+  //       <img src={empty} width={600} alt="empty" />
+  //       <Button
+  //         onClick={showDrawer}
+  //         type="primary"
+  //         icon={<FaPlus />}
+  //         className="custom_button_style !h-[42px]"
+  //       >
+  //         Upload modules
+  //       </Button>
+  //     </div>
+  //   );
+  // }
   return (
-    <div className="max-w-screen-xl mx-auto p-5 pt-0">
-      <div className="flex items-center justify-between">
-        <div className="flex items-start gap-2 mb-5">
-          <div className="space-y-1">
-            <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
-              <Tooltip title="Submit your answer">
-                <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
-                  <RiSoundModuleFill className="h-6 w-6 text-white" />
-                </div>
-              </Tooltip>
-              Modules
-            </h1>
-            <p className="text-slate-600">
-              Ask questions, share knowledge, and engage with your peers
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {academyModules?.length !== 0 && (
-            <>
-              <Button
-                onClick={handleSelectAll}
-                type="default"
-                className="custom_button_style !bg-white !text-gray-600 flex items-center gap-2 !border-none rounded-lg py-1 text-sm px-2"
-              >
-                <span>
-                  {selectall?.length === academyModules?.length &&
-                  academyModules?.length > 0
-                    ? "Deselect All"
-                    : "Select All"}
-                </span>
-              </Button>
-
-              <Button
-                danger
-                disabled={selectall?.length === 0}
-                icon={<MdDeleteOutline />}
-                onClick={handleDeleteAllModules}
-                className="custom_button_style_secondary w-fit"
-              >
-                Delete
-              </Button>
-            </>
-          )}
-        </div>
-      </div>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <div className="pl-[9px] overflow-hidden w-[30px] h-[30px] hover:w-[270px] bg-[#7ABA78] shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">
-            <div className="flex items-center justify-center fill-white">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                id="Isolation_Mode"
-                data-name="Isolation Mode"
-                viewBox="0 0 24 24"
-                width="12"
-                height="12"
-              >
-                <path d="M18.9,16.776A10.539,10.539,0,1,0,16.776,18.9l5.1,5.1L24,21.88ZM10.5,18A7.5,7.5,0,1,1,18,10.5,7.507,7.507,0,0,1,10.5,18Z"></path>
-              </svg>
+    <>
+      {academyModules?.length && allModules?.length > 0 ? (
+        <div className="max-w-screen-xl mx-auto p-5 pt-0">
+          <div className="flex items-center justify-between">
+            <div className="flex items-start gap-2 mb-5">
+              <div className="space-y-1">
+                <h1 className="text-3xl font-bold text-slate-900 flex items-center gap-3">
+                  <div className="p-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg">
+                    <RiSoundModuleFill className="h-6 w-6 text-white" />
+                  </div>
+                  Modules
+                </h1>
+                <p className="text-slate-600">
+                  Ask questions, share knowledge, and engage with your peers
+                </p>
+              </div>
             </div>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Search modules...."
-              type="text"
-              className="outline-none text-[12px] bg-transparent w-full text-white font-normal px-4 placeholder:text-white"
-            />
-          </div>
-          <Button
-            onClick={handleToggleCollapse}
-            className="custom_button_style_icon w-fit"
-          >
-            {buttonText}
-          </Button>
-        </div>
+            <div className="flex items-center gap-2">
+              {academyModules?.length !== 0 && (
+                <>
+                  <Button
+                    onClick={handleSelectAll}
+                    type="default"
+                    className="custom_button_style !bg-white !text-gray-600 flex items-center gap-2 !border-none rounded-lg py-1 text-sm px-2"
+                  >
+                    <span>
+                      {selectall?.length === academyModules?.length &&
+                      academyModules?.length > 0
+                        ? "Deselect All"
+                        : "Select All"}
+                    </span>
+                  </Button>
 
-        <div className="flex items-center bg-white rounded-lg border border-gray-200 p-2 shadow-sm gap-2">
-          <Tooltip title="Grid">
-            <Button
-              type={viewMode === "grid" ? "primary" : "default"}
-              onClick={() => toggleView("grid")}
-              className={`
+                  <Button
+                    danger
+                    disabled={selectall?.length === 0}
+                    icon={<MdDeleteOutline />}
+                    onClick={handleDeleteAllModules}
+                    className="custom_button_style_secondary w-fit"
+                  >
+                    Delete
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <div className="pl-[9px] overflow-hidden w-[30px] h-[30px] hover:w-[270px] bg-[#7ABA78] shadow-[2px_2px_20px_rgba(0,0,0,0.08)] rounded-full flex group items-center hover:duration-300 duration-300">
+                <div className="flex items-center justify-center fill-white">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    id="Isolation_Mode"
+                    data-name="Isolation Mode"
+                    viewBox="0 0 24 24"
+                    width="12"
+                    height="12"
+                  >
+                    <path d="M18.9,16.776A10.539,10.539,0,1,0,16.776,18.9l5.1,5.1L24,21.88ZM10.5,18A7.5,7.5,0,1,1,18,10.5,7.507,7.507,0,0,1,10.5,18Z"></path>
+                  </svg>
+                </div>
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Search modules...."
+                  type="text"
+                  className="outline-none text-[12px] bg-transparent w-full text-white font-normal px-4 placeholder:text-white"
+                />
+              </div>
+              <Button
+                onClick={handleToggleCollapse}
+                className="custom_button_style_icon w-fit"
+              >
+                {buttonText}
+              </Button>
+            </div>
+
+            <div className="flex items-center bg-white rounded-lg border border-gray-200 p-2 shadow-sm gap-2">
+              <Tooltip title="Grid">
+                <Button
+                  type={viewMode === "grid" ? "primary" : "default"}
+                  onClick={() => toggleView("grid")}
+                  className={`
                 h-8 px-3 rounded-md transition-all duration-200 !border-none
                 ${
                   viewMode === "grid"
@@ -350,15 +349,15 @@ const ModuleCard = ({ showDrawer }: any) => {
                     : "!text-gray-600 !hover:text-gray-900 !hover:bg-gray-50"
                 }
               `}
-            >
-              <Grid3X3 className="w-4 h-4 mr-1" />
-            </Button>
-          </Tooltip>
-          <Tooltip title="List">
-            <Button
-              type={viewMode === "list" ? "primary" : "default"}
-              onClick={() => toggleView("list")}
-              className={`
+                >
+                  <Grid3X3 className="w-4 h-4 mr-1" />
+                </Button>
+              </Tooltip>
+              <Tooltip title="List">
+                <Button
+                  type={viewMode === "list" ? "primary" : "default"}
+                  onClick={() => toggleView("list")}
+                  className={`
                 h-8 px-3 rounded-md transition-all duration-200  !border-none
                 ${
                   viewMode === "list"
@@ -366,253 +365,272 @@ const ModuleCard = ({ showDrawer }: any) => {
                     : "!text-gray-600 !hover:text-gray-900 !hover:bg-gray-50"
                 }
               `}
-            >
-              <List className="w-4 h-4 mr-1" />
-            </Button>
-          </Tooltip>
-        </div>
-      </div>
-      <div>
-        <div className="rounded-2xl p-5 h-full">
-          <div
-            className={`grid grid-cols-1 gap-4 lg:gap-2 sm:grid-cols-2 ${
-              viewMode === "grid" ? "lg:grid-cols-3" : "lg:grid-cols-1"
-            }`}
-          >
-            {filteredData?.map((module: any, index: number) => (
-              <AnimatePresence>
-                <motion.div
-                  key={module?.moduleId}
-                  initial={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className=""
                 >
-                  {" "}
-                  <div
-                    key={module?.moduleId}
-                    className="flex items-start gap-2"
-                  >
-                    <Checkbox
-                      onChange={() => handleSelectChange(module?.moduleId)}
-                      checked={selectall?.includes(module?.moduleId)}
-                    />
-                    <Collapse
-                      // bordered={false}
-                      style={{
-                        // background: token.colorBgContainer,
-                        backgroundColor: module?.color,
-                      }}
+                  <List className="w-4 h-4 mr-1" />
+                </Button>
+              </Tooltip>
+            </div>
+          </div>
+          <div>
+            <div className="rounded-2xl p-5 h-full">
+              <div
+                className={`grid grid-cols-1 gap-4 lg:gap-2 sm:grid-cols-2 ${
+                  viewMode === "grid" ? "lg:grid-cols-3" : "lg:grid-cols-1"
+                }`}
+              >
+                {filteredData?.map((module: any, index: number) => (
+                  <AnimatePresence>
+                    <motion.div
                       key={module?.moduleId}
-                      // expandIcon={() => (
-                      //   <Dropdown
-                      //     // trigger={["click"]}
-                      //     menu={{
-                      //       items: [
-                      //         {
-                      //           key: "1",
-                      //           label: (
-                      //             <span
-                      //               onClick={(e) => {
-                      //                 e.stopPropagation();
-                      //                 handleDeleteModule(module?.moduleId);
-                      //               }}
-                      //             >
-                      //               Delete
-                      //             </span>
-                      //           ),
-                      //           icon: <MdDeleteOutline className="!text-xl" />,
-                      //         },
-                      //         {
-                      //           key: "2",
-                      //           label: (
-                      //             <span
-                      //               onClick={(e) => {
-                      //                 showEditDrawer(module);
-                      //                 e.stopPropagation();
-                      //               }}
-                      //             >
-                      //               Edit
-                      //             </span>
-                      //           ),
-                      //           icon: <BiEdit className="!text-xl" />,
-                      //         },
-                      //       ],
-                      //     }}
-                      //     arrow={{ pointAtCenter: true }}
-                      //   >
-                      //     <Button
-                      //       onClick={(e) => e.stopPropagation()}
-                      //       className="custom_button_style_icon"
-                      //     >
-                      //       <IoMdMenu className="!text-xl" />
-                      //     </Button>
-                      //   </Dropdown>
-                      // )}
-                      activeKey={activeKeys}
-                      onChange={handleCollapseChange}
-                      defaultActiveKey={"1"}
-                      className={`w-full !border-none !shadow-none ${
-                        viewMode === "grid" ? "lg:w-[500px]" : "lg:w-full"
-                      } mb-4`}
-                      items={[
-                        {
-                          key: String(index),
-                          label: (
-                            <div className="flex items-center justify-between w-full">
-                              {/* Left side: badge + title */}
-                              <div className="flex items-center gap-2">
-                                <Badge
-                                  style={{ boxShadow: "none" }}
-                                  count={index + 1}
-                                  className="mr-2 h-7 w-7 text-white border border-white/20 bg-white/40 backdrop-blur-md  shadow-lg rounded-full"
-                                  color="transparent"
-                                />
-                                <div className="text-[10.5px] font-semibold bg-white rounded-full px-[10px] py-[2px] max-w-[200px] truncate">
-                                  {module?.heading}: {module?.title}
-                                </div>
-                              </div>
-
-                              {/* Right side: Edit + Delete buttons */}
-                              <div
-                                className="flex items-center gap-2"
-                                onClick={(e) => e.stopPropagation()} // prevent collapse toggle
-                              >
-                                <Tooltip title="Edit">
-                                  <Button
-                                    className="h-7 w-7 !bg-white/20 hover:bg-white/30 text-white border-white/30 rounded-lg"
-                                    size="small"
-                                    icon={
-                                      <BiEdit className="transition-transform" />
-                                    }
-                                    onClick={() => showEditDrawer(module)}
-                                  />
-                                </Tooltip>
-                                <Popconfirm
-                                  title="Delete this module"
-                                  description={
-                                    <p className="text-[12px] text-gray-500 mt-1">
-                                      Are you sure you want to delete this
-                                      module?
-                                    </p>
-                                  }
-                                  onConfirm={() =>
-                                    handleDeleteModule(module?.moduleId)
-                                  }
-                                  okText="Yes"
-                                  cancelText="No"
-                                >
-                                  <Tooltip title="Delete">
-                                    <Button
-                                      className="h-7 w-7 !bg-white/20 hover:bg-white/30 text-white border-white/30 rounded-lg"
-                                      size="small"
-                                      icon={<MdDeleteOutline />}
+                      initial={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.9, y: -20 }}
+                      transition={{ duration: 0.3 }}
+                      className=""
+                    >
+                      {" "}
+                      <div
+                        key={module?.moduleId}
+                        className="flex items-start gap-2"
+                      >
+                        <Checkbox
+                          onChange={() => handleSelectChange(module?.moduleId)}
+                          checked={selectall?.includes(module?.moduleId)}
+                        />
+                        <Collapse
+                          // bordered={false}
+                          style={{
+                            // background: token.colorBgContainer,
+                            backgroundColor: module?.color,
+                          }}
+                          key={module?.moduleId}
+                          // expandIcon={() => (
+                          //   <Dropdown
+                          //     // trigger={["click"]}
+                          //     menu={{
+                          //       items: [
+                          //         {
+                          //           key: "1",
+                          //           label: (
+                          //             <span
+                          //               onClick={(e) => {
+                          //                 e.stopPropagation();
+                          //                 handleDeleteModule(module?.moduleId);
+                          //               }}
+                          //             >
+                          //               Delete
+                          //             </span>
+                          //           ),
+                          //           icon: <MdDeleteOutline className="!text-xl" />,
+                          //         },
+                          //         {
+                          //           key: "2",
+                          //           label: (
+                          //             <span
+                          //               onClick={(e) => {
+                          //                 showEditDrawer(module);
+                          //                 e.stopPropagation();
+                          //               }}
+                          //             >
+                          //               Edit
+                          //             </span>
+                          //           ),
+                          //           icon: <BiEdit className="!text-xl" />,
+                          //         },
+                          //       ],
+                          //     }}
+                          //     arrow={{ pointAtCenter: true }}
+                          //   >
+                          //     <Button
+                          //       onClick={(e) => e.stopPropagation()}
+                          //       className="custom_button_style_icon"
+                          //     >
+                          //       <IoMdMenu className="!text-xl" />
+                          //     </Button>
+                          //   </Dropdown>
+                          // )}
+                          activeKey={activeKeys}
+                          onChange={handleCollapseChange}
+                          defaultActiveKey={"1"}
+                          className={`w-full !border-none !shadow-none ${
+                            viewMode === "grid" ? "lg:w-[500px]" : "lg:w-full"
+                          } mb-4`}
+                          items={[
+                            {
+                              key: String(index),
+                              label: (
+                                <div className="flex items-center justify-between w-full">
+                                  {/* Left side: badge + title */}
+                                  <div className="flex items-center gap-2">
+                                    <Badge
+                                      style={{ boxShadow: "none" }}
+                                      count={index + 1}
+                                      className="mr-2 text-zinc-400 [text-shadow:_0_1px_2px_rgb(0_0_0_/_20%)] border border-white/20 bg-white/40 backdrop-blur-md  shadow-lg rounded-full"
+                                      color="transparent"
                                     />
-                                  </Tooltip>
-                                </Popconfirm>
-                              </div>
-                            </div>
-                          ),
+                                    <div className="text-[10.5px] font-semibold bg-white rounded-full px-[10px] py-[2px] max-w-[200px] truncate">
+                                      {module?.heading}: {module?.title}
+                                    </div>
+                                  </div>
 
-                          children: (
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex flex-col">
-                                {/* <p className="text-[10px] text-gray-400">
+                                  {/* Right side: Edit + Delete buttons */}
+                                  <div
+                                    className="flex items-center gap-2"
+                                    onClick={(e) => e.stopPropagation()} // prevent collapse toggle
+                                  >
+                                    <Tooltip title="Edit">
+                                      <Button
+                                        className="h-7 w-7 !bg-white/20 hover:bg-white/30 text-white border-white/30 rounded-lg"
+                                        size="small"
+                                        icon={
+                                          <BiEdit className="transition-transform" />
+                                        }
+                                        onClick={() => showEditDrawer(module)}
+                                      />
+                                    </Tooltip>
+                                    <Popconfirm
+                                      title="Delete this module"
+                                      description={
+                                        <p className="text-[12px] text-gray-500 mt-1">
+                                          Are you sure you want to delete this
+                                          module?
+                                        </p>
+                                      }
+                                      onConfirm={() =>
+                                        handleDeleteModule(module?.moduleId)
+                                      }
+                                      okText="Yes"
+                                      cancelText="No"
+                                    >
+                                      <Tooltip title="Delete">
+                                        <Button
+                                          className="h-7 w-7 !bg-white/20 hover:bg-white/30 text-white border-white/30 rounded-lg"
+                                          size="small"
+                                          icon={<MdDeleteOutline />}
+                                        />
+                                      </Tooltip>
+                                    </Popconfirm>
+                                  </div>
+                                </div>
+                              ),
+
+                              children: (
+                                <div className="flex items-start justify-between gap-2">
+                                  <div className="flex flex-col">
+                                    {/* <p className="text-[10px] text-gray-400">
                                 {module?.createdAt &&
                                   moment(module?.createdAt).format(
                                     "DD-MM-YYYY"
                                   )}
                               </p> */}
-                                <div
-                                  className={`text-sm text-gray-500 flex flex-col bg-white rounded-lg${
-                                    viewMode === "list" && "!w-[1100px]"
-                                  }`}
-                                >
-                                  <div
-                                    className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full"
-                                    dangerouslySetInnerHTML={{
-                                      __html: module?.description || "",
-                                    }}
-                                  ></div>
+                                    <div
+                                      className={`text-sm text-gray-500 flex flex-col bg-white rounded-lg${
+                                        viewMode === "list" && "!w-[1100px]"
+                                      }`}
+                                    >
+                                      <div
+                                        className="prose prose-sm break-words overflow-hidden text-ellipsis max-w-full"
+                                        dangerouslySetInnerHTML={{
+                                          __html: module?.description || "",
+                                        }}
+                                      ></div>
 
-                                  <div>
-                                    {module?.file && (
-                                      <a
-                                        href={`https://acadizo-backend.onrender.com/file/${module?.file}`}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        download
-                                      >
-                                        <div className="flex flex-col gap-2 w-full sm:w-72 text-[10px] sm:text-xs z-50 mt-3">
-                                          <div className="error-alert cursor-default flex items-center justify-between w-[342px] h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]">
-                                            <div className="flex gap-2">
-                                              <div className="text-primary-color text-3xl">
-                                                <FaRegFileAlt />
-                                              </div>
+                                      <div>
+                                        {module?.file && (
+                                          <a
+                                            href={`https://acadizo-backend.onrender.com/file/${module?.file}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            download
+                                          >
+                                            <div className="flex flex-col gap-2 w-full sm:w-72 text-[10px] sm:text-xs z-50 mt-3">
+                                              <div className="error-alert cursor-default flex items-center justify-between w-[342px] h-12 sm:h-14 rounded-lg bg-[#232531] px-[10px]">
+                                                <div className="flex gap-2">
+                                                  <div className="text-primary-color text-3xl">
+                                                    <FaRegFileAlt />
+                                                  </div>
 
-                                              <div>
-                                                <p className="text-white">
-                                                  {module?.file?.length >= 15
-                                                    ? `${module?.file?.substring(
-                                                        0,
-                                                        15
-                                                      )}...`
-                                                    : module?.file}
-                                                </p>
-                                                <p className="text-gray-500">
-                                                  Attachment
-                                                </p>
+                                                  <div>
+                                                    <p className="text-white">
+                                                      {module?.file?.length >=
+                                                      15
+                                                        ? `${module?.file?.substring(
+                                                            0,
+                                                            15
+                                                          )}...`
+                                                        : module?.file}
+                                                    </p>
+                                                    <p className="text-gray-500">
+                                                      Attachment
+                                                    </p>
+                                                  </div>
+                                                </div>
+                                                <button
+                                                  onClick={() =>
+                                                    handleDownload(module?.file)
+                                                  }
+                                                  className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
+                                                >
+                                                  <BiDownload />
+                                                </button>
                                               </div>
                                             </div>
-                                            <button
-                                              onClick={() =>
-                                                handleDownload(module?.file)
-                                              }
-                                              className="text-gray-200 text-xl hover:bg-white/10 p-1  rounded-full transition-colors ease-linear"
-                                            >
-                                              <BiDownload />
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </a>
-                                    )}
+                                          </a>
+                                        )}
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 mt-2">
+                                      <FcOvertime />
+                                      <p className="text-[10px] text-gray-700 mt-1">
+                                        <span className="font-semibold">
+                                          Submitted at
+                                        </span>
+                                        :{" "}
+                                        <span className="text-gray-600">
+                                          {" "}
+                                          {moment(module?.createdAt)
+                                            .tz("Asia/Dhaka")
+                                            .format("D MMM YYYY, h:mm A")}
+                                        </span>
+                                      </p>
+                                    </div>
                                   </div>
                                 </div>
-                                <div className="flex items-center gap-2 mt-2">
-                                  <FcOvertime />
-                                  <p className="text-[10px] text-gray-700 mt-1">
-                                    <span className="font-semibold">
-                                      Submitted at
-                                    </span>
-                                    :{" "}
-                                    <span className="text-gray-600">
-                                      {" "}
-                                      {moment(module?.createdAt)
-                                        .tz("Asia/Dhaka")
-                                        .format("D MMM YYYY, h:mm A")}
-                                    </span>
-                                  </p>
-                                </div>
-                              </div>
-                            </div>
-                          ),
-                        },
-                      ]}
-                    />
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-            ))}
-            <EditModuleDrawer
-              setOpen={setOpen}
-              open={open}
-              isLoading={isLoading}
-              module={selectedModule}
-            />
+                              ),
+                            },
+                          ]}
+                        />
+                      </div>
+                    </motion.div>
+                  </AnimatePresence>
+                ))}
+                <EditModuleDrawer
+                  setOpen={setOpen}
+                  open={open}
+                  isLoading={isLoading}
+                  module={selectedModule}
+                />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </div>
+      ) : currentUser?.role === "teacher" ? (
+        <div className="flex items-center justify-center flex-col gap-4">
+          <img src={empty} width={600} alt="empty" />
+          <Button
+            onClick={showDrawer}
+            type="primary"
+            icon={<FaPlus />}
+            className="custom_button_style !h-[42px]"
+          >
+            Upload modules
+          </Button>
+        </div>
+      ) : (
+        <div className="flex items-center justify-center flex-col gap-4">
+          <img src={empty} width={600} alt="empty" />
+        </div>
+      )}
+    </>
   );
 };
 

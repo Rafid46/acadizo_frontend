@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { BiDownload, BiEdit } from "react-icons/bi";
-import { CgMenuGridO } from "react-icons/cg";
+// import { CgMenuGridO } from "react-icons/cg";
 import { FaRegFileAlt } from "react-icons/fa";
 import { IoIosSearch, IoMdTime } from "react-icons/io";
 import { IoBookSharp } from "react-icons/io5";
@@ -31,10 +31,8 @@ import React, { useEffect, useState } from "react";
 import { CiSearch } from "react-icons/ci";
 import empty from "../../assets/images/emptypng.png";
 import Loader from "../../common/Loader";
-import EditButtons from "../EditButtons";
 import Dragger from "antd/es/upload/Dragger";
 import { RiUploadCloudLine } from "react-icons/ri";
-import { EditorContent } from "@tiptap/react";
 
 import { GrFormAttachment } from "react-icons/gr";
 import { FcOvertime } from "react-icons/fc";
@@ -60,9 +58,10 @@ import ActivityEditModule from "./ActivityEditModule";
 import dayjs from "dayjs";
 import { useTiptapEditor } from "../../hooks/useTiptapEditor";
 import AnsweredPieChart from "./AnsweredPieChart ";
+import EditorWrapper from "../../common/EditorWrapper";
 const ActivityCard = ({ allActivities, loading }: any) => {
   const [open, setOpen] = useState(false);
-  const [editorContent, setEditorContent] = useState("");
+  const [, setEditorContent] = useState("");
   const [openAnswer, setOpenAnswer] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
   const [form] = Form.useForm();
@@ -204,8 +203,9 @@ const ActivityCard = ({ allActivities, loading }: any) => {
     const activityId = selectedItem?.activityId;
     const academyId = joinedAcademyDetails?.academyId;
     const academyName = joinedAcademyDetails?.academyName;
+    const answerDescription = editor?.getHTML() || "";
     const answerFormData = new FormData();
-    answerFormData.append("answerDescription", editor?.getHTML() || "");
+    answerFormData.append("answerDescription", answerDescription);
     answerFormData.append("academyId", academyId);
     answerFormData.append("academyName", academyName);
     answerFormData.append("student", JSON.stringify(student)); // send full user
@@ -941,24 +941,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                                                     </div>
                                                   </div>
                                                 </div>
-                                                <div
-                                                  className={`p-4 rounded-xl border mb-4`}
-                                                >
-                                                  <div className="flex items-center justify-between mb-3">
-                                                    <div className="flex items-center gap-2">
-                                                      <Calendar className="w-4 h-4 text-gray-600" />
-                                                      <span className="font-medium text-gray-900">
-                                                        Activity Period
-                                                      </span>
-                                                    </div>
-                                                    {/* <Badge
-                                                      variant="secondary"
-                                                      className={`${deadlineInfo.textColor} bg-transparent border-0 text-xs font-medium`}
-                                                    >
-                                                      {deadlineInfo.label}
-                                                    </Badge> */}
-                                                  </div>
-                                                </div>
+
                                                 <div className="space-y-4">
                                                   {/* Answer Content */}
                                                   <div className="bg-slate-100 rounded-lg p-4 border-l-4 border-l-blue-500">
@@ -1249,14 +1232,7 @@ const ActivityCard = ({ allActivities, loading }: any) => {
                         },
                       ]}
                     >
-                      {editor && <EditButtons editor={editor} />}
-                      {editor && (
-                        <EditorContent
-                          placeholder="Write something..."
-                          editor={editor}
-                          className="bg-gray-50 rounded-xl p-4 w-full max-w-full overflow-x-hidden"
-                        />
-                      )}
+                      {editor && <EditorWrapper editor={editor} />}
                     </Form.Item>
                     <Form.Item
                       label={

@@ -15,6 +15,7 @@ import Errorpage from "../pages/error/Errorpage";
 import Notice from "../pages/Institution/Notice";
 import ActivityPage from "../pages/activity/ActivityPage";
 import Homepage from "../pages/Home/Homepage";
+import Students from "../pages/Institution/Students";
 
 const router = createBrowserRouter([
   // {
@@ -80,7 +81,7 @@ const router = createBrowserRouter([
       },
       {
         path: "institution/students",
-        element: <Overview />,
+        element: <Students />,
       },
       {
         path: "institution/users",

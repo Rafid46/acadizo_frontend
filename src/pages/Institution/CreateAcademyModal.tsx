@@ -29,6 +29,7 @@ const CreateAcademyModal = ({
         description: "Academy created successfully,",
       });
       showNotification();
+      setCreateUserModal(false);
       console.log("Response:", res.data);
     } catch (error: any) {
       console.log(error);
