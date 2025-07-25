@@ -34,7 +34,7 @@ const EditorWrapper = ({ editor }: EditorWrapperProps) => {
       <EditButtons editor={editor} />
       <EditorContent
         editor={editor}
-        className="bg-gray-50 rounded-xl p-4 w-full max-w-full overflow-x-hidden"
+        className="bg-gray-50 rounded-xl p-4 w-full max-w-full overflow-x-scroll"
       />
     </div>
   );

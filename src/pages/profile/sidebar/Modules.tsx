@@ -29,6 +29,7 @@ import ModuleCard from "../../ModuleCard";
 import EditorWrapper from "../../../common/EditorWrapper";
 import { useTiptapEditor } from "../../../hooks/useTiptapEditor";
 import Loader from "../../../common/Loader";
+import { Link } from "react-router-dom";
 const Modules = () => {
   const [open, setOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -69,6 +70,7 @@ const Modules = () => {
       });
       form.resetFields();
       setSelectedFile(null);
+      editor.commands.clearContent();
       showNotification();
       onClose();
     },
@@ -95,7 +97,7 @@ const Modules = () => {
     moduleFormData.append("description", description);
     moduleFormData.append("academyId", academyId);
     moduleFormData.append("academyName", academyName);
-    moduleFormData.append("color", color);
+    moduleFormData.append("color", color || "#7ABA78");
     if (selectedFile) {
       moduleFormData.append("file", selectedFile);
     }
@@ -144,7 +146,17 @@ const Modules = () => {
           `}
       </style> */}
 
-      <ModuleCard showDrawer={showDrawer} />
+      {userLoading ? (
+        <Loader />
+      ) : currentUser?.academyName?.trim() && currentUser?.academyId?.trim() ? (
+        <ModuleCard showDrawer={showDrawer} />
+      ) : (
+        <Link to="/dashboard/institution/overview">
+          <Button type="primary" className="custom_button_style !h-[42px]">
+            Join an academy to see modules
+          </Button>
+        </Link>
+      )}
       {userLoading ? (
         <Loader />
       ) : currentUser?.academyName?.trim() && currentUser?.academyId?.trim() ? (

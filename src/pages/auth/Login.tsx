@@ -375,6 +375,11 @@ const Login = () => {
                   </div>
                 </div>
               </Form>
+              <div className="text-[12px] font-semibold text-gray-500 text-center mt-2">
+                email: test@test.com (teacher) <br />
+                email: student@student.com (student) <br />
+                pass: Admin123#
+              </div>
             </div>
           </main>
         </div>
