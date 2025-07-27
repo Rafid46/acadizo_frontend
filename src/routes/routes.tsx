@@ -1,22 +1,123 @@
 import { createBrowserRouter } from "react-router-dom";
-import MainLayout from "../layout/MainLayout";
-import About from "../pages/about";
-import Contact from "../pages/contact";
+// import MainLayout from "../layout/MainLayout";
+import About from "../pages/About";
+import Register from "../pages/auth/Register";
+import Login from "../pages/auth/Login";
+
+import UpdateProfile from "../pages/profile/UpdateProfile";
+import Modules from "../pages/profile/sidebar/Modules";
+import InstitutionSection from "../pages/InstitutionSection";
+import Users from "../pages/profile/Users";
+import Overview from "../pages/Institution/Overview";
+import TestDashboard from "../pages/TestDashboard";
+import PrivateRoute from "./PrivateRoute";
+import Errorpage from "../pages/error/Errorpage";
+import Notice from "../pages/Institution/Notice";
+import ActivityPage from "../pages/activity/ActivityPage";
+import Homepage from "../pages/Home/Homepage";
+import Students from "../pages/Institution/Students";
 
 const router = createBrowserRouter([
+  // {
+  //   path: "/",
+  //   element: (
+  //     <PrivateRoute>
+  //       <TestDashboard />
+  //     </PrivateRoute>
+  //   ),
+  // },
   {
     path: "/",
-    element: <MainLayout />,
+    element: <Homepage />,
+  },
+
+  {
+    path: "/dashboard",
+    errorElement: <Errorpage />,
+    element: (
+      <PrivateRoute>
+        <TestDashboard />
+      </PrivateRoute>
+    ),
     children: [
+      {
+        index: true,
+        element: <InstitutionSection />,
+      },
+      {
+        path: "dashboard",
+        element: <InstitutionSection />,
+      },
       {
         path: "about",
         element: <About />,
       },
       {
-        path: "contact",
-        element: <Contact />,
+        path: "modules",
+        element: <Modules />,
+      },
+      {
+        path: "update-profile",
+        element: <UpdateProfile />,
+      },
+      {
+        path: "notice",
+        element: <Notice />,
+      },
+
+      {
+        path: "AllUsers",
+        element: (
+          <Users />
+
+          // <PrivateRoute role="teacher">
+          //   <Users />
+          // </PrivateRoute>
+        ),
+      },
+      {
+        path: "institution/overview",
+        element: <Overview />,
+      },
+      {
+        path: "institution/students",
+        element: <Students />,
+      },
+      {
+        path: "institution/users",
+        element: <Overview />,
+      },
+      {
+        path: "activity/posts",
+        element: <ActivityPage />,
       },
     ],
+  },
+  // {
+  //   path: "/institution",
+  //   element: <MainLayout />,
+  //   children: [
+  //     {
+  //       path: "overview",
+  //       element: <Overview />,
+  //     },
+  //   ],
+  // },
+  // {
+  //   path: "/home",
+  //   element: <Home />,
+  // },
+  {
+    path: "/register",
+    element: <Register />,
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "*",
+    element: <Errorpage />,
   },
 ]);
 export default router;

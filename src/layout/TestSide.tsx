@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IconType } from "react-icons";
 import {
   FiBarChart,
@@ -11,7 +12,7 @@ import {
   FiUsers,
 } from "react-icons/fi";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 
 export const TestSide = () => {
   return (
@@ -243,5 +244,3 @@ const ToggleClose = ({
     </motion.button>
   );
 };
-
-// const ExampleContent = () => <div className="h-[200vh] w-full"></div>;
