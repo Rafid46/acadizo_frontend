@@ -19,6 +19,8 @@
 * {
   /* font-family: "poppins", sans-serif !important; */
   font-family: "inter", sans-serif !important;
+   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .text-type {

@@ -32,7 +32,7 @@ const Login = () => {
         });
 
         navigate(from, { replace: true });
-
+        navigate("/dashboard");
         setLoading(false);
       })
       .catch(() => {
@@ -280,12 +280,12 @@ const Login = () => {
                         Sign up
                       </a>
                     </p>
-                    <a
+                    {/* <a
                       href="/register"
                       className="text-primary-color font-semibold ml-2"
                     >
                       Forget Password
-                    </a>
+                    </a> */}
                   </div>
                   <div className="mt-4">
                     <Button
@@ -377,7 +377,6 @@ const Login = () => {
               </Form>
               <div className="text-[12px] font-semibold text-gray-500 text-center mt-2">
                 email: test@test.com (teacher) <br />
-                email: student@student.com (student) <br />
                 pass: Admin123#
               </div>
             </div>

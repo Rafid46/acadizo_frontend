@@ -412,7 +412,7 @@ const Homepage = () => {
     );
   };
   return (
-    <div className=" animated-background">
+    <div className="animated-background">
       <style>
         {` 
         .ant-dropdown .ant-dropdown-menu .ant-dropdown-menu-item {

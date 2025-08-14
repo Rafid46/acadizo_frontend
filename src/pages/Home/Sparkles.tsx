@@ -69,14 +69,19 @@ const Sparkles = ({
         if (this.y > canvas.height) this.y = 0;
         if (this.y < 0) this.y = canvas.height;
 
-        // Mouse interaction
+        // Mouse interaction - ultra slow & smooth
         const dx = mousePosition.x - this.x;
         const dy = mousePosition.y - this.y;
         const distance = Math.sqrt(dx * dx + dy * dy);
+
         if (distance < 100) {
           const angle = Math.atan2(dy, dx);
-          this.x -= Math.cos(angle) * 1;
-          this.y -= Math.sin(angle) * 1;
+          const targetX = this.x - Math.cos(angle) * 0.0001; // super tiny movement
+          const targetY = this.y - Math.sin(angle) * 0.0001;
+
+          // Lerp for ultra slow easing
+          this.x += (targetX - this.x) * 0.01;
+          this.y += (targetY - this.y) * 0.01;
         }
       }
 
